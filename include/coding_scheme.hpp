@@ -10,11 +10,11 @@ class coding_scheme {
         void correlator(std::istream &in, std::ostream &out);
         void decorrelator(std::istream &in, std::ostream &out);
 
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
-
     public:
         coding_scheme(unsigned int bitwidth);
+
+        void encoder(std::istream &in, std::ostream &out);
+        void decoder(std::istream &in, std::ostream &out);
 
 };
 

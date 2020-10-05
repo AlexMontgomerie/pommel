@@ -16,7 +16,7 @@ int def::int_to_smint(int in) {
   return (val & val_mask) | (sign << (bitwidth - 1));
 }
 
-void def::encoder(std::istream &in, std::ostream &out) { // TODO: add side channels
+void def::diff_encoder(std::istream &in, std::ostream &out) {
 
   // value buffer
   uint32_t val;
@@ -43,5 +43,11 @@ void def::encoder(std::istream &in, std::ostream &out) { // TODO: add side chann
   }
 }
 
+void def::encoder(std::istream &in, std::ostream &out) {
+    // run encoder
+    std::stringstream buf;
+    diff_encoder(in, buf);
+    decorrelator(buf, out);
+}
 
 def::def(unsigned int bitwidth, unsigned int channels) : coding_scheme(bitwidth), channels(channels){}
