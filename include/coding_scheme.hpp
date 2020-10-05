@@ -6,9 +6,13 @@
 class coding_scheme {
     protected:
         unsigned int bitwidth;
+
         void correlator(std::istream &in, std::ostream &out);
         void decorrelator(std::istream &in, std::ostream &out);
-        
+
+        void encoder(std::istream &in, std::ostream &out);
+        void decoder(std::istream &in, std::ostream &out);
+
     public:
         coding_scheme(unsigned int bitwidth);
 
