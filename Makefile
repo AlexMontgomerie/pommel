@@ -7,7 +7,7 @@ INC_PATH := include
 
 # tool marcros
 CC := g++
-CCFLAG := -I./$(INC_PATH)
+CCFLAG := -std=c++17 -I./$(INC_PATH)
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
 

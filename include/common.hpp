@@ -15,5 +15,6 @@
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
+#include <variant>
 
 #endif

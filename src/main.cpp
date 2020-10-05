@@ -2,12 +2,18 @@
 
 #include "coding_scheme.hpp"
 #include "coding_schemes/def.hpp"
+#include "coding_schemes/abe.hpp"
 
-auto get_coder(std::string coder_name) {
+using coder_t = std::variant<def,abe>;
+
+coder_t get_coder(std::string coder_name) {
 
     if (coder_name == "def") {
         return def(8,1);
+    } else if (coder_name == "abe") {
+        return abe(8,32);
     }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -39,7 +45,15 @@ int main(int argc, char *argv[]) {
     printf("input  path : %s\n", input_path.c_str());
     printf("output path : %s\n", output_path.c_str());
 
-    // get the encoder
+    /*
+    // get the coder
+    if (coder_name == "def") {
+        def coder(8,1);
+    }
+    if (coder_name == "abe") {
+        abe coder(8,32);
+    }
+    */
     auto coder = get_coder(coder_name);
 
     // load the input file stream
@@ -49,7 +63,7 @@ int main(int argc, char *argv[]) {
     if ( in.is_open() && out.is_open() ) {
     
         // run the encoder
-        coder.encoder(in,out);
+        std::visit([&in=in,&out=out](auto&& arg){ arg.encoder(in,out); }, coder);
         
         // close files
         in.close();
