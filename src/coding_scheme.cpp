@@ -1,5 +1,9 @@
 #include "coding_scheme.hpp"
 
+uint32_t coding_scheme::hamming_distance(uint32_t a, uint32_t b) { 
+    return __builtin_popcount(a ^ b); 
+}
+
 void coding_scheme::decorrelator(std::istream &in, std::ostream &out) {
 
     // mask
