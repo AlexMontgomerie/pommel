@@ -8,6 +8,9 @@
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
 
+#include "analysis.hpp"
+#include "trace.hpp"
+
 using coder_t = std::variant<def,abe,pbm,bi,awr,rle>;
 
 coder_t get_coder(std::string coder_name) {
@@ -31,10 +34,11 @@ int main(int argc, char *argv[]) {
     int opt;
     std::string input_path;
     std::string output_path;
+    std::string trace_path;
     std::string coder_name;
     
 
-    while ((opt = getopt(argc, argv, "i:o:e:h")) != -1) {
+    while ((opt = getopt(argc, argv, "i:o:e:t:h")) != -1) {
         switch (opt) {
             case 'i':
                 input_path = optarg;
@@ -44,6 +48,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'e':
                 coder_name = optarg;
+                break;
+            case 't':
+                trace_path = optarg;
                 break;
             case 'h':
                 break;
@@ -68,7 +75,14 @@ int main(int argc, char *argv[]) {
         // close files
         in.close();
         out.close();
-    
+   
+        // run analysis
+        float avg = mean(output_path,8);
+        printf("Bitwise-average = %f\n", avg);
+
+        // create trace file
+        streaming_trace(trace_path);
+
     } else {
         // TODO: raise error
     }

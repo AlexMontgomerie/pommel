@@ -1,6 +1,6 @@
 #include "analysis.hpp"
 
-std::vector<float> bitwise_mean(std::istream &in, unsigned int bitwidth) {
+std::vector<float> bitwise_mean(std::string infile_path, unsigned int bitwidth) {
 
     // bitwise mean
     float acc_cache[bitwidth];
@@ -16,6 +16,7 @@ std::vector<float> bitwise_mean(std::istream &in, unsigned int bitwidth) {
     size_t stream_length;
 
     // iterate over the rest of the stream
+    std::ifstream in(infile_path);
     while (in >> val) {
         for(int i=0; i<bitwidth; i++) {
             acc_cache[i] += (float) ( ( val >> i ) & 0x1 );
@@ -28,6 +29,9 @@ std::vector<float> bitwise_mean(std::istream &in, unsigned int bitwidth) {
     for(int i=0; i<bitwidth; i++) {
         out.push_back(acc_cache[i]/(float)stream_length);
     }
+
+    // close file
+    in.close();
 
     // return the vector
     return out;
@@ -49,8 +53,17 @@ std::vector<uint32_t> bitwise_switching_activity_variance(std::istream &in, unsi
 
 }
 
-uint32_t mean(std::istream &in, unsigned int bitwidth) {
+float mean(std::string infile_path, unsigned int bitwidth) {
 
+    // get bitwise-mean
+    std::vector<float> bw_mean = bitwise_mean(infile_path, bitwidth);
+
+    float avg = 0.0;
+    for(int i=0;i<bitwidth;i++) {
+        avg += bw_mean[i]/bitwidth;
+    }
+
+    return avg;
 }
 
 uint32_t variance(std::istream &in, unsigned int bitwidth) {
