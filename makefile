@@ -10,6 +10,7 @@ CC := g++
 CCFLAG := -std=c++17 -I./$(INC_PATH)
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
+LIBS := -lctemplate -pthread -lxerces-c
 
 # compile marcros
 TARGET_NAME := main
@@ -37,10 +38,10 @@ default: all
 
 # non-phony targets
 $(TARGET): $(OBJ)
-	$(CC) $(CCFLAG) -o $@ $?
+	$(CC) $(CCFLAG) -o $@ $? $(LIBS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAG) -o $@ $<
+	$(CC) $(CCOBJFLAG) -o $@ $< 
 
 $(DBG_PATH)/%.o: $(SRC_PATH)/%.c*
 	$(CC) $(CCOBJFLAG) $(DBGFLAG) -o $@ $<

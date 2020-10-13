@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include <ctemplate/template.h>
 
 #include "coding_scheme.hpp"
 #include "coding_schemes/def.hpp"
@@ -8,8 +9,10 @@
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
 
+#include "config.hpp"
 #include "analysis.hpp"
 #include "trace.hpp"
+
 
 using coder_t = std::variant<def,abe,pbm,bi,awr,rle>;
 
@@ -83,8 +86,21 @@ int main(int argc, char *argv[]) {
         // create trace file
         streaming_trace(trace_path);
 
+        // create cacti config file
+        create_cacti_config("config/test.xml", "dfsfs", "data/cacti_config.cfg");
+        /*
+        ctemplate::TemplateDictionary dict("cacti_config");
+        dict.SetFormattedValue("ACTIVITY", "%.4f", 0.5);
+        std::string cacti_config_out;
+        ctemplate::ExpandTemplate("templates/cacti_config.tpl", 
+            ctemplate::DO_NOT_STRIP, &dict, &cacti_config_out);
+        std::ofstream cacti_config_path("data/cacti_config.cfg");
+        cacti_config_path << cacti_config_out;
+        cacti_config_path.close();
+        */
     } else {
         // TODO: raise error
+        fprintf(stderr,"cannot open input or output file \n");
     }
 
     return 0;
