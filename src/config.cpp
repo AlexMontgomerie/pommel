@@ -22,7 +22,7 @@ void create_cacti_config(std::string config_path, std::string stats_path, std::s
     std::string dram_type = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
     int data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
     int banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
-    int ranks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
+    int rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
     int cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
     int rows            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRows']").node().attribute("value").as_int();
     int data_rate       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='dataRate']").node().attribute("value").as_int();
@@ -84,7 +84,7 @@ void create_cacti_config(std::string config_path, std::string stats_path, std::s
     dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", data_width); 
     
     std::string cacti_config_out;
-    ctemplate::ExpandTemplate("templates/cacti_config.tpl", 
+    ctemplate::ExpandTemplate("templates/cacti_template.tpl", 
         ctemplate::DO_NOT_STRIP, &dict, &cacti_config_out);
     std::ofstream cacti_config_path("data/cacti_config.cfg"); // TODO: format with output path
     cacti_config_path << cacti_config_out;
