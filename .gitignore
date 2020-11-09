@@ -1,3 +1,8 @@
 obj/*
 bin/*
 data/*
+
+*.trace
+*.cmdtrace
+*.csv
+*.stats

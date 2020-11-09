@@ -7,7 +7,7 @@ make -j 8
 
 ./bin/main -e def -i data/test.dat -o data/test_out.dat -t data/test.trace 
 # run ramulator trace
-$RAMULATOR_PATH/ramulator $RAMULATOR_PATH/configs/DDR3-config.cfg --mode=dram data/test.trace
+$RAMULATOR_PATH/ramulator $RAMULATOR_PATH/configs/DDR3-config.cfg --mode=dram tmp.trace
 
 # run vampire power estimation
 
