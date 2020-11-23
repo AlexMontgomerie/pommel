@@ -142,44 +142,120 @@ void power_callback(double a, double b, double c, double d) {}
 void trace::generate_trace(void) {
 
     ramulator::Config configs("ramulator/configs/DDR3-config.cfg");
+    typedef ramulator::DDR3 mem_type;
 
-    /*
+
     const std::string& standard = configs["standard"];
     assert(standard != "" || "DRAM standard should be specified.");
 
-    const char *trace_type = strstr(argv[2], "=");
-    trace_type++;
-    if (strcmp(trace_type, "cpu") == 0) {
-      configs.add("trace_type", "CPU");
-    } else if (strcmp(trace_type, "dram") == 0) {
-      configs.add("trace_type", "DRAM");
-    } else {
-      printf("invalid trace type: %s\n", trace_type);
-      assert(false);
-    }
+    configs.add("trace_type", "DRAM");
 
     int trace_start = 3;
     string stats_out;
-    if (strcmp(argv[trace_start], "--stats") == 0) {
-      Stats::statlist.output(argv[trace_start+1]);
-      stats_out = argv[trace_start+1];
-      trace_start += 2;
-    } else {
-      Stats::statlist.output(standard+".stats");
-      stats_out = standard + string(".stats");
-    }
+    Stats::statlist.output(standard+".stats");
+    stats_out = standard + string(".stats");
 
     // A separate file defines mapping for easy config.
-    if (strcmp(argv[trace_start], "--mapping") == 0) {
-      configs.add("mapping", argv[trace_start+1]);
-      trace_start += 2;
+    configs.add("mapping", "defaultmapping");
+
+    configs.set_core_num(1);
+    
+    mem_type* spec = new mem_type(configs["org"], configs["speed"]);
+    
+    // initiate controller and memory
+    int C = configs.get_channels(), R = configs.get_ranks();
+    // Check and Set channel, rank number
+    spec->set_channel_number(C);
+    spec->set_rank_number(R);
+    std::vector<ramulator::Controller<mem_type>*> ctrls;
+    for (int c = 0 ; c < C ; c++) {
+        ramulator::DRAM<mem_type>* channel = new ramulator::DRAM<mem_type>(spec, mem_type::Level::Channel);
+        channel->id = c;
+        channel->regStats("");
+        ramulator::Controller<mem_type>* ctrl = new ramulator::Controller<mem_type>(configs, channel);
+        ctrls.push_back(ctrl);
+    }
+    ramulator::Memory<mem_type, ramulator::Controller> memory(configs, ctrls);
+
+    /*  
+    assert(files.size() != 0);
+      if (configs["trace_type"] == "CPU") {
+        run_cputrace(configs, memory, files);
+      } else if (configs["trace_type"] == "DRAM") {
+        run_dramtrace(configs, memory, files[0]);
+      }
+    */
+
+
+    //start_run(configs, wio, files);
+
+    /* initialize DRAM trace */
+    ramulator::Trace traceout("test.cmdtrace");
+
+    /* run simulation */
+    bool stall = false, end = false;
+    int reads = 0, writes = 0, clks = 0;
+    long addr = 0;
+
+    // get the read/write type
+    ramulator::Request::Type type;
+    if ( direction ) {
+        type = ramulator::Request::Type::WRITE;
     } else {
-      configs.add("mapping", "defaultmapping");
+        type = ramulator::Request::Type::READ;
     }
 
-    std::vector<const char*> files(&argv[trace_start], &argv[argc]);
-    configs.set_core_num(argc - trace_start);
+    map<int, int> latencies;
+    auto read_complete = [&latencies](ramulator::Request& r){latencies[r.depart - r.arrive]++;};
+
+    ramulator::Request req(addr, type, read_complete);
+
+
+    for(int i=0;i<10;i++) {
+
+        for(int j=0;j<2;j++) {
+            req.addr = i*10+j;
+            req.type = type;
+            memory.send(req);
+            //memory.tick();
+        }
+        for(int j=0;j<20;j++) {
+            memory.tick();
+        } 
+
+    }
+
+
+    /*
+    while (!end || memory.pending_requests()){
+        if (!end && !stall){
+            end = !traceout.get_dramtrace_request(addr, type);
+        }
+
+        if (!end){
+            req.addr = addr;
+            req.type = type;
+            stall = !memory.send(req);
+            if (!stall){
+                if (type == ramulator::Request::Type::READ) reads++;
+                else if (type == ramulator::Request::Type::WRITE) writes++;
+            }
+        }
+        else {
+            memory.set_high_writeq_watermark(0.0f); // make sure that all write requests in the
+                                                    // write queue are drained
+        }
+
+        memory.tick();
+        clks ++;
+        //ramulator::Stats::curTick++; // memory clock, global, for Statistics
+    }
     */
+    // This a workaround for statistics set only initially lost in the end
+    memory.finish();
+    //ramulator::Stats::statlist.printall();
+
+
 
     /*
     // create the trace generator   
