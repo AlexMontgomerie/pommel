@@ -91,7 +91,11 @@ int main(int argc, char *argv[]) {
     // get coding scheme
     auto coder = get_coder(coder_name);
  
+    trace fpgaconvnet_trace;
+    fpgaconvnet_trace.generate_trace();
 
+
+    /*
     if(scale_sim_trace_path != "") {
         //scale_sim_to_memory_trace("dram_filter.csv", "tmp.trace");
     }
@@ -114,7 +118,8 @@ int main(int argc, char *argv[]) {
     out.close();
 
     add_data("tmp.trace", "tmp_out.trace", "tmp_out.dat", 0, false);
-    
+    */
+
     // create cacti config file
     //create_cacti_config("config/test.xml", "dfsfs", "data/cacti_config.cfg");
 

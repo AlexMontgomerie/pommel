@@ -1,5 +1,6 @@
 #include "trace.hpp"
 
+/*
 std::string get_line(std::fstream& file, unsigned int line) {
     file.seekg(std::ios::beg);
     for(int i=0; i < line - 1; ++i){
@@ -114,6 +115,119 @@ void get_data(std::string tracefile_path, std::string datafile_path) {
     datafile.close();
 
 }
+*/
+
+trace::trace() {
+    bitwidth = 8;
+    burst_size = 2;
+    period = 512;
+    direction = true;
+    size = 2048;
+}
+
+/*
+void trace::read_complete(unsigned id, uint64_t address, uint64_t clock_cycle)
+{
+        printf("[Callback] read complete: %d 0x%lx cycle=%lu\n", id, address, clock_cycle);
+}
+
+void trace::write_complete(unsigned id, uint64_t address, uint64_t clock_cycle)
+{
+        printf("[Callback] write complete: %d 0x%lx cycle=%lu\n", id, address, clock_cycle);
+}
+
+void power_callback(double a, double b, double c, double d) {}
+*/
+
+void trace::generate_trace(void) {
+
+    ramulator::Config configs("ramulator/configs/DDR3-config.cfg");
+
+    /*
+    const std::string& standard = configs["standard"];
+    assert(standard != "" || "DRAM standard should be specified.");
+
+    const char *trace_type = strstr(argv[2], "=");
+    trace_type++;
+    if (strcmp(trace_type, "cpu") == 0) {
+      configs.add("trace_type", "CPU");
+    } else if (strcmp(trace_type, "dram") == 0) {
+      configs.add("trace_type", "DRAM");
+    } else {
+      printf("invalid trace type: %s\n", trace_type);
+      assert(false);
+    }
+
+    int trace_start = 3;
+    string stats_out;
+    if (strcmp(argv[trace_start], "--stats") == 0) {
+      Stats::statlist.output(argv[trace_start+1]);
+      stats_out = argv[trace_start+1];
+      trace_start += 2;
+    } else {
+      Stats::statlist.output(standard+".stats");
+      stats_out = standard + string(".stats");
+    }
+
+    // A separate file defines mapping for easy config.
+    if (strcmp(argv[trace_start], "--mapping") == 0) {
+      configs.add("mapping", argv[trace_start+1]);
+      trace_start += 2;
+    } else {
+      configs.add("mapping", "defaultmapping");
+    }
+
+    std::vector<const char*> files(&argv[trace_start], &argv[argc]);
+    configs.set_core_num(argc - trace_start);
+    */
+
+    /*
+    // create the trace generator   
+    DRAMSim::MultiChannelMemorySystem *mem = DRAMSim::getMemorySystemInstance("./DRAMSim2/ini/DDR2_micron_16M_8b_x8_sg3E.ini", "./DRAMSim2/system.ini", "..", "trace_name", 16384); 
+
+    // callbacks for read and write
+    DRAMSim::TransactionCompleteCB *read_cb = new DRAMSim::Callback<trace, void, unsigned, uint64_t, uint64_t>(this, &trace::read_complete);
+    DRAMSim::TransactionCompleteCB *write_cb = new DRAMSim::Callback<trace, void, unsigned, uint64_t, uint64_t>(this, &trace::write_complete);
+
+    mem->RegisterCallbacks(read_cb, write_cb, power_callback);
+
+    for(int i=0;i<10;i++) {
+        // add the burst read/writes
+        for(int j=0;j<burst_size;j++) {
+            mem->addTransaction(direction,i*burst_size+j);
+        }
+        // wait to match device bandwidth
+        for(int j=0;j<20;j++) {
+            mem->update();
+        }
+
+    }
+    mem->printStats(true);
+    */
+
+}
+
+/*
+class trace {
+    protected:
+        
+        // parameters for the trace
+        unsigned int bitwidth;
+        unsigned int burst_size;
+        unsigned int period;
+        bool direction;
+
+        // memory system from DRAMSim2
+        DRAMSim::MemorySystem &mem;
+
+    public:
+        trace();
+
+        void generate_trace(void);
+        std::fstream &tracefile;
+};
+*/
+
 
 //void generate_trace(std::ofstream tracefile, unsigned int burst_size, unsigned int nop_cycles,
 

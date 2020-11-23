@@ -7,10 +7,10 @@ INC_PATH := include
 
 # tool marcros
 CC := g++
-CCFLAG := -std=c++17 -I./$(INC_PATH) -I./DRAMSim2
+CCFLAG := -std=c++17 -I./$(INC_PATH) -I./ramulator/src -DRAMULATOR 
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
-LIBS := -lctemplate -pthread -lxerces-c -lboost_program_options -ldramsim -L./DRAMSim2 
+LIBS := -L./ramulator -lctemplate -pthread -lxerces-c -lboost_program_options -lramulator -Wl,-R./ramulator
 
 # compile marcros
 TARGET_NAME := main 
@@ -44,10 +44,10 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c*
 	$(CC) $(CCOBJFLAG) -o $@ $< 
 
 $(DBG_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAG) $(DBGFLAG) -o $@ $<
+	$(CC) $(CCOBJFLAG) $(DBGFLAG) -o $@ $< 
 
 $(TARGET_DEBUG): $(OBJ_DEBUG)
-	$(CC) $(CCFLAG) $(DBGFLAG) $? -o $@
+	$(CC) $(CCFLAG) $(DBGFLAG) $? -o $@ 
 
 # phony rules
 .PHONY: all
