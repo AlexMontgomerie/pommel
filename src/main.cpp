@@ -1,5 +1,7 @@
 #include "common.hpp"
-#include <ctemplate/template.h>
+
+#include <boost/program_options.hpp>
+using namespace boost::program_options;
 
 #include "coding_scheme.hpp"
 #include "coding_schemes/def.hpp"
@@ -35,12 +37,92 @@ int main(int argc, char *argv[]) {
 
     // parameters
     int opt;
-    std::string input_path;
-    std::string output_path;
-    std::string trace_path;
-    std::string coder_name;
     
-    scale_sim_to_memory_trace("dram_ifmap.csv", "tmp.trace");
+    // config file paths
+    std::string arch_config_path;
+    std::string memory_config_path;
+    std::string model_config_path;
+
+    // encoding scheme
+    std::string coder_name;
+
+    // file path names
+    std::string scale_sim_trace_path;
+    std::string trace_path;
+    std::string data_path;
+    std::string output_path;
+
+    try {
+ 
+    // add command line options
+    options_description desc("Allowed Options");
+    desc.add_options()
+    ("help,h", "help message")
+    ("arch", value(&arch_config_path), "file path for architecture config")
+    ("memory", value(&memory_config_path), "file path for memory config")
+    ("model", value(&model_config_path), "file path for model config")
+    ("encoder,e", value(&coder_name)->required(), "encoding scheme name")
+    ("scale-sim-trace", value(&scale_sim_trace_path), "file path to scale sim trace (optional)")
+    ("trace", value(&trace_path), "file path to memory trace (optional)")
+    ("data", value(&data_path), "file path to data (optional)")
+    ("output,o", value(&output_path), "file path to output (optional)")
+    ;
+
+    variables_map vm;
+    store(parse_command_line(argc, argv, desc), vm);
+
+    if (vm.count("help")) {  
+        std::cout << desc << "\n";
+        return 0;
+    }
+
+    notify(vm);
+
+    }
+    catch(required_option& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 0;
+    }
+    catch(std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 0;
+    }
+
+    // get coding scheme
+    auto coder = get_coder(coder_name);
+ 
+
+    if(scale_sim_trace_path != "") {
+        //scale_sim_to_memory_trace("dram_filter.csv", "tmp.trace");
+    }
+    scale_sim_to_memory_trace("dram_filter.csv", "tmp.trace");
+
+    add_data("tmp.trace", "tmp_out.trace", "data/test.dat", 0x989680, true); // TODO: get offset from arch config
+    
+    get_data("tmp_out.trace", "tmp.dat");
+ 
+   
+    // load the input file stream
+    std::ifstream in  ("tmp.dat");
+    std::ofstream out ("tmp_out.dat");
+
+    // run the encoder
+    std::visit([&in=in,&out=out](auto&& arg){ arg.encoder(in,out); }, coder);
+
+    // close files
+    in.close();
+    out.close();
+
+    add_data("tmp.trace", "tmp_out.trace", "tmp_out.dat", 0, false);
+    
+    // create cacti config file
+    //create_cacti_config("config/test.xml", "dfsfs", "data/cacti_config.cfg");
+
+    /*
+    scale_sim_to_memory_trace("dram_filter.csv", "tmp.trace");
+
+    add_data("tmp.trace", "tmp_out.trace", "data/test.dat", 0x989680);
+    */
 
     /*
     while ((opt = getopt(argc, argv, "i:o:e:t:h")) != -1) {
@@ -66,7 +148,6 @@ int main(int argc, char *argv[]) {
     printf("input  path : %s\n", input_path.c_str());
     printf("output path : %s\n", output_path.c_str());
 
-    auto coder = get_coder(coder_name);
 
     // load the input file stream
     std::ifstream in  (input_path);

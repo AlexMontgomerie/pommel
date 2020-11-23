@@ -1,13 +1,18 @@
-VAMPIRE_PATH=/home/alex/VAMPIRE
-RAMULATOR_PATH=/home/alex/ramulator
-CACTI_PATH=/home/alex/cacti
+# Paths to external programs
+RAMULATOR_PATH=/home/alex/ramulator/ramulator
+CACTI_PATH=/home/alex/cacti/cacti
+SCALE_SIM_PATH=/home/alex/SCALE-Sim
+DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 
+# build tool TODO: remove later on
 make clean
 make -j 8
 
-./bin/main -e def -i data/test.dat -o data/test_out.dat -t data/test.trace 
+./bin/main -e def #-i data/test.dat -o data/test_out.dat -t data/test.trace 
+#./bin/main -e def --scale-sim-trace dram_filter.csv #-i data/test.dat -o data/test_out.dat -t data/test.trace 
+#./bin/main -e def -i data/test.dat -o data/test_out.dat -t data/test.trace 
 # run ramulator trace
-$RAMULATOR_PATH/ramulator $RAMULATOR_PATH/configs/DDR3-config.cfg --mode=dram tmp.trace
+#$RAMULATOR_PATH/ramulator $RAMULATOR_PATH/configs/DDR3-config.cfg --mode=dram tmp.trace
 
 # run vampire power estimation
 

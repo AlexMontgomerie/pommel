@@ -1,9 +1,123 @@
 #include "trace.hpp"
 
-/**
- * Generate memory trace for ramulator simulator
- */
+std::string get_line(std::fstream& file, unsigned int line) {
+    file.seekg(std::ios::beg);
+    for(int i=0; i < line - 1; ++i){
+        file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    }
+    std::string out;
+    file >> out;
+    return out;
 
+}
+
+void add_data(std::string trace_in_file_path, std::string trace_out_file_path, std::string datafile_path, int addr_offset, bool use_addr) {
+
+    // open traceinfile
+    std::ifstream trace_in_file(trace_in_file_path);
+    if(!trace_in_file.is_open()) throw std::runtime_error("Could not open traceinfile!");
+
+    // open traceoutfile
+    std::ofstream trace_out_file(trace_out_file_path);
+    if(!trace_out_file.is_open()) throw std::runtime_error("Could not open traceoutfile!");
+
+    // open datafile
+    std::fstream datafile(datafile_path);
+    if(!datafile.is_open()) throw std::runtime_error("Could not open datafile!");
+
+    // iterate over lines in the file in
+    std::string line;
+    std::string val;
+    int index = 0;
+    while( std::getline(trace_in_file,line) ) {
+        
+        index++;
+        
+        // convert line to string stream
+        std::stringstream row(line);
+        
+        // get the addr 
+        std::getline(row, val, ' ');
+        int addr = std::stoul(val, nullptr, 16);
+
+        // get the direction
+        std::getline(row, val, ' ');
+        char direction = (char) val[0];
+
+        // get data
+        int data;
+        if ( use_addr ) {
+            data = stoi( get_line(datafile, addr-addr_offset + 1 ) );
+        } else {
+            data = stoi( get_line(datafile, index ) );
+        }
+
+        // save to outfile
+        char buffer[50];
+        sprintf(buffer, "0x%X %c %d\n", addr, direction, data);
+        trace_out_file << buffer; 
+
+    }
+
+    // close files
+    trace_in_file.close();
+    trace_out_file.close();
+    datafile.close();
+}
+
+void get_data(std::string tracefile_path, std::string datafile_path) {
+
+
+    // open tracefile
+    std::ifstream tracefile(tracefile_path);
+    if(!tracefile.is_open()) throw std::runtime_error("Could not open trace file!");
+
+    // open datafile
+    std::ofstream datafile(datafile_path);
+    if(!datafile.is_open()) throw std::runtime_error("Could not open datafile!");
+
+    // iterate over lines in the file in
+    std::string line;
+    std::string val;
+    while( std::getline(tracefile,line) ) {
+        
+        // convert line to string stream
+        std::stringstream row(line);
+        
+        // get the addr 
+        std::getline(row, val, ' ');
+        int addr = std::stoul(val, nullptr, 16);
+
+        // get the direction
+        std::getline(row, val, ' ');
+        char direction = (char) val[0];
+
+        // get data
+        try {
+            std::getline(row, val, ' ');
+            int data = stoi(val);
+    
+            // save to data file
+            char buffer[50];
+            sprintf(buffer, "%d\n", data);
+            datafile << buffer; 
+
+        } 
+        catch( std::invalid_argument& e) {
+            std::cout << e.what() << std::endl;
+        }
+
+    }
+
+    // close files
+    tracefile.close();
+    datafile.close();
+
+}
+
+//void generate_trace(std::ofstream tracefile, unsigned int burst_size, unsigned int nop_cycles,
+
+/*
 void streaming_trace(std::string tracefile_path, int fm_size, int burst_size, int bitwidth) {
 
     // create trace
@@ -25,7 +139,6 @@ void streaming_trace(std::string tracefile_path, int fm_size, int burst_size, in
 }
 
 
-/*
 void processing_engine_trace(std::string tracefile_path, fm_dim_t fm_in, int filters=128, int bitwidth=8) {
 
     // get the output dimensions

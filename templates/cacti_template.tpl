@@ -187,7 +187,7 @@
 
 # Memory Type (D=DDR3, L=LPDDR2, W=WideIO, S=Low-swing differential)
 
--dram_type "${{DRAM_TYPE}}"
+-dram_type "{{DRAM_TYPE}}"
 //-dram_type "D"
 //-dram_type "L"
 //-dram_type "W"
@@ -195,7 +195,7 @@
 
 # Memory State (R=Read, W=Write, I=Idle  or S=Sleep) 
 
--iostate "${{IO_STATE}}"
+-iostate "{{IO_STATE}}"
 //-iostate  "R"
 //-iostate "W"
 //-iostate "I"
@@ -207,7 +207,7 @@
 
 #Address bus timing 
 
--addr_timing ${{ADDR_TIMING}}
+-addr_timing {{ADDR_TIMING}}
 //-addr_timing 0.5 //DDR, for LPDDR2 and LPDDR3
 //-addr_timing 1.0 //SDR for DDR3, Wide-IO
 //-addr_timing 2.0 //2T timing
@@ -215,48 +215,48 @@
 
 # Bandwidth (Gbytes per second, this is the effective bandwidth) 
 
--bus_bw  ${{BUS_BW}} GBps //Valid range 0 to 2*bus_freq*num_dq
+-bus_bw  {{BUS_BW}} GBps //Valid range 0 to 2*bus_freq*num_dq
 
 # Memory Density (Gbit per memory/DRAM die)
 
--mem_density ${{MEM_DENSITY}} Gb //Valid values 2^n Gb
+-mem_density {{MEM_DENSITY}} Gb //Valid values 2^n Gb
 
 # IO frequency (MHz) (frequency of the external memory interface).
 
--bus_freq ${{BUS_FREQ}} MHz //Valid range 0 to 1.5 GHz for DDR3, 0 to 1.2 GHz for LPDDR3, 0 - 800 MHz for WideIO and 0 - 3 GHz for Low-swing differential 
+-bus_freq {{BUS_FREQ}} MHz //Valid range 0 to 1.5 GHz for DDR3, 0 to 1.2 GHz for LPDDR3, 0 - 800 MHz for WideIO and 0 - 3 GHz for Low-swing differential 
 
 # Duty Cycle (fraction of time in the Memory State defined above)
 
--duty_cycle ${{DUTY_CYCLE}} //Valid range 0 to 1.0
+-duty_cycle {{DUTY_CYCLE}} //Valid range 0 to 1.0
 
 # Activity factor for Data (0->1 transitions) per cycle (for DDR, need to account for the higher activity in this parameter. E.g. max. activity factor for DDR is 1.0, for SDR is 0.5)
  
--activity_dq ${{ACTIVITY_DQ}} //Valid range 0 to 1.0 for DDR, 0 to 0.5 for SDR
+-activity_dq {{ACTIVITY_DQ}} //Valid range 0 to 1.0 for DDR, 0 to 0.5 for SDR
 
 # Activity factor for Control/Address (0->1 transitions) per cycle (for DDR, need to account for the higher activity in this parameter. E.g. max. activity factor for DDR is 1.0, for SDR is 0.5)
 
--activity_ca ${{ACTIVITY_CA}} //Valid range 0 to 1.0 for DDR, 0 to 0.5 for SDR
+-activity_ca {{ACTIVITY_CA}} //Valid range 0 to 1.0 for DDR, 0 to 0.5 for SDR
 
 # Number of DQ pins 
 
--num_dq ${{NUM_DQ}} //Include ECC pins as well (if present). If ECC pins are included, the bus bandwidth is 2*(num_dq-#of ECC pins)*bus_freq. Valid range 0 to 72.
+-num_dq {{NUM_DQ}} //Include ECC pins as well (if present). If ECC pins are included, the bus bandwidth is 2*(num_dq-#of ECC pins)*bus_freq. Valid range 0 to 72.
 
 # Number of DQS pins 
 
--num_dqs ${{NUM_DQS}} //2 x differential pairs. Include ECC pins as well. Valid range 0 to 18. For x4 memories, could have 36 DQS pins.
+-num_dqs {{NUM_DQS}} //2 x differential pairs. Include ECC pins as well. Valid range 0 to 18. For x4 memories, could have 36 DQS pins.
 
 # Number of CA pins 
 
--num_ca ${{NUM_CA}} //Valid range 0 to 35 pins.
+-num_ca {{NUM_CA}} //Valid range 0 to 35 pins.
 
 # Number of CLK pins 
 
--num_clk  ${{NUM_CLK}} //2 x differential pair. Valid values: 0/2/4.
+-num_clk {{NUM_CLK}} //2 x differential pair. Valid values: 0/2/4.
 
 # Number of Physical Ranks
 
--num_mem_dq ${{NUM_MEM_DQ}} //Number of ranks (loads on DQ and DQS) per DIMM or buffer chip
+-num_mem_dq {{NUM_MEM_DQ}} //Number of ranks (loads on DQ and DQS) per DIMM or buffer chip
 
 # Width of the Memory Data Bus
 
--mem_data_width ${{MEM_DATA_WIDTH}} //x4 or x8 or x16 or x32 or x128 memories
+-mem_data_width {{MEM_DATA_WIDTH}} //x4 or x8 or x16 or x32 or x128 memories

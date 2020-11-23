@@ -1,8 +1,10 @@
 obj/*
 bin/*
 data/*
+outputs/*
 
 *.trace
 *.cmdtrace
 *.csv
 *.stats
+*.dat

@@ -7,13 +7,13 @@ INC_PATH := include
 
 # tool marcros
 CC := g++
-CCFLAG := -std=c++17 -I./$(INC_PATH)
+CCFLAG := -std=c++17 -I./$(INC_PATH) -I./DRAMSim2
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
-LIBS := -lctemplate -pthread -lxerces-c
+LIBS := -lctemplate -pthread -lxerces-c -lboost_program_options -ldramsim -L./DRAMSim2 
 
 # compile marcros
-TARGET_NAME := main
+TARGET_NAME := main 
 ifeq ($(OS),Windows_NT)
 	TARGET_NAME := $(addsuffix .exe,$(TARGET_NAME))
 endif
