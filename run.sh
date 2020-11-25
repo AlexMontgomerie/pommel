@@ -15,7 +15,7 @@ make -j 8
 #$RAMULATOR_PATH/ramulator $RAMULATOR_PATH/configs/DDR3-config.cfg --mode=dram tmp.trace
 
 # run vampire power estimation
-
+#$DRAMPOWER_PATH -m config/memory/MICRON_1Gb_DDR3-1066_16bit_G_2s.xml -c cmd-trace-chan-0-rank-0.cmdtrace 
 # run cacti estimation
 #$CACTI_PATH
 

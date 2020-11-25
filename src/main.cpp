@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     // get coding scheme
     auto coder = get_coder(coder_name);
  
-    trace fpgaconvnet_trace;
+    silence::trace fpgaconvnet_trace;
     fpgaconvnet_trace.generate_trace();
 
 

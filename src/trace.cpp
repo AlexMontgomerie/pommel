@@ -1,5 +1,6 @@
 #include "trace.hpp"
 
+namespace silence {
 /*
 std::string get_line(std::fstream& file, unsigned int line) {
     file.seekg(std::ios::beg);
@@ -119,7 +120,7 @@ void get_data(std::string tracefile_path, std::string datafile_path) {
 
 trace::trace() {
     bitwidth = 8;
-    burst_size = 2;
+    burst_size = 256;
     period = 512;
     direction = true;
     size = 2048;
@@ -142,12 +143,12 @@ void power_callback(double a, double b, double c, double d) {}
 void trace::generate_trace(void) {
 
     ramulator::Config configs("ramulator/configs/DDR3-config.cfg");
-    typedef ramulator::DDR3 mem_type;
-
-
+    
     const std::string& standard = configs["standard"];
     assert(standard != "" || "DRAM standard should be specified.");
 
+    typedef ramulator::DDR3 mem_type;
+    
     configs.add("trace_type", "DRAM");
 
     int trace_start = 3;
@@ -189,9 +190,6 @@ void trace::generate_trace(void) {
 
     //start_run(configs, wio, files);
 
-    /* initialize DRAM trace */
-    ramulator::Trace traceout("test.cmdtrace");
-
     /* run simulation */
     bool stall = false, end = false;
     int reads = 0, writes = 0, clks = 0;
@@ -211,16 +209,20 @@ void trace::generate_trace(void) {
     ramulator::Request req(addr, type, read_complete);
 
 
-    for(int i=0;i<10;i++) {
+    for(int i=0;i< floor(size/burst_size) ;i++) {
 
-        for(int j=0;j<2;j++) {
+        for(int j=0;j<burst_size;j++) {
             req.addr = i*10+j;
             req.type = type;
             memory.send(req);
-            //memory.tick();
-        }
-        for(int j=0;j<20;j++) {
             memory.tick();
+            clks ++;
+            Stats::curTick++; // memory clock, global, for Statistics
+        }
+        for(int j=0;j<period-burst_size;j++) {
+            memory.tick();
+            clks ++;
+            Stats::curTick++; // memory clock, global, for Statistics
         } 
 
     }
@@ -253,7 +255,7 @@ void trace::generate_trace(void) {
     */
     // This a workaround for statistics set only initially lost in the end
     memory.finish();
-    //ramulator::Stats::statlist.printall();
+    Stats::statlist.printall();
 
 
 
@@ -367,3 +369,5 @@ void processing_engine_trace(std::string tracefile_path, fm_dim_t fm_in, int fil
 
 }
 */
+
+}
