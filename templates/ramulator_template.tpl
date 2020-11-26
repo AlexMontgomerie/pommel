@@ -1,0 +1,14 @@
+standard = {{STANDARD}}
+channels = {{CHANNELS}}
+ranks = {{RANKS}}
+speed = {{SPEED}}
+org = {{ORG}}
+record_cmd_trace = off
+print_cmd_trace = on
+cpu_tick = 4
+mem_tick = 1
+early_exit = on
+expected_limit_insts = 200000000
+warmup_insts = 100000000
+cache = no
+translation = None

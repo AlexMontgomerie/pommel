@@ -3,6 +3,12 @@
 #include <boost/program_options.hpp>
 using namespace boost::program_options;
 
+#include "config.hpp"
+#include "analysis.hpp"
+#include "trace.hpp"
+#include "convert.hpp"
+#include "featuremap.hpp"
+
 #include "coding_scheme.hpp"
 #include "coding_schemes/def.hpp"
 #include "coding_schemes/abe.hpp"
@@ -11,10 +17,6 @@ using namespace boost::program_options;
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
 
-#include "config.hpp"
-#include "analysis.hpp"
-#include "trace.hpp"
-#include "convert.hpp"
 
 using coder_t = std::variant<def,abe,pbm,bi,awr,rle>;
 
@@ -90,9 +92,22 @@ int main(int argc, char *argv[]) {
 
     // get coding scheme
     auto coder = get_coder(coder_name);
- 
+    
+    // create configs
+    silence::config fpgaconvnet_config;
+
+    fpgaconvnet_config.load_memory_config("config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml");
+    fpgaconvnet_config.generate_cacti_config("outputs/test/cacti_config.cfg"); 
+    fpgaconvnet_config.generate_ramulator_config("outputs/test/ramulator_config.cfg"); 
+
+    // load the featuremap
+    silence::featuremap fpgaconvnet_featuremap("data/test.h5", "classifier.1");    
+
+
+    // generate the trace
     silence::trace fpgaconvnet_trace;
     fpgaconvnet_trace.generate_trace();
+
 
 
     /*

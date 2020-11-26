@@ -140,57 +140,25 @@ void trace::write_complete(unsigned id, uint64_t address, uint64_t clock_cycle)
 void power_callback(double a, double b, double c, double d) {}
 */
 
-void trace::generate_trace(void) {
+template<typename T>
+void trace::run_trace(const ramulator::Config& configs, T* spec) {
 
-    ramulator::Config configs("ramulator/configs/DDR3-config.cfg");
-    
-    const std::string& standard = configs["standard"];
-    assert(standard != "" || "DRAM standard should be specified.");
-
-    typedef ramulator::DDR3 mem_type;
-    
-    configs.add("trace_type", "DRAM");
-
-    int trace_start = 3;
-    string stats_out;
-    Stats::statlist.output(standard+".stats");
-    stats_out = standard + string(".stats");
-
-    // A separate file defines mapping for easy config.
-    configs.add("mapping", "defaultmapping");
-
-    configs.set_core_num(1);
-    
-    mem_type* spec = new mem_type(configs["org"], configs["speed"]);
-    
     // initiate controller and memory
     int C = configs.get_channels(), R = configs.get_ranks();
     // Check and Set channel, rank number
     spec->set_channel_number(C);
     spec->set_rank_number(R);
-    std::vector<ramulator::Controller<mem_type>*> ctrls;
+    std::vector<ramulator::Controller<T>*> ctrls;
     for (int c = 0 ; c < C ; c++) {
-        ramulator::DRAM<mem_type>* channel = new ramulator::DRAM<mem_type>(spec, mem_type::Level::Channel);
+        ramulator::DRAM<T>* channel = new ramulator::DRAM<T>(spec, T::Level::Channel);
         channel->id = c;
         channel->regStats("");
-        ramulator::Controller<mem_type>* ctrl = new ramulator::Controller<mem_type>(configs, channel);
+        ramulator::Controller<T>* ctrl = new ramulator::Controller<T>(configs, channel);
         ctrls.push_back(ctrl);
     }
-    ramulator::Memory<mem_type, ramulator::Controller> memory(configs, ctrls);
-
-    /*  
-    assert(files.size() != 0);
-      if (configs["trace_type"] == "CPU") {
-        run_cputrace(configs, memory, files);
-      } else if (configs["trace_type"] == "DRAM") {
-        run_dramtrace(configs, memory, files[0]);
-      }
-    */
+    ramulator::Memory<T, ramulator::Controller> memory(configs, ctrls);
 
 
-    //start_run(configs, wio, files);
-
-    /* run simulation */
     bool stall = false, end = false;
     int reads = 0, writes = 0, clks = 0;
     long addr = 0;
@@ -227,147 +195,85 @@ void trace::generate_trace(void) {
 
     }
 
-
-    /*
-    while (!end || memory.pending_requests()){
-        if (!end && !stall){
-            end = !traceout.get_dramtrace_request(addr, type);
-        }
-
-        if (!end){
-            req.addr = addr;
-            req.type = type;
-            stall = !memory.send(req);
-            if (!stall){
-                if (type == ramulator::Request::Type::READ) reads++;
-                else if (type == ramulator::Request::Type::WRITE) writes++;
-            }
-        }
-        else {
-            memory.set_high_writeq_watermark(0.0f); // make sure that all write requests in the
-                                                    // write queue are drained
-        }
-
-        memory.tick();
-        clks ++;
-        //ramulator::Stats::curTick++; // memory clock, global, for Statistics
-    }
-    */
     // This a workaround for statistics set only initially lost in the end
     memory.finish();
     Stats::statlist.printall();
 
+}
 
+void trace::generate_trace(void) {
 
+    ramulator::Config configs("ramulator/configs/DDR3-config.cfg");
+    
+    const std::string& standard = configs["standard"];
+    assert(standard != "" || "DRAM standard should be specified.");
+
+    configs.add("trace_type", "DRAM");
+
+    int trace_start = 3;
+    string stats_out;
+    Stats::statlist.output(standard+".stats");
+    stats_out = standard + string(".stats");
+
+    // A separate file defines mapping for easy config.
+    configs.add("mapping", "defaultmapping");
+
+    configs.set_core_num(1);
+    
+    //mem_type* spec = new mem_type(configs["org"], configs["speed"]);
+ 
+    if (standard == "ramulator::DDR3") {
+      ramulator::DDR3* ddr3 = new ramulator::DDR3(configs["org"], configs["speed"]);
+      run_trace(configs, ddr3);
+    } 
     /*
-    // create the trace generator   
-    DRAMSim::MultiChannelMemorySystem *mem = DRAMSim::getMemorySystemInstance("./DRAMSim2/ini/DDR2_micron_16M_8b_x8_sg3E.ini", "./DRAMSim2/system.ini", "..", "trace_name", 16384); 
-
-    // callbacks for read and write
-    DRAMSim::TransactionCompleteCB *read_cb = new DRAMSim::Callback<trace, void, unsigned, uint64_t, uint64_t>(this, &trace::read_complete);
-    DRAMSim::TransactionCompleteCB *write_cb = new DRAMSim::Callback<trace, void, unsigned, uint64_t, uint64_t>(this, &trace::write_complete);
-
-    mem->RegisterCallbacks(read_cb, write_cb, power_callback);
-
-    for(int i=0;i<10;i++) {
-        // add the burst read/writes
-        for(int j=0;j<burst_size;j++) {
-            mem->addTransaction(direction,i*burst_size+j);
-        }
-        // wait to match device bandwidth
-        for(int j=0;j<20;j++) {
-            mem->update();
-        }
-
+    else if (standard == "ramulator::DDR4") {
+      ramulator::DDR4* ddr4 = new ramulator::DDR4(configs["org"], configs["speed"]);
+      run_trace(configs, ddr4);
+    } else if (standard == "ramulator::SALP-MASA") {
+      ramulator::SALP* salp8 = new ramulator::SALP(configs["org"], configs["speed"], "ramulator::SALP-MASA", configs.get_subarrays());
+      run_trace(configs, salp8);
+    } else if (standard == "ramulator::LPramulator::DDR3") {
+      ramulator::LPDDR3* lpddr3 = new ramulator::LPDDR3(configs["org"], configs["speed"]);
+      run_trace(configs, lpddr3);
+    } else if (standard == "ramulator::LPramulator::DDR4") {
+      // total cap: 2GB, 1/2 of others
+      ramulator::LPDDR4* lpddr4 = new ramulator::LPDDR4(configs["org"], configs["speed"]);
+      run_trace(configs, lpddr4);
+    } else if (standard == "ramulator::GDDR5") {
+      ramulator::GDDR5* gddr5 = new ramulator::GDDR5(configs["org"], configs["speed"]);
+      run_trace(configs, gddr5);
+    } else if (standard == "ramulator::HBM") {
+      ramulator::HBM* hbm = new ramulator::HBM(configs["org"], configs["speed"]);
+      run_trace(configs, hbm);
+    } else if (standard == "ramulator::WideIO") {
+      // total cap: 1GB, 1/4 of others
+      ramulator::WideIO* wio = new ramulator::WideIO(configs["org"], configs["speed"]);
+      run_trace(configs, wio);
+    } else if (standard == "ramulator::ramulator::WideIO2") {
+      // total cap: 2GB, 1/2 of others
+      ramulator::WideIO2* wio2 = new ramulator::WideIO2(configs["org"], configs["speed"], configs.get_channels());
+      wio2->channel_width *= 2;
+      run_trace(configs, wio2);
+    } else if (standard == "STTMRAM") {
+        ramulator::STTMRAM* sttmram = new ramulator::STTMRAM(configs["org"], configs["speed"]);
+        run_trace(configs, sttmram);
+    } else if (standard == "ramulator::PCM") {
+        ramulator::PCM* pcm = new ramulator::PCM(configs["org"], configs["speed"]);
+        run_trace(configs, pcm);
+    } else if (standard == "ramulator::DSARP") {
+      ramulator::DSARP* dsddr3_dsarp = new ramulator::DSARP(configs["org"], configs["speed"], ramulator::DSARP::Type::DSARP, configs.get_subarrays());
+      run_trace(configs, dsddr3_dsarp);
+    } else if (standard == "ramulator::ALDRAM") {
+      ramulator::ALDRAM* aldram = new ramulator::ALDRAM(configs["org"], configs["speed"]);
+      run_trace(configs, aldram);
+    } else if (standard == "ramulator::TLDRAM") {
+      ramulator::TLDRAM* tldram = new ramulator::TLDRAM(configs["org"], configs["speed"], configs.get_subarrays());
+      run_trace(configs, tldram);
     }
-    mem->printStats(true);
     */
 
 }
-
-/*
-class trace {
-    protected:
-        
-        // parameters for the trace
-        unsigned int bitwidth;
-        unsigned int burst_size;
-        unsigned int period;
-        bool direction;
-
-        // memory system from DRAMSim2
-        DRAMSim::MemorySystem &mem;
-
-    public:
-        trace();
-
-        void generate_trace(void);
-        std::fstream &tracefile;
-};
-*/
-
-
-//void generate_trace(std::ofstream tracefile, unsigned int burst_size, unsigned int nop_cycles,
-
-/*
-void streaming_trace(std::string tracefile_path, int fm_size, int burst_size, int bitwidth) {
-
-    // create trace
-    int in_addr  = 0;
-    int out_addr = fm_size;
-    std::ofstream tracefile(tracefile_path);
-    for(int i=0; i<(int)(fm_size/burst_size); i++) {
-        // input burst
-        for( int j=0;j<burst_size;j++ ) {
-            tracefile << boost::format("0x%X R") % in_addr << std::endl;
-            in_addr += (int) (bitwidth/8);
-        }
-        // output burst
-        for( int j=0;j<burst_size;j++ ) {
-            tracefile << boost::format("0x%X W") % out_addr << std::endl;
-            out_addr += (int) (bitwidth/8); 
-        }
-    }    
-}
-
-
-void processing_engine_trace(std::string tracefile_path, fm_dim_t fm_in, int filters=128, int bitwidth=8) {
-
-    // get the output dimensions
-    int rows_out = ;
-    int cols_out = ;
-
-    // initialise base addresses
-    int in_base_addr = 0;
-    int out_base_addr = fm_in.rows*fm_in.cols*fm_in.channels;
-
-    // tracefile setup
-    std::ofstream tracefile(tracefile_path);
-    
-    // iterate over dimensions out
-    for(int i=0;i<rows_out;i++) {
-        for(int j=0;j<cols_out;j++) {
-            // read input
-            for(int k=0;k<fm_in.channels;k++) {
-                for(int k1=0;k1<fm_in.kernel_size;k1++) {
-                    for(int k2=0;k2<fm_in.kernel_size;k2++) {
-                        int in_addr = in_base_addr + ( i * fm_in.cols * fm_in.channels +
-                            j * fm_in.channels + 
-                            k) + ( k1 * fm_in.kernel_size + k2 );
-                    }
-                }
-            }
-            // write output
-            for(int k=0;k<filters;k++) {
-                int out_addr = out_base_addr + ( i * cols_out * filters +
-                        j * filters +
-                        k) * ( (int) (bitwidth/8) );
-                tracefile << std::format("0x%X W", out_addr) << std::endl;
-            }
-        }
-    }
-
-}
-*/
+   
 
 }

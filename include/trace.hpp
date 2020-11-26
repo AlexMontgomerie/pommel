@@ -4,13 +4,12 @@
 #include "common.hpp"
 #include <boost/format.hpp>
 
-#include "Processor.h"
-#include "Config.h"
-#include "Controller.h"
-#include "SpeedyController.h"
-#include "Memory.h"
-#include "DRAM.h"
-#include "Statistics.h"
+#include "ramulator/src/Config.h"
+#include "ramulator/src/Controller.h"
+#include "ramulator/src/SpeedyController.h"
+#include "ramulator/src/Memory.h"
+#include "ramulator/src/DRAM.h"
+#include "ramulator/src/Statistics.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -19,21 +18,20 @@
 #include <map>
 
 /* Standards */
-#include "Gem5Wrapper.h"
-#include "DDR3.h"
-#include "DDR4.h"
-#include "DSARP.h"
-#include "GDDR5.h"
-#include "LPDDR3.h"
-#include "LPDDR4.h"
-#include "WideIO.h"
-#include "WideIO2.h"
-#include "HBM.h"
-#include "SALP.h"
-#include "ALDRAM.h"
-#include "TLDRAM.h"
-#include "STTMRAM.h"
-#include "PCM.h"
+#include "ramulator/src/DDR3.h"
+#include "ramulator/src/DDR4.h"
+#include "ramulator/src/DSARP.h"
+#include "ramulator/src/GDDR5.h"
+#include "ramulator/src/LPDDR3.h"
+#include "ramulator/src/LPDDR4.h"
+#include "ramulator/src/WideIO.h"
+#include "ramulator/src/WideIO2.h"
+#include "ramulator/src/HBM.h"
+#include "ramulator/src/SALP.h"
+#include "ramulator/src/ALDRAM.h"
+#include "ramulator/src/TLDRAM.h"
+#include "ramulator/src/STTMRAM.h"
+#include "ramulator/src/PCM.h"
 
 namespace silence {
 
@@ -49,6 +47,8 @@ class trace {
 
         // memory system from DRAMSim2
         //DRAMSim::MemorySystem &mem;
+        template<typename T>
+        void run_trace(const ramulator::Config& configs, T* spec);
 
     public:
         trace();

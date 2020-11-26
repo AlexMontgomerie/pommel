@@ -1,33 +1,60 @@
 #include "config.hpp"
 
-#include <ctemplate/template.h>
-#include "pugixml.hpp"
+namespace silence {
 
-void create_cacti_config(std::string config_path, std::string stats_path, std::string output_path) {
-   
-    printf("starting ... \n");
-    // create cacti config file
-    ctemplate::TemplateDictionary dict("cacti_config");
+void config::load_memory_config(std::string config_path) {
 
-    // load the DRAM config file
+    // load the memory config file
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(config_path.c_str());
     if (!result) {
         fprintf(stderr,"Couldn't open config file!");
     }
-    
-    printf("here ... \n");
  
-    // get all relevant parameters    
-    std::string dram_type = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
-    int data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
-    int banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
-    int rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
-    int cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
-    int rows            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRows']").node().attribute("value").as_int();
-    int data_rate       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='dataRate']").node().attribute("value").as_int();
-    int burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
-    int clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
+    // get all memory parameters 
+    dram_type       = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
+    data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
+    banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
+    rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
+    cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
+    rows            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRows']").node().attribute("value").as_int();
+    data_rate       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='dataRate']").node().attribute("value").as_int();
+    burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
+    clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
+
+    return;
+}
+
+void config::load_platform_config(std::string config_path) {
+
+}
+
+void config::generate_ramulator_config(std::string config_path) { 
+
+    // create ramulator config file
+    ctemplate::TemplateDictionary dict("cacti_config");
+
+    // add config
+    dict.SetValue("STANDARD", dram_type);
+    dict.SetValue("CHANNELS", "1");
+    dict.SetFormattedValue("RANKS", "%d", rank);
+    dict.SetValue("SPEED", "DDR3_1600K"); // FIXME 
+    dict.SetValue("ORG", "DDR3_2Gb_x8"); // FIXME
+
+    // save to file
+    std::string config_out;
+    ctemplate::ExpandTemplate("templates/ramulator_template.tpl", 
+        ctemplate::DO_NOT_STRIP, &dict, &config_out);
+    std::ofstream ramulator_config_path(config_path);
+    ramulator_config_path << config_out;
+    ramulator_config_path.close();
+
+}
+
+void config::generate_cacti_config(std::string config_path) {
+
+    // create cacti config file
+    ctemplate::TemplateDictionary dict("cacti_config");
 
     // convert DRAMPower config to cacti config
     // DRAM TYPE
@@ -86,9 +113,15 @@ void create_cacti_config(std::string config_path, std::string stats_path, std::s
     std::string cacti_config_out;
     ctemplate::ExpandTemplate("templates/cacti_template.tpl", 
         ctemplate::DO_NOT_STRIP, &dict, &cacti_config_out);
-    std::ofstream cacti_config_path("data/cacti_config.cfg"); // TODO: format with output path
+    std::ofstream cacti_config_path(config_path); // TODO: format with output path
     cacti_config_path << cacti_config_out;
     cacti_config_path.close();
+
+}
+
+void config::generate_dram_power_config(std::string config_path) {
+
+}
 
 }
 
