@@ -183,9 +183,9 @@ void trace::run_trace(const ramulator::Config& configs, T* spec) {
             req.addr = i*10+j;
             req.type = type;
             memory.send(req);
-            memory.tick();
-            clks ++;
-            Stats::curTick++; // memory clock, global, for Statistics
+            //memory.tick();
+            //clks ++;
+            //Stats::curTick++; // memory clock, global, for Statistics
         }
         for(int j=0;j<period-burst_size;j++) {
             memory.tick();

@@ -17,7 +17,7 @@ make -j 8
 # run vampire power estimation
 #$DRAMPOWER_PATH -m config/memory/MICRON_1Gb_DDR3-1066_16bit_G_2s.xml -c cmd-trace-chan-0-rank-0.cmdtrace 
 # run cacti estimation
-#$CACTI_PATH
+#$CACTI_PATH 
 
 #./bin/main -e abe -i data/test.dat -o data/test_out.dat 
 #./bin/main -e bi  -i data/test.dat -o data/test_out.dat 

@@ -96,17 +96,22 @@ int main(int argc, char *argv[]) {
     // create configs
     silence::config fpgaconvnet_config;
 
+    // load configs
     fpgaconvnet_config.load_memory_config("config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml");
-    fpgaconvnet_config.generate_cacti_config("outputs/test/cacti_config.cfg"); 
-    fpgaconvnet_config.generate_ramulator_config("outputs/test/ramulator_config.cfg"); 
 
     // load the featuremap
     silence::featuremap fpgaconvnet_featuremap("data/test.h5", "classifier.1");    
+    fpgaconvnet_featuremap.generate_stream("outputs/test/test.dat", "channel-first");
 
-
+    // generate config for ramulator and trace
+    fpgaconvnet_config.generate_ramulator_config("outputs/test/ramulator_config.cfg"); 
+    
     // generate the trace
     silence::trace fpgaconvnet_trace;
     fpgaconvnet_trace.generate_trace();
+
+    // generate output configs
+    fpgaconvnet_config.generate_cacti_config("outputs/test/cacti_config.cfg"); 
 
 
 
