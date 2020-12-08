@@ -45,19 +45,12 @@ class trace {
         unsigned int size;
         bool direction;
 
-        // memory system from DRAMSim2
-        //DRAMSim::MemorySystem &mem;
         template<typename T>
-        void run_trace(const ramulator::Config& configs, T* spec);
+        void run_trace(std::string stream_path, const ramulator::Config& configs, T* spec);
 
     public:
         trace();
-
-        void read_complete(unsigned id, uint64_t address, uint64_t clock_cycle);
-        void write_complete(unsigned id, uint64_t address, uint64_t clock_cycle);
-
-        void generate_trace(void);
-        //std::fstream &tracefile;
+        void generate_trace(std::string stream_path, std::string ramulator_config_path);
 };
 
 }

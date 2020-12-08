@@ -8,8 +8,8 @@ using namespace boost::program_options;
 #include "trace.hpp"
 #include "convert.hpp"
 #include "featuremap.hpp"
+#include "encoder.hpp"
 
-#include "coding_scheme.hpp"
 #include "coding_schemes/def.hpp"
 #include "coding_schemes/abe.hpp"
 #include "coding_schemes/pbm.hpp"
@@ -18,6 +18,7 @@ using namespace boost::program_options;
 #include "coding_schemes/rle.hpp"
 
 
+/*
 using coder_t = std::variant<def,abe,pbm,bi,awr,rle>;
 
 coder_t get_coder(std::string coder_name) {
@@ -34,6 +35,7 @@ coder_t get_coder(std::string coder_name) {
         return rle(8,0);
     }
 }
+*/
 
 int main(int argc, char *argv[]) {
 
@@ -90,8 +92,6 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    // get coding scheme
-    auto coder = get_coder(coder_name);
     
     // create configs
     silence::config fpgaconvnet_config;
@@ -103,17 +103,27 @@ int main(int argc, char *argv[]) {
     silence::featuremap fpgaconvnet_featuremap("data/test.h5", "classifier.1");    
     fpgaconvnet_featuremap.generate_stream("outputs/test/test.dat", "channel-first");
 
+    // encode featuremap
+    if( coder_name == "bi" ) {
+        silence::encoder<bi> fpgaconvnet_encoder("config/encoder/test_def.xml");
+        fpgaconvnet_encoder.encode_stream("outputs/test/test.dat", "outputs/test/test_encoded.dat");    
+    } else if( coder_name == "def" ) {
+        silence::encoder<bi> fpgaconvnet_encoder("config/encoder/test_def.xml");
+        fpgaconvnet_encoder.encode_stream("outputs/test/test.dat", "outputs/test/test_encoded.dat");    
+    } else {
+        fprintf(stderr,"ERROR (encoder) : %s not specified!\n", coder_name.c_str());
+        return 1;
+    }
+
     // generate config for ramulator and trace
     fpgaconvnet_config.generate_ramulator_config("outputs/test/ramulator_config.cfg"); 
     
     // generate the trace
     silence::trace fpgaconvnet_trace;
-    fpgaconvnet_trace.generate_trace();
+    fpgaconvnet_trace.generate_trace("outputs/test/test.dat","outputs/test/ramulator_config.cfg");
 
     // generate output configs
     fpgaconvnet_config.generate_cacti_config("outputs/test/cacti_config.cfg"); 
-
-
 
     /*
     if(scale_sim_trace_path != "") {

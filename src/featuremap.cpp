@@ -45,9 +45,10 @@ void featuremap::generate_stream(std::string data_path, std::string transform) {
 
     // save to a .dat file
     std::ofstream datafile(data_path);
+    int i = 0;
     for(auto const& value: transformed_data) {
-        //datafile << boost::format("%i\n") % ( value & ( (1 << 8) - 1 ) );
-        datafile << boost::format("%i\n") % value;
+        datafile << boost::format("%i %c %i\n") % i % 'R' % value;
+        i++;
     }
     datafile.close();
 }

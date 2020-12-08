@@ -32,7 +32,7 @@ void config::load_platform_config(std::string config_path) {
 void config::generate_ramulator_config(std::string config_path) { 
 
     // create ramulator config file
-    ctemplate::TemplateDictionary dict("cacti_config");
+    ctemplate::TemplateDictionary dict("ramulator_config");
 
     // add config
     dict.SetValue("STANDARD", dram_type);

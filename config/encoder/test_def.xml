@@ -1,0 +1,4 @@
+<encoderspec>
+  <parameter id="bitwidth" type="int" value="8" />
+  <parameter id="distance" type="int" value="16" />
+</encoderspec>
