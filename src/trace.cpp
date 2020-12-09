@@ -2,116 +2,24 @@
 
 namespace silence {
 
-template<typename T>
-void trace::run_trace(std::string stream_path, const ramulator::Config& configs, T* spec) {
+template<>
+trace<ramulator::DDR3>::trace(std::string ramulator_config_path, std::string accelerator_config_path, std::string output_path, int bitwidth) : bitwidth(bitwidth) {
+   
+    // setup accelerator information (TODO: get from config file) 
+    burst_size = 256;
+    period = 512;
 
-    // initiate controller and memory
-    int C = configs.get_channels(), R = configs.get_ranks();
-    // Check and Set channel, rank number
-    spec->set_channel_number(C);
-    spec->set_rank_number(R);
-    std::vector<ramulator::Controller<T>*> ctrls;
-    for (int c = 0 ; c < C ; c++) {
-        ramulator::DRAM<T>* channel = new ramulator::DRAM<T>(spec, T::Level::Channel);
-        channel->id = c;
-        channel->regStats("");
-        ramulator::Controller<T>* ctrl = new ramulator::Controller<T>(configs, channel);
-        ctrls.push_back(ctrl);
-    }
-    ramulator::Memory<T, ramulator::Controller> memory(configs, ctrls);
+    // setup config
+    setup_memory_config(ramulator_config_path);
 
-    bool stall = false, end = false;
-    int reads = 0, writes = 0, clks = 0;
-    long addr = 0;
+    // setup memory specification
+    spec = new ramulator::DDR3((*configs)["org"], (*configs)["speed"]);
 
-    // get the read/write type
-    ramulator::Request::Type type;
-    if ( direction ) {
-        type = ramulator::Request::Type::WRITE;
-    } else {
-        type = ramulator::Request::Type::READ;
-    }
-
-    map<int, int> latencies;
-    auto read_complete = [&latencies](ramulator::Request& r){latencies[r.depart - r.arrive]++;};
-
-    ramulator::Request req(addr, type, read_complete);
-
-    // load stream in
-    std::ifstream in  (stream_path);
-    if( !in.is_open() ) {
-        fprintf(stderr,"cannot open input file: %s \n", stream_path);
-    }
-    
-    // iterate over stream
-    while( in.rdbuf()->in_avail() ) {
-        // iterate over batch
-        for(int i=0;i<burst_size;i++) {
-            // break if buffer empty
-            if( !in.rdbuf()->in_avail() ) {
-                break;
-            }
-
-            // read from buffer
-            std::string line;
-            std::getline(in, line);
-
-            // convert line to string stream
-            std::stringstream row(line);
-            std::string val;
-
-            // get address
-            std::getline(row,val,' ');
-            int addr = stoi(val);
-
-            // get direction
-            std::getline(row,val,' ');
-            ramulator::Request::Type RW = (val == "R") ? 
-                ramulator::Request::Type::READ : ramulator::Request::Type::WRITE;
-
-            // send to memory
-            req.addr = addr;
-            req.type = RW;
-            memory.send(req);
-            memory.tick();
-        }
-
-        // iterate over rest of burst
-        for(int i=0;i<period-burst_size;i++) {
-            memory.tick();
-        } 
-
-    }
-
-    // This a workaround for statistics set only initially lost in the end
-    memory.finish();
-    Stats::statlist.printall();
+    // setup memory
+    setup_memory();
 
 }
 
-void trace::generate_trace(std::string stream_path, std::string ramulator_config_path) {
-
-    ramulator::Config configs(ramulator_config_path);
-    
-    const std::string& standard = configs["standard"];
-    assert(standard != "" || "DRAM standard should be specified.");
-
-    configs.add("trace_type", "DRAM");
-
-    int trace_start = 3;
-    string stats_out;
-    Stats::statlist.output(standard+".stats");
-    stats_out = standard + string(".stats");
-
-    // A separate file defines mapping for easy config.
-    configs.add("mapping", "defaultmapping");
-
-    configs.set_core_num(1);
-    
-    if (standard == "DDR3") {
-      ramulator::DDR3* ddr3 = new ramulator::DDR3(configs["org"], configs["speed"]);
-      run_trace(stream_path, configs, ddr3);
-    } 
     /*
     else if (standard == "ramulator::DDR4") {
       ramulator::DDR4* ddr4 = new ramulator::DDR4(configs["org"], configs["speed"]);
@@ -158,15 +66,5 @@ void trace::generate_trace(std::string stream_path, std::string ramulator_config
       run_trace(configs, tldram);
     }
     */
-
-}
-
-trace::trace() {
-    bitwidth = 8;
-    burst_size = 256;
-    period = 512;
-    direction = true;
-    size = 2048;
-}
 
 }

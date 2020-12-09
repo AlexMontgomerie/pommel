@@ -35,22 +35,131 @@
 
 namespace silence {
 
+template<class T>
 class trace {
     protected:
         
-        // parameters for the trace
+        // accelerator parameters
         unsigned int bitwidth;
         unsigned int burst_size;
         unsigned int period;
-        unsigned int size;
-        bool direction;
 
-        template<typename T>
-        void run_trace(std::string stream_path, const ramulator::Config& configs, T* spec);
+        // ramulator config instance
+        ramulator::Config * configs;
+
+        // memory instance
+        ramulator::Memory<T, ramulator::Controller> * memory;
+
+        // memory spec instance
+        T * spec;
+
+        // function to setup memory
+        void setup_memory(void) {
+            // initiate controller and memory
+            int C = configs->get_channels(), R = configs->get_ranks();
+            // Check and Set channel, rank number
+            spec->set_channel_number(C);
+            spec->set_rank_number(R);
+            // iterate over the controllers for each channel
+            std::vector<ramulator::Controller<T>*> ctrls;
+            for (int c = 0 ; c < C ; c++) {
+                ramulator::DRAM<T>* channel = new ramulator::DRAM<T>(spec, T::Level::Channel);
+                channel->id = c;
+                channel->regStats("");
+                ramulator::Controller<T>* ctrl = new ramulator::Controller<T>(*configs, channel);
+                ctrls.push_back(ctrl);
+            }
+            // initialise memory type 
+            memory = new ramulator::Memory<T, ramulator::Controller>(*configs, ctrls);
+        }
+
+        // function to setup config
+        void setup_memory_config(std::string ramulator_config_path) {
+            
+            // create new ramulator config instance
+            configs = new ramulator::Config(ramulator_config_path);
+
+            // add cmd trace prefix TODO: make it for each run
+            configs->add("cmd_trace_prefix","outputs/test/tmp");
+
+            const std::string& standard = (*configs)["standard"];
+            assert(standard != "" || "DRAM standard should be specified.");
+
+            configs->add("trace_type", "DRAM");
+
+            int trace_start = 3;
+            //string stats_out;
+            //Stats::statlist.output(standard+".stats");
+            //stats_out = standard + string(".stats");
+
+            // A separate file defines mapping for easy config.
+            configs->add("mapping", "defaultmapping");
+
+            // set core number
+            configs->set_core_num(1);
+         }
 
     public:
-        trace();
-        void generate_trace(std::string stream_path, std::string ramulator_config_path);
+        
+        trace(std::string ramulator_config_path, std::string accelerator_config_path, std::string output_path, int bitwidth);
+        
+        void generate_trace(std::string stream_path) {
+            
+            // setup requests
+            map<int, int> latencies;
+            auto read_complete = [&latencies](ramulator::Request& r){latencies[r.depart - r.arrive]++;};
+            ramulator::Request req(0, ramulator::Request::Type::WRITE, read_complete);
+
+            // load stream in
+            std::ifstream in  (stream_path);
+            if( !in.is_open() ) {
+                fprintf(stderr,"cannot open input file: %s \n", stream_path);
+            }
+            
+            // iterate over stream
+            while( in.rdbuf()->in_avail() ) {
+                // iterate over batch
+                for(int i=0;i<burst_size;i++) {
+                    // break if buffer empty
+                    if( !in.rdbuf()->in_avail() ) {
+                        break;
+                    }
+
+                    // read from buffer
+                    std::string line;
+                    std::getline(in, line);
+
+                    // convert line to string stream
+                    std::stringstream row(line);
+                    std::string val;
+
+                    // get address
+                    std::getline(row,val,' ');
+                    int addr = stoi(val);
+
+                    // get direction
+                    std::getline(row,val,' ');
+                    ramulator::Request::Type RW = (val == "R") ? 
+                        ramulator::Request::Type::READ : ramulator::Request::Type::WRITE;
+
+                    // send to memory        }
+                    req.addr = addr;
+                    req.type = RW;
+                    memory->send(req);
+                    memory->tick();
+                }
+
+                // iterate over rest of burst
+                for(int i=0;i<period-burst_size;i++) {
+                    memory->tick();
+                } 
+            }
+
+            // finish memory transactions
+            memory->finish();
+
+        }
+
 };
 
 }

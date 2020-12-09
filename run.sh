@@ -8,7 +8,15 @@ DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 make clean
 make -j 8
 
-./bin/main -e def #-i data/test.dat -o data/test_out.dat -t data/test.trace 
+#gdb --args 
+./bin/main \
+    --memory config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml \
+    --featuremap data/test.h5 \
+    --encoder config/encoder/test_def.xml \
+    --accelerator config/accelerator/fpgaconvnet.xml \
+    --output output/test
+
+    #-i data/test.dat -o data/test_out.dat -t data/test.trace 
 #./bin/main -e def --scale-sim-trace dram_filter.csv #-i data/test.dat -o data/test_out.dat -t data/test.trace 
 #./bin/main -e def -i data/test.dat -o data/test_out.dat -t data/test.trace 
 # run ramulator trace

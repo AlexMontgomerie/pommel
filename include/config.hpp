@@ -37,28 +37,41 @@
 
 namespace silence {
 
+typedef struct {
+    std::string dram_type;
+    int data_width;
+    int banks;
+    int rank;
+    int cols;
+    int rows;
+    int data_rate;
+    int burst_length; 
+    int clock;
+} memory_config_t;
+
+typedef struct {
+    int bitwidth;
+    int burst_size;
+    int period;
+    std::string transform;
+    std::string input_featuremap;
+    std::string output_featuremap;
+} accelerator_config_t;
+
 class config {
-    protected:
-        
-        // all config parameters
-        
-        // memory parameters
-        std::string dram_type;
-        int data_width;
-        int banks;
-        int rank;
-        int cols;
-        int rows;
-        int data_rate;
-        int burst_length; 
-        int clock;
-
     public:
-        //config();
 
+        // memory config type
+        memory_config_t memory_config;
+
+        // accelerator config type
+        std::map<int, accelerator_config_t> accelerator_config;
+
+        // load config functions
         void load_memory_config(std::string config_path);
-        void load_platform_config(std::string config_path);
+        void load_accelerator_config(std::string config_path);
 
+        // generate config functions
         void generate_ramulator_config(std::string config_path);
         void generate_cacti_config(std::string config_path);
         void generate_dram_power_config(std::string config_path);
