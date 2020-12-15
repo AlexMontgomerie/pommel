@@ -16,5 +16,6 @@
 #include <cassert>
 #include <stdexcept>
 #include <variant>
+#include <boost/any.hpp>
 
 #endif

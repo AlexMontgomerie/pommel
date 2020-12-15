@@ -1,7 +1,5 @@
 #include "featuremap.hpp"
 
-#include <boost/numeric/ublas/matrix.hpp>
-
 namespace silence {
 
 int featuremap::get_size(void) {
@@ -56,7 +54,7 @@ void featuremap::generate_stream(std::string data_path, std::string transform) {
 featuremap::featuremap(std::string featuremap_path, std::string layer_name) : featuremap_path(featuremap_path), layer_name(layer_name) {
 
     // load h5 file
-    HighFive::File file("data/test.h5", HighFive::File::ReadOnly );
+    HighFive::File file(featuremap_path, HighFive::File::ReadOnly );
 
     // get the data
     HighFive::DataSet layer = file.getDataSet(layer_name);

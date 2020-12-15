@@ -3,14 +3,10 @@
 namespace silence {
 
 template<>
-trace<ramulator::DDR3>::trace(std::string ramulator_config_path, std::string accelerator_config_path, std::string output_path, int bitwidth) : bitwidth(bitwidth) {
+trace<ramulator::DDR3>::trace(std::string ramulator_config_path, std::string output_path, int burst_size, int period, int bitwidth) : burst_size(burst_size), period(period), bitwidth(bitwidth) {
    
-    // setup accelerator information (TODO: get from config file) 
-    burst_size = 256;
-    period = 512;
-
     // setup config
-    setup_memory_config(ramulator_config_path);
+    setup_memory_config(ramulator_config_path, output_path);
 
     // setup memory specification
     spec = new ramulator::DDR3((*configs)["org"], (*configs)["speed"]);

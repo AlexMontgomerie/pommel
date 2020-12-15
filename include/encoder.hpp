@@ -2,6 +2,7 @@
 #define ENCODER_HPP_
 
 #include "common.hpp"
+#include <boost/format.hpp>
 #include "pugixml.hpp"
 #include "stream_helper.hpp"
 #include "coding_scheme.hpp"
@@ -20,14 +21,14 @@ class encoder {
     protected:
         T * coder;
     public:
-        encoder(std::string config_path);
-        
+        encoder(std::string config_path, std::string featuremap, int bitwidth);
+
         void encode_stream(std::string stream_in_path, std::string stream_out_path) {
 
             // open stream in
             std::ifstream in  (stream_in_path);
             if( !in.is_open() ) {
-                fprintf(stderr,"cannot open input file: %s \n", stream_in_path);
+                fprintf(stderr,"cannot open input file: %s \n", stream_in_path.c_str());
             }
     
             // get the data field stream
@@ -45,7 +46,7 @@ class encoder {
             // open stream out
             std::ofstream out (stream_out_path);
             if( !out.is_open() ) {
-                fprintf(stderr,"cannot open output file: %s \n", stream_out_path);
+                fprintf(stderr,"cannot open output file: %s \n", stream_out_path.c_str());
             } 
 
             // add data to stream out

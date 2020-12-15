@@ -74,13 +74,13 @@ class trace {
         }
 
         // function to setup config
-        void setup_memory_config(std::string ramulator_config_path) {
+        void setup_memory_config(std::string ramulator_config_path, std::string output_path) {
             
             // create new ramulator config instance
             configs = new ramulator::Config(ramulator_config_path);
 
             // add cmd trace prefix TODO: make it for each run
-            configs->add("cmd_trace_prefix","outputs/test/tmp");
+            configs->add("cmd_trace_prefix",output_path.c_str());
 
             const std::string& standard = (*configs)["standard"];
             assert(standard != "" || "DRAM standard should be specified.");
@@ -101,7 +101,8 @@ class trace {
 
     public:
         
-        trace(std::string ramulator_config_path, std::string accelerator_config_path, std::string output_path, int bitwidth);
+        //trace(std::string ramulator_config_path, std::string accelerator_config_path, std::string output_path, int bitwidth);
+        trace(std::string ramulator_config_path, std::string output_path, int burst_size, int period, int bitwidth);
         
         void generate_trace(std::string stream_path) {
             
@@ -113,7 +114,7 @@ class trace {
             // load stream in
             std::ifstream in  (stream_path);
             if( !in.is_open() ) {
-                fprintf(stderr,"cannot open input file: %s \n", stream_path);
+                fprintf(stderr,"cannot open input file: %s \n", stream_path.c_str());
             }
             
             // iterate over stream

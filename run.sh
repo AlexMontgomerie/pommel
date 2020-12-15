@@ -14,7 +14,7 @@ make -j 8
     --featuremap data/test.h5 \
     --encoder config/encoder/test_def.xml \
     --accelerator config/accelerator/fpgaconvnet.xml \
-    --output output/test
+    --output outputs/test
 
     #-i data/test.dat -o data/test_out.dat -t data/test.trace 
 #./bin/main -e def --scale-sim-trace dram_filter.csv #-i data/test.dat -o data/test_out.dat -t data/test.trace 
