@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<encoderspec type="def">
+	<layer id="classifier.1">
+		<parameter id="bitwidth" type="int" value="8"/>
+		<parameter id="distance" type="int" value="4096"/>
+	</layer>
+	<layer id="classifier.4">
+		<parameter id="bitwidth" type="int" value="8"/>
+		<parameter id="distance" type="int" value="4096"/>
+	</layer>
+	<layer id="classifier.4">
+		<parameter id="bitwidth" type="int" value="8"/>
+		<parameter id="distance" type="int" value="4096"/>
+	</layer>
+	<layer id="classifier.6">
+		<parameter id="bitwidth" type="int" value="8"/>
+		<parameter id="distance" type="int" value="1000"/>
+	</layer>
+</encoderspec>

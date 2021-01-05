@@ -40,6 +40,7 @@ namespace silence {
 typedef struct {
     std::string dram_type;
     int data_width;
+    int addr_width;
     int banks;
     int rank;
     int cols;
@@ -47,6 +48,7 @@ typedef struct {
     int data_rate;
     int burst_length; 
     int clock;
+    int capacity;
 } memory_config_t;
 
 typedef struct {
@@ -73,7 +75,8 @@ class config {
 
         // generate config functions
         void generate_ramulator_config(std::string config_path);
-        void generate_cacti_config(std::string config_path);
+        //void generate_cacti_config(std::string config_path);
+        void generate_cacti_config(std::string config_path, float bandwidth, float data_activity, float address_activity);
         void generate_dram_power_config(std::string config_path);
 
 };

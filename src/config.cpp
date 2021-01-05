@@ -22,6 +22,13 @@ void config::load_memory_config(std::string config_path) {
     memory_config.burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
     memory_config.clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
 
+    // get other memory parameters
+    memory_config.capacity = (int) (memory_config.banks*memory_config.rank*memory_config.cols*memory_config.rows/memory_config.data_width);
+    memory_config.addr_width = (int) log2( (float) memory_config.capacity );
+        
+    std::cout << memory_config.capacity << std::endl;
+    std::cout << memory_config.addr_width << std::endl;
+
     return;
 }
 
@@ -82,7 +89,7 @@ void config::generate_ramulator_config(std::string config_path) {
 
 }
 
-void config::generate_cacti_config(std::string config_path) {
+void config::generate_cacti_config(std::string config_path, float bandwidth, float data_activity, float address_activity) {
 
     // create cacti config file
     ctemplate::TemplateDictionary dict("cacti_config");
@@ -91,66 +98,62 @@ void config::generate_cacti_config(std::string config_path) {
     // DRAM TYPE
     if ( memory_config.dram_type == "DDR3" ) {
         dict.SetValue("DRAM_TYPE", "D");
+        dict.SetValue("ADDR_TIMING", "1.0"); 
     } else if ( memory_config.dram_type == "LPDDR2" ) {
         dict.SetValue("DRAM_TYPE", "L");
+        dict.SetValue("ADDR_TIMING", "0.5"); 
     } else if ( memory_config.dram_type == "WIDEIO_SDR" ) {
         dict.SetValue("DRAM_TYPE", "W");
+        dict.SetValue("ADDR_TIMING", "1.0"); 
     } else {
         // TODO: raise error
     }
 
     // IO STATE
-    dict.SetValue("IO_STATE", "W");
+    dict.SetValue("IO_STATE", "W"); // FIXME
     
-    // ADDR TIMING
-    dict.SetFormattedValue("ADDR_TIMING", "%.4f", (float) (1/(float) memory_config.data_rate) );
-
     // BUS BW
-    dict.SetFormattedValue("BUS_BW", "%d", (int) 2*(memory_config.clock/1000)*memory_config.data_width );
+    dict.SetFormattedValue("BUS_BW", "%.1f", bandwidth);
     
-    // MEM DENSITY 
-    dict.SetFormattedValue("MEM_DENSITY", "%.4f", 0.5); // TODO
+    // MEM DENSITY
+    dict.SetFormattedValue("MEM_DENSITY", "%d", memory_config.capacity/1000000); 
 
     // BUS FREQ
     dict.SetFormattedValue("BUS_FREQ", "%d", memory_config.clock); 
     
     // DUTY CYCLE
-    dict.SetFormattedValue("DUTY_CYCLE", "%.4f", 1.0); 
+    dict.SetFormattedValue("DUTY_CYCLE", "%.1f", 1.0); // FIXME
     
     // ACTIVITY DQ
-    dict.SetFormattedValue("ACTIVITY_DQ", "%.4f", 0.5); 
+    dict.SetFormattedValue("ACTIVITY_DQ", "%.1f", data_activity);
    
     // ACTIVITY CA 
-    dict.SetFormattedValue("ACTIVITY_CA", "%.4f", 0.5); 
+    dict.SetFormattedValue("ACTIVITY_CA", "%.1f", address_activity);
     
     // NUM DQ
     dict.SetFormattedValue("NUM_DQ", "%d", memory_config.data_width); 
  
     // NUM DQS
-    dict.SetFormattedValue("NUM_DQS", "%d", memory_config.data_width); 
+    dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory_config.data_width/8)); // maybe x2 ?
  
     // NUM CA
-    dict.SetFormattedValue("NUM_CA", "%d", memory_config.data_width); 
+    dict.SetFormattedValue("NUM_CA", "%d", memory_config.addr_width);
  
     // NUM CLK
-    dict.SetFormattedValue("NUM_CLK", "%d", 2); 
+    dict.SetFormattedValue("NUM_CLK", "%d", 2);
     
     // NUM MEM DQ
     dict.SetFormattedValue("NUM_MEM_DQ", "%d", memory_config.rank); 
  
     // MEM DATA WIDTH
-    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width); 
+    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width); // FIXME
     
     std::string cacti_config_out;
     ctemplate::ExpandTemplate("templates/cacti_template.tpl", 
         ctemplate::DO_NOT_STRIP, &dict, &cacti_config_out);
-    std::ofstream cacti_config_path(config_path); // TODO: format with output path
+    std::ofstream cacti_config_path(config_path);
     cacti_config_path << cacti_config_out;
     cacti_config_path.close();
-
-}
-
-void config::generate_dram_power_config(std::string config_path) {
 
 }
 

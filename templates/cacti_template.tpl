@@ -1,18 +1,5 @@
 # Cache size
-//-size (bytes) 2048
-//-size (bytes) 4096
-//-size (bytes) 32768
-//-size (bytes) 131072
-//-size (bytes) 262144
-//-size (bytes) 1048576
-//-size (bytes) 2097152
-//-size (bytes) 4194304
 -size (bytes) 8388608
-//-size (bytes) 16777216
-//-size (bytes) 33554432
-//-size (bytes) 134217728
-//-size (bytes) 67108864
-//-size (bytes) 1073741824
 
 # power gating
 -Array Power Gating - "false"
@@ -23,14 +10,9 @@
 -Power Gating Performance Loss 0.01
 
 # Line size
-//-block size (bytes) 8
 -block size (bytes) 64
 
 # To model Fully Associative cache, set associativity to zero
-//-associativity 0
-//-associativity 2
-//-associativity 4
-//-associativity 8
 -associativity 8
 
 -read-write port 1
@@ -188,18 +170,10 @@
 # Memory Type (D=DDR3, L=LPDDR2, W=WideIO, S=Low-swing differential)
 
 -dram_type "{{DRAM_TYPE}}"
-//-dram_type "D"
-//-dram_type "L"
-//-dram_type "W"
-//-dram_type "S"
 
 # Memory State (R=Read, W=Write, I=Idle  or S=Sleep) 
 
 -iostate "{{IO_STATE}}"
-//-iostate  "R"
-//-iostate "W"
-//-iostate "I"
-//-iostate "S"
 
 # Is ECC Enabled (Y=Yes, N=No)
 

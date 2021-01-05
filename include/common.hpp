@@ -17,5 +17,6 @@
 #include <stdexcept>
 #include <variant>
 #include <boost/any.hpp>
+#include <math.h>
 
 #endif
