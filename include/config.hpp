@@ -54,7 +54,9 @@ typedef struct {
 typedef struct {
     int bitwidth;
     int burst_size;
-    int period;
+    int clk_freq;
+    float bandwidth_in;
+    float bandwidth_out;
     std::string transform;
     std::string input_featuremap;
     std::string output_featuremap;

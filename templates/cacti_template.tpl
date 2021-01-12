@@ -177,7 +177,7 @@
 
 # Is ECC Enabled (Y=Yes, N=No)
 
--dram_ecc "Y"
+-dram_ecc "N"
 
 #Address bus timing 
 

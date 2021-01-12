@@ -6,18 +6,33 @@ DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 make clean
 make -j 8
 
+# parameters
+memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
+featuremap_path=data/test.h5
+encoder_config=test.xml
+accelerator_config=config/accelerator/fpgaconvnet.xml
+output_path=outputs/test
+
 # run silence
 ./bin/main \
-    --memory config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml \
-    --featuremap data/test.h5 \
-    --encoder test.xml \
-    --accelerator config/accelerator/fpgaconvnet.xml \
-    --output outputs/test
+    --memory $memory_config \
+    --featuremap $featuremap_path \
+    --encoder $encoder_config \
+    --accelerator $accelerator_config \
+    --output $output_path
 
-# run vampire power estimation
-#$DRAMPOWER_PATH -m config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml -c outputs/test/0/input-chan-0-rank-0.cmdtrace
-#$DRAMPOWER_PATH -m config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml -c outputs/test/0/output-chan-0-rank-0.cmdtrace
+# iterate over folders in output directory
+for partition in $output_path/*/ ; do
+    
+    # run DRAM Power estimation
+    $DRAMPOWER_PATH -m $memory_config -c $partition/input-chan-0-rank-0.cmdtrace  > $partition/input_dram_power.rpt
+    $DRAMPOWER_PATH -m $memory_config -c $partition/output-chan-0-rank-0.cmdtrace > $partition/output_dram_power.rpt
 
-# run cacti estimation
-$CACTI_PATH -infile outputs/test/0/input_cacti.cfg 
-#$CACTI_PATH -infile outputs/test/0/output_cacti.cfg 
+    # run cacti IO estimation 
+    cd cacti
+        ./cacti -infile ../$partition/input_cacti.cfg  > ../$partition/input_cacti.rpt
+        ./cacti -infile ../$partition/output_cacti.cfg > ../$partition/output_cacti.rpt
+    cd ..
+
+done
+

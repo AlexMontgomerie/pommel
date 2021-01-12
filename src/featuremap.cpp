@@ -10,7 +10,7 @@ int featuremap::get_size(void) {
  * Transforms
  */
 
-std::vector<int> featuremap::channel_first_transform(std::vector<int> data_in) {
+std::vector<int> featuremap::channel_major_transform(std::vector<int> data_in) {
     
     std::vector<int> data_out;
 
@@ -37,8 +37,8 @@ void featuremap::generate_stream(std::string data_path, std::string transform) {
 
     // get transformed data 
     std::vector<int> transformed_data;
-    if(transform == "channel-first") {
-        transformed_data = channel_first_transform(data);
+    if(transform == "channel-major") {
+        transformed_data = channel_major_transform(data);
     }
 
     // save to a .dat file

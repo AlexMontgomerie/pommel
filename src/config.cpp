@@ -26,9 +26,6 @@ void config::load_memory_config(std::string config_path) {
     memory_config.capacity = (int) (memory_config.banks*memory_config.rank*memory_config.cols*memory_config.rows/memory_config.data_width);
     memory_config.addr_width = (int) log2( (float) memory_config.capacity );
         
-    std::cout << memory_config.capacity << std::endl;
-    std::cout << memory_config.addr_width << std::endl;
-
     return;
 }
 
@@ -56,8 +53,10 @@ void config::load_accelerator_config(std::string config_path) {
         accelerator_config_t conf;
         conf.bitwidth   = partition.select_node("parameter[@id='bitwidth']").node().attribute("value").as_int();
         conf.burst_size = partition.select_node("parameter[@id='burst_size']").node().attribute("value").as_int();
-        conf.period     = partition.select_node("parameter[@id='period']").node().attribute("value").as_int();
-        conf.transform  = partition.select_node("parameter[@id='transform']").node().attribute("value").value();
+        conf.clk_freq   = partition.select_node("parameter[@id='clk_freq']").node().attribute("value").as_int();
+        conf.bandwidth_in       = partition.select_node("parameter[@id='bandwidth_in']").node().attribute("value").as_float();
+        conf.bandwidth_out      = partition.select_node("parameter[@id='bandwidth_out']").node().attribute("value").as_float();
+        conf.transform          = partition.select_node("parameter[@id='transform']").node().attribute("value").value();
         conf.input_featuremap   = partition.select_node("parameter[@id='input_featuremap']").node().attribute("value").value();
         conf.output_featuremap  = partition.select_node("parameter[@id='output_featuremap']").node().attribute("value").value();
         

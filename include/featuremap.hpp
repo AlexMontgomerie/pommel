@@ -25,7 +25,8 @@ class featuremap {
         unsigned int channels;
 
         // transforms
-        std::vector<int> channel_first_transform(std::vector<int> data_in);
+        std::vector<int> row_major_transform(std::vector<int> data_in);
+        std::vector<int> channel_major_transform(std::vector<int> data_in);
 
     public:
         

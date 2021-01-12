@@ -139,14 +139,22 @@ int main(int argc, char *argv[]) {
         // partition information
         std::string partition_index = std::to_string(partition.first);
         silence::accelerator_config_t partition_conf = partition.second;
-        
+       
+        // get period (clk cycles) for input and output featuremaps
+        int period_in = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(partition_conf.bandwidth_in*1000);
+        int period_out = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(partition_conf.bandwidth_out*1000);
+
         // print debug information
         printf("Running Partition %s of fpgaconvnet\n", partition_index.c_str() );
         printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
-        printf("---- bitwidth   : %d \n", partition_conf.bitwidth   ); 
-        printf("---- burst_size : %d \n", partition_conf.burst_size ); 
-        printf("---- period     : %d \n", partition_conf.period     ); 
+        printf("---- bitwidth               : %d \n", partition_conf.bitwidth ); 
+        printf("---- clk freq (MHz)         : %d \n", partition_conf.clk_freq ); 
+        printf("---- bandwidth in (Gbps)    : %f \n", partition_conf.bandwidth_in ); 
+        printf("---- bandwidth out (Gbps)   : %f \n", partition_conf.bandwidth_out ); 
+        printf("---- burst_size             : %d \n", partition_conf.burst_size ); 
+        printf("---- period in              : %d \n", period_in ); 
+        printf("---- period out             : %d \n", period_out ); 
  
         // create output paths
         boost::filesystem::create_directory(output_path);
@@ -181,19 +189,16 @@ int main(int argc, char *argv[]) {
 
         // generate the trace
         trace_t trace_input = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
-                partition_conf.burst_size, partition_conf.period, partition_conf.bitwidth);
+                partition_conf.burst_size, period_in, partition_conf.bitwidth);
 
         std::visit([&stream_in=encoded_stream_output_path](auto&& arg){
                 arg.generate_trace(stream_in); }, trace_input);
 
-        // TODO: get activity and statistics for trace
+        // get activity and statistics for trace
         silence::analysis analysis_input(stream_output_path,config_inst.memory_config.data_width,config_inst.memory_config.addr_width);
 
-        //std::cout << analysis_input.get_addr_activity() << std::endl;
-        //std::cout << analysis_input.get_data_activity() << std::endl;
-
         // generate output configs
-        config_inst.generate_cacti_config(cacti_config_path, 1.0, 
+        config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_in, 
                 analysis_input.get_data_activity(), analysis_input.get_addr_activity()); 
 
         /**
@@ -220,13 +225,17 @@ int main(int argc, char *argv[]) {
 
         // generate the trace
         trace_t trace_output = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
-                partition_conf.burst_size, partition_conf.period, partition_conf.bitwidth);
+                partition_conf.burst_size, period_out, partition_conf.bitwidth);
         
         std::visit([&stream_in=encoded_stream_output_path](auto&& arg){
                 arg.generate_trace(stream_in); }, trace_output);
 
+        // get activity and statistics for trace
+        silence::analysis analysis_output(stream_output_path,config_inst.memory_config.data_width,config_inst.memory_config.addr_width);
+
         // generate output configs
-        //config_inst.generate_cacti_config(cacti_config_path); 
+        config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_out, 
+                analysis_output.get_data_activity(), analysis_output.get_addr_activity()); 
 
     }
 
