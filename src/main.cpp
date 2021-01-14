@@ -27,7 +27,8 @@ using encoder_t = std::variant<
 >;
 
 using trace_t = std::variant<
-    silence::trace<ramulator::DDR3>
+    silence::trace<ramulator::DDR3>,
+    silence::trace<ramulator::WideIO>
 >;
 
 std::string get_encoder_type(std::string config_path) {
@@ -70,6 +71,9 @@ trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
         std::string output_path, int burst_size, int period, int bitwidth) {
     if( dram_type == "DDR3" ) { 
         return silence::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    }
+    if( dram_type == "WIDEIO_SDR" ) { 
+        return silence::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
         fprintf(stderr,"ERROR (trace) : %s not specified!\n", dram_type.c_str());
@@ -139,10 +143,19 @@ int main(int argc, char *argv[]) {
         // partition information
         std::string partition_index = std::to_string(partition.first);
         silence::accelerator_config_t partition_conf = partition.second;
-       
+      
+        // max board bandwidth
+        float max_board_bw = partition_conf.clk_freq/1000.0;
+
+        // find the actual bandwidth in and out
+        float bandwidth_in = std::min( std::min(partition_conf.bandwidth_in, max_board_bw),config_inst.memory_config.bandwidth);
+        float bandwidth_out = std::min( std::min(partition_conf.bandwidth_out, max_board_bw),config_inst.memory_config.bandwidth);
+
         // get period (clk cycles) for input and output featuremaps
-        int period_in = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(partition_conf.bandwidth_in*1000);
-        int period_out = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(partition_conf.bandwidth_out*1000);
+        int period_in = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(bandwidth_in*1000);
+        int period_out = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(bandwidth_out*1000);
+
+        // TODO: scale memory clock speed to match input bandwidth
 
         // print debug information
         printf("Running Partition %s of fpgaconvnet\n", partition_index.c_str() );
@@ -150,6 +163,7 @@ int main(int argc, char *argv[]) {
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
         printf("---- bitwidth               : %d \n", partition_conf.bitwidth ); 
         printf("---- clk freq (MHz)         : %d \n", partition_conf.clk_freq ); 
+        printf("---- mem bandwidth (Gbps)   : %f \n", config_inst.memory_config.bandwidth ); 
         printf("---- bandwidth in (Gbps)    : %f \n", partition_conf.bandwidth_in ); 
         printf("---- bandwidth out (Gbps)   : %f \n", partition_conf.bandwidth_out ); 
         printf("---- burst_size             : %d \n", partition_conf.burst_size ); 
@@ -237,6 +251,12 @@ int main(int argc, char *argv[]) {
         config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_out, 
                 analysis_output.get_data_activity(), analysis_output.get_addr_activity()); 
 
+        // activity information
+        printf("---- data activity in       : %f \n", analysis_input.get_data_activity()); 
+        printf("---- data activity out      : %f \n", analysis_output.get_data_activity()); 
+        printf("---- address activity in    : %f \n", analysis_input.get_addr_activity()); 
+        printf("---- address activity out   : %f \n", analysis_output.get_addr_activity()); 
+ 
     }
 
     // end execution

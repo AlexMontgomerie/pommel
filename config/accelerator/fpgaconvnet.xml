@@ -2,19 +2,23 @@
     <partition id="0">
         <parameter id="bitwidth" type="int" value="8" />
         <parameter id="burst_size" type="int" value="256" />
-        <parameter id="clk_freq" type="int" value="125" />
-        <parameter id="bandwidth_in" type="float" value="0.07" />
-        <parameter id="bandwidth_out" type="float" value="0.02" />
+        <parameter id="clk_freq" type="int" value="800" />
+        <parameter id="bandwidth_in" type="float" value="1.7" />
+        <parameter id="bandwidth_out" type="float" value="1.1" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
         <parameter id="transform" type="string" value="channel-major" />
         <parameter id="input_featuremap" type="string" value="classifier.1" />
         <parameter id="output_featuremap" type="string" value="classifier.4" />
     </partition>
     <partition id="1">
         <parameter id="bitwidth" type="int" value="8" />
-        <parameter id="burst_size" type="int" value="256" />
-        <parameter id="clk_freq" type="int" value="125" />
-        <parameter id="bandwidth_in" type="int" value="0.07" />
+        <parameter id="burst_size" type="int" value="512" />
+        <parameter id="clk_freq" type="int" value="800" />
+        <parameter id="bandwidth_in" type="int" value="0.8" />
         <parameter id="bandwidth_out" type="int" value="0.02" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
         <parameter id="transform" type="string" value="channel-major" />
         <parameter id="input_featuremap" type="string" value="classifier.4" />
         <parameter id="output_featuremap" type="string" value="classifier.6" />

@@ -14,6 +14,7 @@ void config::load_memory_config(std::string config_path) {
     // get all memory parameters 
     memory_config.dram_type       = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
     memory_config.data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
+    memory_config.num_dq          = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrDQ']").node().attribute("value").as_int();
     memory_config.banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
     memory_config.rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
     memory_config.cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
@@ -25,7 +26,8 @@ void config::load_memory_config(std::string config_path) {
     // get other memory parameters
     memory_config.capacity = (int) (memory_config.banks*memory_config.rank*memory_config.cols*memory_config.rows/memory_config.data_width);
     memory_config.addr_width = (int) log2( (float) memory_config.capacity );
-        
+    memory_config.bandwidth = (memory_config.data_rate*memory_config.clock*memory_config.num_dq/1000.0); 
+    
     return;
 }
 
@@ -73,10 +75,10 @@ void config::generate_ramulator_config(std::string config_path) {
 
     // add config
     dict.SetValue("STANDARD", memory_config.dram_type);
-    dict.SetValue("CHANNELS", "1");
+    dict.SetValue("CHANNELS", "4");
     dict.SetFormattedValue("RANKS", "%d", memory_config.rank);
-    dict.SetValue("SPEED", "DDR3_1600K"); // FIXME 
-    dict.SetValue("ORG", "DDR3_2Gb_x8"); // FIXME
+    dict.SetFormattedValue("SPEED", "%s_%dK",memory_config.dram_type.c_str(), memory_config.clock); 
+    dict.SetFormattedValue("ORG", "%s_%dGb_x%d", memory_config.dram_type.c_str(),(int) memory_config.capacity/8589934592, memory_config.data_width);
 
     // save to file
     std::string config_out;
@@ -130,10 +132,10 @@ void config::generate_cacti_config(std::string config_path, float bandwidth, flo
     dict.SetFormattedValue("ACTIVITY_CA", "%.1f", address_activity);
     
     // NUM DQ
-    dict.SetFormattedValue("NUM_DQ", "%d", memory_config.data_width); 
+    dict.SetFormattedValue("NUM_DQ", "%d", memory_config.num_dq); 
  
     // NUM DQS
-    dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory_config.data_width/8)); // maybe x2 ?
+    dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory_config.num_dq/8)); // maybe x2 ?
  
     // NUM CA
     dict.SetFormattedValue("NUM_CA", "%d", memory_config.addr_width);
@@ -145,7 +147,7 @@ void config::generate_cacti_config(std::string config_path, float bandwidth, flo
     dict.SetFormattedValue("NUM_MEM_DQ", "%d", memory_config.rank); 
  
     // MEM DATA WIDTH
-    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width); // FIXME
+    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width);
     
     std::string cacti_config_out;
     ctemplate::ExpandTemplate("templates/cacti_template.tpl", 

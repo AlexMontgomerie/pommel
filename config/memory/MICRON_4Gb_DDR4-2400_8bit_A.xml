@@ -5,6 +5,7 @@
   <parameter id="memoryType" type="string" value="DDR4" />
   <memarchitecturespec>
     <parameter id="width" type="uint" value="8" />
+    <parameter id="nbrDQ" type="uint" value="64" />
     <parameter id="nbrOfBankGroups" type="uint" value="4" />
     <parameter id="nbrOfBanks" type="uint" value="16" />
     <parameter id="nbrOfRanks" type="uint" value="1" />

@@ -8,6 +8,7 @@ make -j 8
 
 # parameters
 memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
+#memory_config=config/memory/JEDEC_256Mb_WIDEIO_SDR-266_128bit.xml
 featuremap_path=data/test.h5
 encoder_config=test.xml
 accelerator_config=config/accelerator/fpgaconvnet.xml

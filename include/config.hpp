@@ -39,6 +39,7 @@ namespace silence {
 
 typedef struct {
     std::string dram_type;
+    int num_dq;
     int data_width;
     int addr_width;
     int banks;
@@ -49,6 +50,7 @@ typedef struct {
     int burst_length; 
     int clock;
     int capacity;
+    float bandwidth;
 } memory_config_t;
 
 typedef struct {

@@ -31,7 +31,7 @@ def parse_cacti_report(report_path):
 def parse_dram_power_report(report_path):
     
     # regex expressions
-    trace_length = re.compile("Total Trace Length (clock cycles): ([0-9]+)")
+    trace_length = re.compile("Total Trace Length \(clock cycles\): ([0-9]+)")
     trace_energy = re.compile("Total Trace Energy: ([+-]?[0-9]*[.]?[0-9]+)")
     trace_power  = re.compile("Average Power: ([+-]?[0-9]*[.]?[0-9]+)")
 
