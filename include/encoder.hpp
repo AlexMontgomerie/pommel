@@ -14,7 +14,7 @@
 #include "coding_schemes/rle.hpp"
 
 
-namespace silence {
+namespace pommel {
 
 template<class T>
 class encoder {

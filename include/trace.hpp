@@ -33,7 +33,7 @@
 #include "ramulator/src/STTMRAM.h"
 #include "ramulator/src/PCM.h"
 
-namespace silence {
+namespace pommel {
 
 template<class T>
 class trace {

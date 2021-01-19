@@ -18,17 +18,17 @@ using namespace boost::program_options;
 #include "coding_schemes/rle.hpp"
 
 using encoder_t = std::variant<
-    silence::encoder<bi>,
-    silence::encoder<def>,
-    silence::encoder<awr>,
-    silence::encoder<abe>,
-    silence::encoder<pbm>,
-    silence::encoder<rle>
+    pommel::encoder<bi>,
+    pommel::encoder<def>,
+    pommel::encoder<awr>,
+    pommel::encoder<abe>,
+    pommel::encoder<pbm>,
+    pommel::encoder<rle>
 >;
 
 using trace_t = std::variant<
-    silence::trace<ramulator::DDR3>,
-    silence::trace<ramulator::WideIO>
+    pommel::trace<ramulator::DDR3>,
+    pommel::trace<ramulator::WideIO>
 >;
 
 std::string get_encoder_type(std::string config_path) {
@@ -49,19 +49,19 @@ encoder_t get_encoder_inst(std::string config_path, std::string featuremap, int 
 
     // get encoder
     if( encoder_type == "bi" ) {    
-        return silence::encoder<bi>(config_path, featuremap, bitwidth);
+        return pommel::encoder<bi>(config_path, featuremap, bitwidth);
     } else if( encoder_type == "def" ) {    
-        return silence::encoder<def>(config_path, featuremap, bitwidth);
+        return pommel::encoder<def>(config_path, featuremap, bitwidth);
     } else if( encoder_type == "awr" ) {    
-        return silence::encoder<awr>(config_path, featuremap, bitwidth);
+        return pommel::encoder<awr>(config_path, featuremap, bitwidth);
     } else if( encoder_type == "abe" ) {    
-        return silence::encoder<abe>(config_path, featuremap, bitwidth);
+        return pommel::encoder<abe>(config_path, featuremap, bitwidth);
     } else if( encoder_type == "pbm" ) {    
-        return silence::encoder<pbm>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pbm>(config_path, featuremap, bitwidth);
     } else if( encoder_type == "rle" ) {    
-        return silence::encoder<def>(config_path, featuremap, bitwidth);
+        return pommel::encoder<def>(config_path, featuremap, bitwidth);
     //} else if( encoder_type == "huffman" ) {    
-    //    return silence::encoder<huffman>(config_path, featuremap, bitwidth);
+    //    return pommel::encoder<huffman>(config_path, featuremap, bitwidth);
     } else {
         fprintf(stderr,"ERROR (encoder) : %s not specified!\n", encoder_type.c_str());
     }
@@ -70,10 +70,10 @@ encoder_t get_encoder_inst(std::string config_path, std::string featuremap, int 
 trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path, 
         std::string output_path, int burst_size, int period, int bitwidth) {
     if( dram_type == "DDR3" ) { 
-        return silence::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     if( dram_type == "WIDEIO_SDR" ) { 
-        return silence::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
         fprintf(stderr,"ERROR (trace) : %s not specified!\n", dram_type.c_str());
@@ -101,12 +101,16 @@ int main(int argc, char *argv[]) {
     std::string data_path;
     std::string output_path;
 
+    //
+    bool baseline = false;
+
     try {
  
         // add command line options
         options_description desc("Allowed Options");
         desc.add_options()
         ("help,h", "help message")
+        ("baseline", "compute baseline power readings (no encoding)")
         ("memory", value(&memory_config_path)->required(), "file path for memory config (.xml)")
         ("encoder", value(&encoder_config_path)->required(), "file path for encoding scheme config (.xml)")
         ("accelerator", value(&accelerator_config_path)->required(), "accelerator config path (.xml)")
@@ -122,6 +126,10 @@ int main(int argc, char *argv[]) {
             return 0;
         }
 
+        if (vm.count("baseline")) {
+            baseline = true;
+        }
+
         notify(vm);
 
     }
@@ -131,7 +139,7 @@ int main(int argc, char *argv[]) {
     }
 
     // create configs
-    silence::config config_inst;
+    pommel::config config_inst;
 
     // load configs
     config_inst.load_memory_config(memory_config_path);
@@ -142,18 +150,15 @@ int main(int argc, char *argv[]) {
 
         // partition information
         std::string partition_index = std::to_string(partition.first);
-        silence::accelerator_config_t partition_conf = partition.second;
+        pommel::accelerator_config_t partition_conf = partition.second;
       
-        // max board bandwidth
-        float max_board_bw = partition_conf.clk_freq/1000.0;
-
         // find the actual bandwidth in and out
-        float bandwidth_in = std::min( std::min(partition_conf.bandwidth_in, max_board_bw),config_inst.memory_config.bandwidth);
-        float bandwidth_out = std::min( std::min(partition_conf.bandwidth_out, max_board_bw),config_inst.memory_config.bandwidth);
+        float bandwidth_in = std::min( partition_conf.bandwidth_in,config_inst.memory_config.bandwidth);
+        float bandwidth_out = std::min( partition_conf.bandwidth_out,config_inst.memory_config.bandwidth);
 
         // get period (clk cycles) for input and output featuremaps
-        int period_in = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(bandwidth_in*1000);
-        int period_out = (int) (partition_conf.burst_size*partition_conf.clk_freq)/(bandwidth_out*1000);
+        int period_in = (int) ((partition_conf.burst_size*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)/(bandwidth_in*8.0*1000.0));
+        int period_out = (int) ((partition_conf.burst_size*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)/(bandwidth_out*8.0*1000.0));
 
         // TODO: scale memory clock speed to match input bandwidth
 
@@ -163,9 +168,9 @@ int main(int argc, char *argv[]) {
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
         printf("---- bitwidth               : %d \n", partition_conf.bitwidth ); 
         printf("---- clk freq (MHz)         : %d \n", partition_conf.clk_freq ); 
-        printf("---- mem bandwidth (Gbps)   : %f \n", config_inst.memory_config.bandwidth ); 
-        printf("---- bandwidth in (Gbps)    : %f \n", partition_conf.bandwidth_in ); 
-        printf("---- bandwidth out (Gbps)   : %f \n", partition_conf.bandwidth_out ); 
+        printf("---- mem bandwidth (GB/s)   : %f \n", config_inst.memory_config.bandwidth ); 
+        printf("---- bandwidth in (GB/s)    : %f \n", partition_conf.bandwidth_in ); 
+        printf("---- bandwidth out (GB/s)   : %f \n", partition_conf.bandwidth_out ); 
         printf("---- burst_size             : %d \n", partition_conf.burst_size ); 
         printf("---- period in              : %d \n", period_in ); 
         printf("---- period out             : %d \n", period_out ); 
@@ -193,13 +198,17 @@ int main(int argc, char *argv[]) {
         config_inst.generate_ramulator_config(ramulator_config_path); 
  
         //  load the featuremap
-        silence::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
+        pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
         featuremap_input.generate_stream(stream_output_path, partition_conf.transform);
 
         //  encode featuremap
-        encoder_t encoder_input = get_encoder_inst(encoder_config_path, partition_conf.input_featuremap, partition_conf.bitwidth);
-        std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
-                arg.encode_stream(stream_in, stream_out); }, encoder_input);
+        if(!baseline) {
+            encoder_t encoder_input = get_encoder_inst(encoder_config_path, partition_conf.input_featuremap, partition_conf.bitwidth);
+            std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
+                    arg.encode_stream(stream_in, stream_out); }, encoder_input);
+        } else {
+            encoded_stream_output_path = stream_output_path;
+        }
 
         // generate the trace
         trace_t trace_input = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
@@ -209,7 +218,7 @@ int main(int argc, char *argv[]) {
                 arg.generate_trace(stream_in); }, trace_input);
 
         // get activity and statistics for trace
-        silence::analysis analysis_input(stream_output_path,config_inst.memory_config.data_width,config_inst.memory_config.addr_width);
+        pommel::analysis analysis_input(encoded_stream_output_path,config_inst.memory_config.num_dq,config_inst.memory_config.addr_width);
 
         // generate output configs
         config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_in, 
@@ -229,13 +238,17 @@ int main(int argc, char *argv[]) {
         config_inst.generate_ramulator_config(ramulator_config_path); 
  
         //  load the featuremap
-        silence::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
+        pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
         featuremap_output.generate_stream(stream_output_path, partition_conf.transform);
 
         //  encode featuremap
-        encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, partition_conf.bitwidth);
-        std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
-                arg.encode_stream(stream_in, stream_out); }, encoder_output);
+        if(!baseline) {
+            encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, partition_conf.bitwidth);
+            std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
+                    arg.encode_stream(stream_in, stream_out); }, encoder_output);
+        } else {
+            encoded_stream_output_path = stream_output_path;
+        }
 
         // generate the trace
         trace_t trace_output = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
@@ -245,7 +258,7 @@ int main(int argc, char *argv[]) {
                 arg.generate_trace(stream_in); }, trace_output);
 
         // get activity and statistics for trace
-        silence::analysis analysis_output(stream_output_path,config_inst.memory_config.data_width,config_inst.memory_config.addr_width);
+        pommel::analysis analysis_output(encoded_stream_output_path,config_inst.memory_config.num_dq, config_inst.memory_config.addr_width);
 
         // generate output configs
         config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_out, 

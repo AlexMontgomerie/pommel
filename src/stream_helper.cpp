@@ -5,9 +5,9 @@ void get_stream_field(std::istream &in, std::ostream &out, field_type field) {
     // iterate over trace file
     std::string line;
     std::string val;
-    int addr;
+    uint64_t addr;
     bool direction;
-    int data;
+    uint64_t data;
     while( std::getline(in, line) ) {
 
         // convert line to string stream
@@ -15,15 +15,15 @@ void get_stream_field(std::istream &in, std::ostream &out, field_type field) {
 
         // get address
         std::getline(row,val,' ');
-        int addr = stoi(val);
+        addr = std::stoull(val);
 
         // get direction
         std::getline(row,val,' ');
-        char direction = val.c_str()[0];
+        direction = val.c_str()[0];
 
         // get data
         std::getline(row,val,' ');
-        int data = stoi(val);
+        data = std::stoull(val);
 
         switch(field) {
             case ADDR:
@@ -45,9 +45,9 @@ void add_stream_field(std::istream &in, std::istream &field_stream, std::ostream
     // iterate over trace file
     std::string line;
     std::string val;
-    int addr;
+    uint64_t addr;
     bool direction;
-    int data;
+    uint64_t data;
     while( std::getline(in, line) ) {
 
         // convert line to string stream
@@ -55,15 +55,15 @@ void add_stream_field(std::istream &in, std::istream &field_stream, std::ostream
 
         // get address
         std::getline(row,val,' ');
-        int addr = stoi(val);
+        addr = std::stoull(val);
 
         // get direction
         std::getline(row,val,' ');
-        char direction = val.c_str()[0];
+        direction = val.c_str()[0];
 
         // get data
         std::getline(row,val,' ');
-        int data = stoi(val);
+        data = std::stoull(val);
 
         // get the field data
         if( !(field_stream >> val) ) {

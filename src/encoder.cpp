@@ -1,6 +1,6 @@
 #include "encoder.hpp"
 
-namespace silence {
+namespace pommel {
 
 template<>
 encoder<def>::encoder(std::string config_path, std::string featuremap, int bitwidth) {

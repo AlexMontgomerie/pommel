@@ -35,7 +35,7 @@
 #include "ramulator/src/PCM.h"
 
 
-namespace silence {
+namespace pommel {
 
 typedef struct {
     std::string dram_type;

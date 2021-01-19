@@ -1,6 +1,6 @@
 #include "analysis.hpp"
 
-namespace silence {
+namespace pommel {
 
 float analysis::get_addr_activity(void) {
     return analysis::get_total_transitions(addr_stream)/(addr_width*addr_stream.size());
@@ -10,11 +10,11 @@ float analysis::get_data_activity(void) {
     return analysis::get_total_transitions(data_stream)/(data_width*data_stream.size());
 }
 
-float analysis::get_total_transitions(std::vector<uint32_t> stream) {
+float analysis::get_total_transitions(std::vector<uint64_t> stream) {
     
     // iterate over vector
-    uint32_t transitions = 0;
-    uint32_t value_prev = 0;
+    uint64_t transitions = 0;
+    uint64_t value_prev = 0;
     for(auto const& value: stream) {
         transitions += __builtin_popcount(value^value_prev);
         value_prev = value;
@@ -41,7 +41,7 @@ analysis::analysis(std::string trace_path, int data_width, int addr_width) : dat
 
     // convert stream to a vector
     while( std::getline(addr_stream_raw, line) ) {
-        addr_stream.push_back(stoi(line));
+        addr_stream.push_back(std::stoull(line));
     }
 
     // set to beginning
@@ -54,7 +54,7 @@ analysis::analysis(std::string trace_path, int data_width, int addr_width) : dat
 
     // convert stream to a vector
     while( std::getline(data_stream_raw, line) ) {
-        data_stream.push_back(stoi(line));
+        data_stream.push_back(std::stoull(line));
     }
 
 }
@@ -81,7 +81,7 @@ std::vector<float> bitwise_mean(std::string infile_path, unsigned int bitwidth) 
     }
 
     // value buffer
-    uint32_t val;
+    uint64_t val;
 
     size_t stream_length;
 

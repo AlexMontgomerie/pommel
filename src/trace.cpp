@@ -1,6 +1,6 @@
 #include "trace.hpp"
 
-namespace silence {
+namespace pommel {
 
 template<>
 trace<ramulator::DDR3>::trace(std::string ramulator_config_path, std::string output_path, int burst_size, int period, int bitwidth) : burst_size(burst_size), period(period), bitwidth(bitwidth) {

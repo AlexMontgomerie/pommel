@@ -5,7 +5,7 @@
 #include <bitset>
 #include "stream_helper.hpp"
 
-namespace silence {
+namespace pommel {
 
 class analysis {
     
@@ -14,10 +14,10 @@ class analysis {
         uint32_t addr_width;
         uint32_t data_width;
 
-        std::vector<uint32_t> data_stream;
-        std::vector<uint32_t> addr_stream;
+        std::vector<uint64_t> data_stream;
+        std::vector<uint64_t> addr_stream;
 
-        float get_total_transitions(std::vector<uint32_t> stream);
+        float get_total_transitions(std::vector<uint64_t> stream);
 
     public:
 

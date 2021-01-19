@@ -8,7 +8,7 @@
 #include <highfive/H5DataSet.hpp>
 #include <highfive/H5DataSpace.hpp>
 
-namespace silence {
+namespace pommel {
 
 class featuremap {
     protected:
@@ -17,7 +17,7 @@ class featuremap {
         std::string featuremap_path;
 
         // featuremap dimensions
-        std::vector<int> data;
+        std::vector<uint64_t> data;
         std::string layer_name;
         unsigned int batch_size;
         unsigned int width;
@@ -25,8 +25,8 @@ class featuremap {
         unsigned int channels;
 
         // transforms
-        std::vector<int> row_major_transform(std::vector<int> data_in);
-        std::vector<int> channel_major_transform(std::vector<int> data_in);
+        std::vector<uint64_t> row_major_transform(std::vector<uint64_t> data_in);
+        std::vector<uint64_t> channel_major_transform(std::vector<uint64_t> data_in);
 
     public:
         

@@ -1,6 +1,6 @@
 #include "config.hpp"
 
-namespace silence {
+namespace pommel {
 
 void config::load_memory_config(std::string config_path) {
 
@@ -26,7 +26,7 @@ void config::load_memory_config(std::string config_path) {
     // get other memory parameters
     memory_config.capacity = (int) (memory_config.banks*memory_config.rank*memory_config.cols*memory_config.rows/memory_config.data_width);
     memory_config.addr_width = (int) log2( (float) memory_config.capacity );
-    memory_config.bandwidth = (memory_config.data_rate*memory_config.clock*memory_config.num_dq/1000.0); 
+    memory_config.bandwidth = ((memory_config.data_rate*memory_config.clock*memory_config.num_dq)/(8*1000.0)); 
     
     return;
 }
