@@ -90,7 +90,7 @@ void config::generate_ramulator_config(std::string config_path) {
 
 }
 
-void config::generate_cacti_config(std::string config_path, float bandwidth, float data_activity, float address_activity) {
+void config::generate_cacti_config(std::string direction, std::string config_path, float bandwidth, float data_activity, float address_activity, float duty_cycle) {
 
     // create cacti config file
     ctemplate::TemplateDictionary dict("cacti_config");
@@ -103,6 +103,9 @@ void config::generate_cacti_config(std::string config_path, float bandwidth, flo
     } else if ( memory_config.dram_type == "LPDDR2" ) {
         dict.SetValue("DRAM_TYPE", "L");
         dict.SetValue("ADDR_TIMING", "0.5"); 
+    } else if ( memory_config.dram_type == "LPDDR3" ) {
+        dict.SetValue("DRAM_TYPE", "L");
+        dict.SetValue("ADDR_TIMING", "0.5"); 
     } else if ( memory_config.dram_type == "WIDEIO_SDR" ) {
         dict.SetValue("DRAM_TYPE", "W");
         dict.SetValue("ADDR_TIMING", "1.0"); 
@@ -110,43 +113,18 @@ void config::generate_cacti_config(std::string config_path, float bandwidth, flo
         // TODO: raise error
     }
 
-    // IO STATE
-    dict.SetValue("IO_STATE", "W"); // FIXME
-    
-    // BUS BW
-    dict.SetFormattedValue("BUS_BW", "%.1f", bandwidth);
-    
-    // MEM DENSITY
-    dict.SetFormattedValue("MEM_DENSITY", "%d", memory_config.capacity/1000000); 
-
-    // BUS FREQ
+    dict.SetValue("IO_STATE", direction); 
+    dict.SetFormattedValue("BUS_BW", "%.4f", memory_config.bandwidth);
+    dict.SetFormattedValue("MEM_DENSITY", "%d", memory_config.capacity/(1000000*memory_config.banks*memory_config.rank)); 
     dict.SetFormattedValue("BUS_FREQ", "%d", memory_config.clock); 
-    
-    // DUTY CYCLE
-    dict.SetFormattedValue("DUTY_CYCLE", "%.1f", 1.0); // FIXME
-    
-    // ACTIVITY DQ
-    dict.SetFormattedValue("ACTIVITY_DQ", "%.1f", data_activity);
-   
-    // ACTIVITY CA 
-    dict.SetFormattedValue("ACTIVITY_CA", "%.1f", address_activity);
-    
-    // NUM DQ
+    dict.SetFormattedValue("DUTY_CYCLE", "%.4f", duty_cycle); 
+    dict.SetFormattedValue("ACTIVITY_DQ", "%.4f", data_activity);
+    dict.SetFormattedValue("ACTIVITY_CA", "%.4f", address_activity);
     dict.SetFormattedValue("NUM_DQ", "%d", memory_config.num_dq); 
- 
-    // NUM DQS
     dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory_config.num_dq/8)); // maybe x2 ?
- 
-    // NUM CA
     dict.SetFormattedValue("NUM_CA", "%d", memory_config.addr_width);
- 
-    // NUM CLK
     dict.SetFormattedValue("NUM_CLK", "%d", 2);
-    
-    // NUM MEM DQ
     dict.SetFormattedValue("NUM_MEM_DQ", "%d", memory_config.rank); 
- 
-    // MEM DATA WIDTH
     dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width);
     
     std::string cacti_config_out;

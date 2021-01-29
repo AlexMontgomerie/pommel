@@ -111,6 +111,9 @@ featuremap::featuremap(std::string featuremap_path, std::string layer_name) : fe
     // convert to vector
     data.insert(data.begin(), &tmp[0], &tmp[get_size()-1]);
 
+    // close file
+    //HighFive::close();
+
     return;
 }
 

@@ -7,7 +7,7 @@ float analysis::get_addr_activity(void) {
 }
 
 float analysis::get_data_activity(void) {
-    return analysis::get_total_transitions(data_stream)/(data_width*data_stream.size());
+    return analysis::get_total_transitions(data_stream)/(data_width*2*data_stream.size());
 }
 
 float analysis::get_total_transitions(std::vector<uint64_t> stream) {
@@ -16,7 +16,7 @@ float analysis::get_total_transitions(std::vector<uint64_t> stream) {
     uint64_t transitions = 0;
     uint64_t value_prev = 0;
     for(auto const& value: stream) {
-        transitions += __builtin_popcount(value^value_prev);
+        transitions += __builtin_popcountl(value^value_prev);
         value_prev = value;
     }
     
@@ -57,97 +57,8 @@ analysis::analysis(std::string trace_path, int data_width, int addr_width) : dat
         data_stream.push_back(std::stoull(line));
     }
 
-}
-
-}
-
-std::vector<uint32_t> get_address_trace(std::string trace_path) {
-    
-    // open trace file
-
-    // iterate over trace
-
-
-}
-
-std::vector<float> bitwise_mean(std::string infile_path, unsigned int bitwidth) {
-
-    // bitwise mean
-    float acc_cache[bitwidth];
-    
-    // initialise acc_cache
-    for(int i=0; i<bitwidth; i++) {
-        acc_cache[i] = 0.0;
-    }
-
-    // value buffer
-    uint64_t val;
-
-    size_t stream_length;
-
-    // iterate over the rest of the stream
-    std::ifstream in(infile_path);
-    while (in >> val) {
-        for(int i=0; i<bitwidth; i++) {
-            acc_cache[i] += (float) ( ( val >> i ) & 0x1 );
-        }
-        stream_length++;
-    }
-
-    // get bitwise mean vector
-    std::vector<float> out;
-    for(int i=0; i<bitwidth; i++) {
-        out.push_back(acc_cache[i]/(float)stream_length);
-    }
-
     // close file
-    in.close();
-
-    // return the vector
-    return out;
+    trace.close();
 }
-
-std::vector<uint32_t> bitwise_variance(std::istream &in, unsigned int bitwidth) {
-
-}
-
-std::vector<uint32_t> bitwise_transitions(std::istream &in, unsigned int bitwidth) {
-
-}
-
-std::vector<uint32_t> bitwise_switching_activity_mean(std::istream &in, unsigned int bitwidth) {
-
-}
-
-std::vector<uint32_t> bitwise_switching_activity_variance(std::istream &in, unsigned int bitwidth) {
-
-}
-
-float mean(std::string infile_path, unsigned int bitwidth) {
-
-    // get bitwise-mean
-    std::vector<float> bw_mean = bitwise_mean(infile_path, bitwidth);
-
-    float avg = 0.0;
-    for(int i=0;i<bitwidth;i++) {
-        avg += bw_mean[i]/bitwidth;
-    }
-
-    return avg;
-}
-
-uint32_t variance(std::istream &in, unsigned int bitwidth) {
-
-}
-
-uint32_t transitions(std::istream &in, unsigned int bitwidth) {
-
-}
-
-uint32_t switching_activity_mean(std::istream &in, unsigned int bitwidth) {
-
-}
-
-uint32_t switching_activity_variance(std::istream &in, unsigned int bitwidth) {
 
 }

@@ -1,5 +1,7 @@
 #include "common.hpp"
 
+#include "nlohmann/json.hpp"
+
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 using namespace boost::program_options;
@@ -28,7 +30,8 @@ using encoder_t = std::variant<
 
 using trace_t = std::variant<
     pommel::trace<ramulator::DDR3>,
-    pommel::trace<ramulator::WideIO>
+    pommel::trace<ramulator::WideIO>,
+    pommel::trace<ramulator::LPDDR3>
 >;
 
 std::string get_encoder_type(std::string config_path) {
@@ -73,7 +76,10 @@ trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     if( dram_type == "WIDEIO_SDR" ) { 
-        return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    }
+    if( dram_type == "LPDDR3" ) { 
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
         fprintf(stderr,"ERROR (trace) : %s not specified!\n", dram_type.c_str());
@@ -145,6 +151,9 @@ int main(int argc, char *argv[]) {
     config_inst.load_memory_config(memory_config_path);
     config_inst.load_accelerator_config(accelerator_config_path);
 
+    // create a report
+    nlohmann::json report;
+
     // iterate over partition for a given accelerator
     for(auto const& partition : config_inst.accelerator_config) { 
 
@@ -157,8 +166,14 @@ int main(int argc, char *argv[]) {
         float bandwidth_out = std::min( partition_conf.bandwidth_out,config_inst.memory_config.bandwidth);
 
         // get period (clk cycles) for input and output featuremaps
-        int period_in = (int) ((partition_conf.burst_size*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)/(bandwidth_in*8.0*1000.0));
-        int period_out = (int) ((partition_conf.burst_size*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)/(bandwidth_out*8.0*1000.0));
+        int period_in = (int) ((partition_conf.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
+                /(bandwidth_in*8*1000.0));
+        int period_out = (int) ((partition_conf.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
+                /(bandwidth_out*8*1000.0));
+
+        if ( period_in <= partition_conf.burst_size ||period_out <= partition_conf.burst_size ) {
+            continue;
+        }
 
         // TODO: scale memory clock speed to match input bandwidth
 
@@ -220,9 +235,12 @@ int main(int argc, char *argv[]) {
         // get activity and statistics for trace
         pommel::analysis analysis_input(encoded_stream_output_path,config_inst.memory_config.num_dq,config_inst.memory_config.addr_width);
 
+        float data_activity_in = analysis_input.get_data_activity();
+        float addr_activity_in = analysis_input.get_addr_activity();
+ 
         // generate output configs
-        config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_in, 
-                analysis_input.get_data_activity(), analysis_input.get_addr_activity()); 
+        config_inst.generate_cacti_config("R",cacti_config_path, partition_conf.bandwidth_in, 
+                data_activity_in, addr_activity_in, ((partition_conf.burst_size)/((float)period_out))); 
 
         /**
          * Output Featuremap
@@ -237,11 +255,11 @@ int main(int argc, char *argv[]) {
         // generate config for ramulator and trace
         config_inst.generate_ramulator_config(ramulator_config_path); 
  
-        //  load the featuremap
+        // load the featuremap
         pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
         featuremap_output.generate_stream(stream_output_path, partition_conf.transform);
 
-        //  encode featuremap
+        // encode featuremap
         if(!baseline) {
             encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, partition_conf.bitwidth);
             std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
@@ -260,17 +278,36 @@ int main(int argc, char *argv[]) {
         // get activity and statistics for trace
         pommel::analysis analysis_output(encoded_stream_output_path,config_inst.memory_config.num_dq, config_inst.memory_config.addr_width);
 
+        float data_activity_out = analysis_output.get_data_activity();
+        float addr_activity_out = analysis_output.get_addr_activity();
+ 
         // generate output configs
-        config_inst.generate_cacti_config(cacti_config_path, partition_conf.bandwidth_out, 
-                analysis_output.get_data_activity(), analysis_output.get_addr_activity()); 
+        config_inst.generate_cacti_config("W", cacti_config_path, partition_conf.bandwidth_out, 
+                data_activity_out, addr_activity_out, ((partition_conf.burst_size)/((float)period_out))); 
 
         // activity information
-        printf("---- data activity in       : %f \n", analysis_input.get_data_activity()); 
-        printf("---- data activity out      : %f \n", analysis_output.get_data_activity()); 
-        printf("---- address activity in    : %f \n", analysis_input.get_addr_activity()); 
-        printf("---- address activity out   : %f \n", analysis_output.get_addr_activity()); 
- 
+        printf("---- data activity in       : %f \n", data_activity_in); 
+        printf("---- data activity out      : %f \n", data_activity_out); 
+        printf("---- address activity in    : %f \n", addr_activity_in); 
+        printf("---- address activity out   : %f \n", addr_activity_out); 
+
+        // add report information
+        report[partition_index.c_str()]["in"] = { 
+            {"bandwidth", bandwidth_in},
+            {"data_activity", data_activity_in},
+            {"addr_activity", addr_activity_in}
+        };
+        report[partition_index.c_str()]["out"] = { 
+            {"bandwidth", bandwidth_out},
+            {"data_activity", data_activity_out},
+            {"addr_activity", addr_activity_out}
+        };
     }
+
+    // save report
+    std::ofstream report_file(output_path+"/"+"report.json");
+    report_file << report.dump(4);
+    report_file.close();
 
     // end execution
     return 0;

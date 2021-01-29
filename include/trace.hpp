@@ -114,6 +114,7 @@ class trace {
             // load stream in
             std::ifstream in  (stream_path);
             if( !in.is_open() ) {
+                perror("file error");
                 fprintf(stderr,"cannot open input file: %s \n", stream_path.c_str());
             }
             
@@ -159,6 +160,11 @@ class trace {
             // finish memory transactions
             memory->finish();
 
+            // close file in
+            in.close();
+
+            delete configs;
+            delete memory;
         }
 
 };

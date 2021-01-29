@@ -18,5 +18,8 @@
 #include <variant>
 #include <boost/any.hpp>
 #include <math.h>
+#include <stdint.h>
+
+#define uint128_t __uint128_t
 
 #endif

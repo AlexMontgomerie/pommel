@@ -29,6 +29,20 @@ trace<ramulator::WideIO>::trace(std::string ramulator_config_path, std::string o
     setup_memory();
 
 }
+
+template<>
+trace<ramulator::LPDDR3>::trace(std::string ramulator_config_path, std::string output_path, int burst_size, int period, int bitwidth) : burst_size(burst_size), period(period), bitwidth(bitwidth) {
+ 
+    // setup config
+    setup_memory_config(ramulator_config_path, output_path);
+
+    // setup memory specification
+    spec = new ramulator::LPDDR3((*configs)["org"], (*configs)["speed"]);
+
+    // setup memory
+    setup_memory();
+
+}
     /*
     else if (standard == "ramulator::DDR4") {
       ramulator::DDR4* ddr4 = new ramulator::DDR4(configs["org"], configs["speed"]);

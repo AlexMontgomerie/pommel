@@ -7,7 +7,7 @@ INC_PATH := include
 
 # tool marcros
 CC := g++
-CCFLAG := -std=c++17 -I./$(INC_PATH) -I. -I./HighFive/include -DRAMULATOR -I/usr/include/hdf5/serial/ -I/usr/include/xtensor -I/usr/local/include/xtl
+CCFLAG := -std=c++17 -I./$(INC_PATH) -I. -I./HighFive/include -DRAMULATOR -I/usr/include/hdf5/serial/ -I/usr/include/xtensor -I/usr/local/include/xtl 
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
 LIBS := -L./ramulator -L/usr/lib/x86_64-linux-gnu/hdf5/serial/ -lhdf5 -lctemplate -pthread -lxerces-c -lboost_program_options -lboost_system -lboost_filesystem -lramulator -Wl,-R./ramulator

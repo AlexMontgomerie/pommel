@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import argparse
 
 def parse_cacti_report(report_path):
     
@@ -56,30 +57,25 @@ def parse_dram_power_report(report_path):
     
     return dram_power
 
-def get_complete_report(output_path):
-    report = {}
+def add_power_to_report(output_path):
+    with open(os.path.join(output_path,"report.json"),"r") as f:
+        report = json.load(f)
     # iterate over folders in path
     for partition in os.listdir(output_path): 
         if not os.path.isdir(os.path.join(output_path,partition)):
             continue
-        report[partition] = {
-            "io" : {
-                "in"  : parse_cacti_report(os.path.join(output_path,partition,"input_cacti.rpt")),
-                "out" : parse_cacti_report(os.path.join(output_path,partition,"output_cacti.rpt"))
-            },
-            "dram" : {
-                "in"  : parse_dram_power_report(os.path.join(output_path,partition,"input_dram_power.rpt")),
-                "out" : parse_dram_power_report(os.path.join(output_path,partition,"output_dram_power.rpt"))
-            }
-        }
+        report[partition]["in"]["io"]   = parse_cacti_report(os.path.join(output_path,partition,"input_cacti.rpt"))
+        report[partition]["in"]["dram"] = parse_dram_power_report(os.path.join(output_path,partition,"input_dram_power.rpt"))
+        report[partition]["out"]["io"]   = parse_cacti_report(os.path.join(output_path,partition,"output_cacti.rpt"))
+        report[partition]["out"]["dram"] = parse_dram_power_report(os.path.join(output_path,partition,"output_dram_power.rpt"))
     # save report to output path
     with open(os.path.join(output_path,"report.json"),"w") as f:
-        json.dump(report,f)
-
+        json.dump(report,f,indent=4)
 
 if __name__ == "__main__":
-    get_complete_report("outputs/test")
-    print("cact:")
-    print(parse_cacti_report("outputs/test/0/input_cacti.rpt"))
-    print("dram power:")
-    print(parse_dram_power_report("outputs/test/0/input_dram_power.rpt"))
+    parser = argparse.ArgumentParser(description="Add Power Measurements")
+    parser.add_argument("-p","--path",required=True, help="path")
+
+    args = parser.parse_args()
+ 
+    add_power_to_report(args.path)

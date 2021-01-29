@@ -80,7 +80,7 @@ class config {
         // generate config functions
         void generate_ramulator_config(std::string config_path);
         //void generate_cacti_config(std::string config_path);
-        void generate_cacti_config(std::string config_path, float bandwidth, float data_activity, float address_activity);
+        void generate_cacti_config(std::string direction, std::string config_path, float bandwidth, float data_activity, float address_activity, float duty_cycle);
         void generate_dram_power_config(std::string config_path);
 
 };
