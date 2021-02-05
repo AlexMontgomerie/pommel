@@ -7,7 +7,7 @@ float analysis::get_addr_activity(void) {
 }
 
 float analysis::get_data_activity(void) {
-    return analysis::get_total_transitions(data_stream)/(data_width*2*data_stream.size());
+    return analysis::get_total_transitions(data_stream)/(data_width*data_stream.size());
 }
 
 float analysis::get_total_transitions(std::vector<uint64_t> stream) {

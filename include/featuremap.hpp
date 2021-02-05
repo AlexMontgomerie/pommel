@@ -12,7 +12,10 @@ namespace pommel {
 
 class featuremap {
     protected:
-        
+
+        int MAX_SIZE = 10000;
+        int featuremap_size;
+
         //  feautremap file path
         std::string featuremap_path;
 

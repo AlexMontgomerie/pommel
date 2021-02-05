@@ -1,0 +1,62 @@
+<acceleratorspec type="eyeriss" network="alexnet">
+    <partition id="0">
+        <parameter id="bitwidth" type="int" value="16" />
+        <parameter id="burst_size" type="int" value="256" />
+        <parameter id="clk_freq" type="int" value="200" />
+        <parameter id="bandwidth_in" type="float" value="0.02128" />
+        <parameter id="bandwidth_out" type="float" value="0.11256" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
+        <parameter id="transform" type="string" value="channel-major" />
+        <parameter id="input_featuremap" type="string" value="data" />
+        <parameter id="output_featuremap" type="string" value="features.module.0" />
+    </partition>
+    <partition id="1">
+        <parameter id="bitwidth" type="int" value="16" />
+        <parameter id="burst_size" type="int" value="256" />
+        <parameter id="clk_freq" type="int" value="200" />
+        <parameter id="bandwidth_in" type="float" value="2.398" />
+        <parameter id="bandwidth_out" type="float" value="2.692" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
+        <parameter id="transform" type="string" value="channel-major" />
+        <parameter id="input_featuremap" type="string" value="features.module.0" />
+        <parameter id="output_featuremap" type="string" value="features.module.3" />
+    </partition>
+    <partition id="2">
+        <parameter id="bitwidth" type="int" value="16" />
+        <parameter id="burst_size" type="int" value="256" />
+        <parameter id="clk_freq" type="int" value="200" />
+        <parameter id="bandwidth_in" type="float" value="0.00995" />
+        <parameter id="bandwidth_out" type="float" value="0.0107" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
+        <parameter id="transform" type="string" value="channel-major" />
+        <parameter id="input_featuremap" type="string" value="features.module.3" />
+        <parameter id="output_featuremap" type="string" value="features.module.6" />
+    </partition>
+    <partition id="3">
+        <parameter id="bitwidth" type="int" value="16" />
+        <parameter id="burst_size" type="int" value="256" />
+        <parameter id="clk_freq" type="int" value="200" />
+        <parameter id="bandwidth_in" type="float" value="0.01002" />
+        <parameter id="bandwidth_out" type="float" value="0.00707" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
+        <parameter id="transform" type="string" value="channel-major" />
+        <parameter id="input_featuremap" type="string" value="features.module.6" />
+        <parameter id="output_featuremap" type="string" value="features.module.10" />
+    </partition>
+    <partition id="4">
+        <parameter id="bitwidth" type="int" value="16" />
+        <parameter id="burst_size" type="int" value="256" />
+        <parameter id="clk_freq" type="int" value="200" />
+        <parameter id="bandwidth_in" type="float" value="0.01472" />
+        <parameter id="bandwidth_out" type="float" value="0.00702" />
+        <parameter id="tiling_factor" type="int" value="1" />
+        <parameter id="packing_factor" type="int" value="1" />
+        <parameter id="transform" type="string" value="channel-major" />
+        <parameter id="input_featuremap" type="string" value="features.module.10" />
+        <parameter id="output_featuremap" type="string" value="features.module.12" />
+    </partition>
+</acceleratorspec>

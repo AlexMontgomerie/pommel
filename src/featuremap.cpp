@@ -105,14 +105,12 @@ featuremap::featuremap(std::string featuremap_path, std::string layer_name) : fe
     }
 
     // get featuremap
-    uint64_t tmp [get_size()];
+    featuremap_size = get_size();
+    uint64_t* tmp = new uint64_t[featuremap_size];
     layer.read(tmp);
 
     // convert to vector
-    data.insert(data.begin(), &tmp[0], &tmp[get_size()-1]);
-
-    // close file
-    //HighFive::close();
+    data.insert(data.begin(), &tmp[0], &tmp[featuremap_size-1]);
 
     return;
 }

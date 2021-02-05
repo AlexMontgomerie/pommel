@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
         int period_out = (int) ((partition_conf.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
                 /(bandwidth_out*8*1000.0));
 
-        if ( period_in <= partition_conf.burst_size ||period_out <= partition_conf.burst_size ) {
+        if ( (period_in <= partition_conf.burst_size) || (period_out <= partition_conf.burst_size) ) {
             continue;
         }
 
