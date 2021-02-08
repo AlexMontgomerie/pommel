@@ -22,17 +22,19 @@ class featuremap {
         // featuremap dimensions
         std::vector<uint64_t> data;
         std::string layer_name;
-        unsigned int batch_size;
-        unsigned int width;
-        unsigned int height;
-        unsigned int channels;
-
+        
         // transforms
         std::vector<uint64_t> row_major_transform(std::vector<uint64_t> data_in);
         std::vector<uint64_t> channel_major_transform(std::vector<uint64_t> data_in);
 
     public:
-        
+ 
+        unsigned int batch_size;
+        unsigned int width;
+        unsigned int height;
+        unsigned int channels;
+
+       
         int get_size(void);
     
         void generate_stream(std::string data_path, std::string transform);

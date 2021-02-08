@@ -4,6 +4,8 @@
 #include "common.hpp"
 #include <ctemplate/template.h>
 #include "pugixml.hpp"
+#include "featuremap.hpp"
+#include "csv.h"
 
 #include "ramulator/src/Config.h"
 #include "ramulator/src/Controller.h"
@@ -55,8 +57,8 @@ typedef struct {
 
 typedef struct {
     int bitwidth;
-    int burst_size;
-    int clk_freq;
+    int kernel_size;
+    int stride;
     float bandwidth_in;
     float bandwidth_out;
     std::string transform;
@@ -64,11 +66,28 @@ typedef struct {
     std::string output_featuremap;
 } accelerator_config_t;
 
+typedef struct {
+    int burst_size;
+    int clk_freq;
+    int array_height;
+    int array_width;
+    int ifmap_sram_size;
+    int filter_sram_size;
+    int ofmap_sram_size;
+    int ifmap_offset = 0;
+    int filter_offset = 10000000;
+    int ofmap_offset = 20000000;
+    std::string dataflow;
+} platform_config_t;
+
 class config {
     public:
 
         // memory config type
         memory_config_t memory_config;
+
+        // memory config type
+        platform_config_t platform_config;
 
         // accelerator config type
         std::map<int, accelerator_config_t> accelerator_config;
@@ -76,13 +95,18 @@ class config {
         // load config functions
         void load_memory_config(std::string config_path);
         void load_accelerator_config(std::string config_path);
+        void load_platform_config(std::string config_path);
 
         // generate config functions
         void generate_ramulator_config(std::string config_path);
         //void generate_cacti_config(std::string config_path);
         void generate_cacti_config(std::string direction, std::string config_path, float bandwidth, float data_activity, float address_activity, float duty_cycle);
         void generate_dram_power_config(std::string config_path);
+        void generate_scale_sim_config(std::string config_path, std::string output_path); 
+        void generate_scale_sim_topology(std::string featuremap_path, std::string topology_path);
 
+
+        void add_scale_sim_bandwidth(std::string report_path);
 };
 
 }

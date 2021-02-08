@@ -31,7 +31,6 @@ void config::load_memory_config(std::string config_path) {
     return;
 }
 
-
 void config::load_accelerator_config(std::string config_path) {
     
     // load the memory config file
@@ -42,7 +41,7 @@ void config::load_accelerator_config(std::string config_path) {
     }
 
     // get accelerator name
-    pugi::xml_node root = doc.select_node("/acceleratorspec").node();
+    pugi::xml_node root = doc.select_node("/acceleratorspec/partitions").node();
     std::string accelerator_name = root.attribute("type").value();
 
     // iterate over partitions
@@ -53,11 +52,11 @@ void config::load_accelerator_config(std::string config_path) {
 
         // get accelerator configuration
         accelerator_config_t conf;
-        conf.bitwidth   = partition.select_node("parameter[@id='bitwidth']").node().attribute("value").as_int();
-        conf.burst_size = partition.select_node("parameter[@id='burst_size']").node().attribute("value").as_int();
-        conf.clk_freq   = partition.select_node("parameter[@id='clk_freq']").node().attribute("value").as_int();
-        conf.bandwidth_in       = partition.select_node("parameter[@id='bandwidth_in']").node().attribute("value").as_float();
-        conf.bandwidth_out      = partition.select_node("parameter[@id='bandwidth_out']").node().attribute("value").as_float();
+        conf.bitwidth       = partition.select_node("parameter[@id='bitwidth']").node().attribute("value").as_int();
+        conf.kernel_size    = partition.select_node("parameter[@id='kernel_size']").node().attribute("value").as_int();
+        conf.stride         = partition.select_node("parameter[@id='stride']").node().attribute("value").as_int();
+        //conf.bandwidth_in       = partition.select_node("parameter[@id='bandwidth_in']").node().attribute("value").as_float();
+        //conf.bandwidth_out      = partition.select_node("parameter[@id='bandwidth_out']").node().attribute("value").as_float();
         conf.transform          = partition.select_node("parameter[@id='transform']").node().attribute("value").value();
         conf.input_featuremap   = partition.select_node("parameter[@id='input_featuremap']").node().attribute("value").value();
         conf.output_featuremap  = partition.select_node("parameter[@id='output_featuremap']").node().attribute("value").value();
@@ -65,6 +64,29 @@ void config::load_accelerator_config(std::string config_path) {
         // update accelerator configuration
         accelerator_config[partition_index] = conf;
     }
+
+}
+
+void config::load_platform_config(std::string config_path) {
+    
+    // load the accelerator config file
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file(config_path.c_str());
+    if (!result) {
+        fprintf(stderr,"Couldn't open config file: %s\n", config_path.c_str());
+    }
+ 
+    // get all platform parameters 
+    platform_config.dataflow        = doc.select_node("/acceleratorspec/platformspec/parameter[@id='dataflow']").node().attribute("value").value();
+    platform_config.array_height    = doc.select_node("/acceleratorspec/platformspec/parameter[@id='array_height']").node().attribute("value").as_int();
+    platform_config.array_width     = doc.select_node("/acceleratorspec/platformspec/parameter[@id='array_width']").node().attribute("value").as_int();
+    platform_config.ifmap_sram_size = doc.select_node("/acceleratorspec/platformspec/parameter[@id='ifmap_sram_size']").node().attribute("value").as_int();
+    platform_config.filter_sram_size= doc.select_node("/acceleratorspec/platformspec/parameter[@id='filter_sram_size']").node().attribute("value").as_int();
+    platform_config.ofmap_sram_size = doc.select_node("/acceleratorspec/platformspec/parameter[@id='ofmap_sram_size']").node().attribute("value").as_int();
+    platform_config.clk_freq        = doc.select_node("/acceleratorspec/platformspec/parameter[@id='clk_freq']").node().attribute("value").as_int();
+    platform_config.burst_size      = doc.select_node("/acceleratorspec/platformspec/parameter[@id='burst_size']").node().attribute("value").as_int();
+    
+    return;
 
 }
 
@@ -133,6 +155,104 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
     std::ofstream cacti_config_path(config_path);
     cacti_config_path << cacti_config_out;
     cacti_config_path.close();
+
+}
+
+void config::generate_scale_sim_config(std::string config_path, std::string output_path) { 
+
+    // create ramulator config file
+    ctemplate::TemplateDictionary dict("scale_sim_config");
+
+    // add config
+    std::string test_name = "../" + output_path;
+    dict.SetValue("run_name", test_name.c_str());
+    dict.SetFormattedValue("array_height", "%d", platform_config.array_height);
+    dict.SetFormattedValue("array_width" , "%d", platform_config.array_width); 
+    dict.SetFormattedValue("ifmap_sram_size"  , "%d", platform_config.ifmap_sram_size); 
+    dict.SetFormattedValue("filter_sram_size" , "%d", platform_config.filter_sram_size); 
+    dict.SetFormattedValue("ofmap_sram_size"  , "%d", platform_config.ofmap_sram_size); 
+    dict.SetFormattedValue("ifmap_offset"  , "%d", platform_config.ifmap_offset); 
+    dict.SetFormattedValue("filter_offset" , "%d", platform_config.filter_offset); 
+    dict.SetFormattedValue("ofmap_offset"  , "%d", platform_config.ofmap_offset); 
+    dict.SetValue("dataflow", platform_config.dataflow);
+
+    // save to file
+    std::string config_out;
+    ctemplate::ExpandTemplate("templates/scale_sim_config_template.tpl", 
+        ctemplate::DO_NOT_STRIP, &dict, &config_out);
+    std::ofstream scale_sim_config_path(config_path);
+    scale_sim_config_path << config_out;
+    scale_sim_config_path.close();
+
+}
+
+void config::generate_scale_sim_topology(std::string featuremap_path, std::string topology_path) { 
+
+    // header for CSV file
+    std::string topology_csv = "Layer name, IFMAP Height, IFMAP Width, Filter Height, Filter Width, Channels, Num Filter, Strides,\n";
+
+    // iterate over the partitions
+    for(auto const& partition : accelerator_config) {
+
+        // get accelerator configuration        
+        pommel::accelerator_config_t partition_conf = partition.second;
+        
+        // get input and output featuremap
+        pommel::featuremap featuremap_in(featuremap_path, partition_conf.input_featuremap);    
+        pommel::featuremap featuremap_out(featuremap_path, partition_conf.output_featuremap);    
+    
+        // write to csv
+        topology_csv += std::to_string(partition.first) + ", ";
+        topology_csv += std::to_string(featuremap_in.height) + ", ";
+        topology_csv += std::to_string(featuremap_in.width) + ", ";
+        topology_csv += std::to_string(partition_conf.kernel_size) + ", ";
+        topology_csv += std::to_string(partition_conf.kernel_size) + ", ";
+        topology_csv += std::to_string(featuremap_in.channels) + ", ";
+        topology_csv += std::to_string(featuremap_out.channels) + ", ";
+        topology_csv += std::to_string(partition_conf.stride) + ",\n";
+
+    } 
+
+    // save to output path
+    std::ofstream scale_sim_topology_path(topology_path);
+    scale_sim_topology_path << topology_csv;
+    scale_sim_topology_path.close();
+
+}
+
+void config::add_scale_sim_bandwidth(std::string report_path) {
+
+    // load csv file 
+    io::CSVReader<9> bw_csv(report_path.c_str());
+    bw_csv.read_header(io::ignore_extra_column, 
+        "IFMAP SRAM Size",
+        "Filter SRAM Size",
+        "OFMAP SRAM Size",
+        "Conv Layer Num",
+        "DRAM IFMAP Read BW",
+        "DRAM Filter Read BW",
+        "DRAM OFMAP Write BW",
+        "SRAM Read BW",
+        "SRAM OFMAP Write BW"
+    );
+    
+    // setup variables
+    int ifmap_sram_size, filter_sram_size, ofmap_sram_size;
+    std::string partition_index;
+    float dram_ifmap_bw, dram_filter_bw, dram_ofmap_bw,
+          sram_read_bw, sram_write_bw;
+    
+    // iterate over each line
+    while(bw_csv.read_row(ifmap_sram_size, filter_sram_size, ofmap_sram_size, partition_index,
+        dram_ifmap_bw, dram_filter_bw, dram_ofmap_bw, sram_read_bw, sram_write_bw)) {
+
+        // update accelerator bandwidth
+        accelerator_config[std::stoi(partition_index)].bandwidth_in = 
+            (dram_ifmap_bw*platform_config.clk_freq)/1000;
+        accelerator_config[std::stoi(partition_index)].bandwidth_out = 
+            (dram_ofmap_bw*platform_config.clk_freq)/1000;
+
+    }
 
 }
 

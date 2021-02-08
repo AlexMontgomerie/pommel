@@ -64,6 +64,8 @@ def add_power_to_report(output_path):
     for partition in os.listdir(output_path): 
         if not os.path.isdir(os.path.join(output_path,partition)):
             continue
+        if partition == "layer_wise":
+            continue
         report[partition]["in"]["io"]   = parse_cacti_report(os.path.join(output_path,partition,"input_cacti.rpt"))
         report[partition]["in"]["dram"] = parse_dram_power_report(os.path.join(output_path,partition,"input_dram_power.rpt"))
         report[partition]["out"]["io"]   = parse_cacti_report(os.path.join(output_path,partition,"output_cacti.rpt"))

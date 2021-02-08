@@ -107,8 +107,9 @@ int main(int argc, char *argv[]) {
     std::string data_path;
     std::string output_path;
 
-    //
+    // flags
     bool baseline = false;
+    bool use_scale_sim = true;
 
     try {
  
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]) {
         options_description desc("Allowed Options");
         desc.add_options()
         ("help,h", "help message")
+        ("scale-sim", "use SCALE-Sim to get bandwidth estimates")
         ("baseline", "compute baseline power readings (no encoding)")
         ("memory", value(&memory_config_path)->required(), "file path for memory config (.xml)")
         ("encoder", value(&encoder_config_path)->required(), "file path for encoding scheme config (.xml)")
@@ -136,6 +138,10 @@ int main(int argc, char *argv[]) {
             baseline = true;
         }
 
+        if (vm.count("scale-sim")) {
+            use_scale_sim = true;
+        }
+        
         notify(vm);
 
     }
@@ -150,9 +156,30 @@ int main(int argc, char *argv[]) {
     // load configs
     config_inst.load_memory_config(memory_config_path);
     config_inst.load_accelerator_config(accelerator_config_path);
+    config_inst.load_platform_config(accelerator_config_path);
 
     // create a report
     nlohmann::json report;
+
+    // run scale-sim to get bandwidths
+    if ( use_scale_sim ) {
+        
+        //  create platform config
+        std::string scale_sim_config_path   = output_path + "/scale-sim-config.cfg";
+        std::string scale_sim_topology_path = output_path + "/scale-sim-topology.csv";
+        config_inst.generate_scale_sim_config(scale_sim_config_path, output_path);
+        config_inst.generate_scale_sim_topology(featuremap_path, scale_sim_topology_path);
+
+        //  run scale-sim command
+        std::string scale_sim_cmd = "python SCALE-Sim/scale.py";
+        scale_sim_cmd += " -arch_config=" + scale_sim_config_path; 
+        scale_sim_cmd += " -network=" + scale_sim_topology_path; 
+        system( scale_sim_cmd.c_str() );
+
+        // add bandwidth 
+        config_inst.add_scale_sim_bandwidth(output_path + "/scale-sim-topology_avg_bw.csv");
+        
+    }
 
     // iterate over partition for a given accelerator
     for(auto const& partition : config_inst.accelerator_config) { 
@@ -166,12 +193,15 @@ int main(int argc, char *argv[]) {
         float bandwidth_out = std::min( partition_conf.bandwidth_out,config_inst.memory_config.bandwidth);
 
         // get period (clk cycles) for input and output featuremaps
-        int period_in = (int) ((partition_conf.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
+        int period_in = (int) (
+                (config_inst.platform_config.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
                 /(bandwidth_in*8*1000.0));
-        int period_out = (int) ((partition_conf.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
+        int period_out = (int) (
+                (config_inst.platform_config.burst_size*config_inst.memory_config.data_rate*config_inst.memory_config.clock*partition_conf.bitwidth*1.0)
                 /(bandwidth_out*8*1000.0));
 
-        if ( (period_in <= partition_conf.burst_size) || (period_out <= partition_conf.burst_size) ) {
+        if ( (period_in <= config_inst.platform_config.burst_size) || (period_out <= config_inst.platform_config.burst_size) ) {
+            printf("WARNING: bandwidth in or out larger than memory bandwidth\n");
             continue;
         }
 
@@ -182,11 +212,11 @@ int main(int argc, char *argv[]) {
         printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
         printf("---- bitwidth               : %d \n", partition_conf.bitwidth ); 
-        printf("---- clk freq (MHz)         : %d \n", partition_conf.clk_freq ); 
+        printf("---- clk freq (MHz)         : %d \n", config_inst.platform_config.clk_freq ); 
         printf("---- mem bandwidth (GB/s)   : %f \n", config_inst.memory_config.bandwidth ); 
         printf("---- bandwidth in (GB/s)    : %f \n", partition_conf.bandwidth_in ); 
         printf("---- bandwidth out (GB/s)   : %f \n", partition_conf.bandwidth_out ); 
-        printf("---- burst_size             : %d \n", partition_conf.burst_size ); 
+        printf("---- burst_size             : %d \n", config_inst.platform_config.burst_size ); 
         printf("---- period in              : %d \n", period_in ); 
         printf("---- period out             : %d \n", period_out ); 
  
@@ -227,7 +257,7 @@ int main(int argc, char *argv[]) {
 
         // generate the trace
         trace_t trace_input = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
-                partition_conf.burst_size, period_in, partition_conf.bitwidth);
+                config_inst.platform_config.burst_size, period_in, partition_conf.bitwidth);
 
         std::visit([&stream_in=encoded_stream_output_path](auto&& arg){
                 arg.generate_trace(stream_in); }, trace_input);
@@ -240,7 +270,7 @@ int main(int argc, char *argv[]) {
  
         // generate output configs
         config_inst.generate_cacti_config("R",cacti_config_path, partition_conf.bandwidth_in, 
-                data_activity_in, addr_activity_in, ((partition_conf.burst_size)/((float)period_out))); 
+                data_activity_in, addr_activity_in, ((config_inst.platform_config.burst_size)/((float)period_out))); 
 
         /**
          * Output Featuremap
@@ -270,7 +300,7 @@ int main(int argc, char *argv[]) {
 
         // generate the trace
         trace_t trace_output = get_trace_inst(config_inst.memory_config.dram_type, ramulator_config_path, trace_prefix,
-                partition_conf.burst_size, period_out, partition_conf.bitwidth);
+                config_inst.platform_config.burst_size, period_out, partition_conf.bitwidth);
         
         std::visit([&stream_in=encoded_stream_output_path](auto&& arg){
                 arg.generate_trace(stream_in); }, trace_output);
@@ -283,7 +313,7 @@ int main(int argc, char *argv[]) {
  
         // generate output configs
         config_inst.generate_cacti_config("W", cacti_config_path, partition_conf.bandwidth_out, 
-                data_activity_out, addr_activity_out, ((partition_conf.burst_size)/((float)period_out))); 
+                data_activity_out, addr_activity_out, ((config_inst.platform_config.burst_size)/((float)period_out))); 
 
         // activity information
         printf("---- data activity in       : %f \n", data_activity_in); 
