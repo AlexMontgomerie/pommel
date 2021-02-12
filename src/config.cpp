@@ -12,26 +12,26 @@ void config::load_memory_config(std::string config_path) {
     }
  
     // get all memory parameters 
-    memory_config.dram_type       = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
-    memory_config.data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
-    memory_config.num_dq          = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrDQ']").node().attribute("value").as_int();
-    memory_config.banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
-    memory_config.rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
-    memory_config.cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
-    memory_config.rows            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRows']").node().attribute("value").as_int();
-    memory_config.data_rate       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='dataRate']").node().attribute("value").as_int();
-    memory_config.burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
-    memory_config.clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
+    memory.dram_type       = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
+    memory.data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
+    memory.num_dq          = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrDQ']").node().attribute("value").as_int();
+    memory.banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
+    memory.rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
+    memory.cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
+    memory.rows            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRows']").node().attribute("value").as_int();
+    memory.data_rate       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='dataRate']").node().attribute("value").as_int();
+    memory.burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
+    memory.clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
 
     // get other memory parameters
-    memory_config.capacity = (int) (memory_config.banks*memory_config.rank*memory_config.cols*memory_config.rows/memory_config.data_width);
-    memory_config.addr_width = (int) log2( (float) memory_config.capacity );
-    memory_config.bandwidth = ((memory_config.data_rate*memory_config.clock*memory_config.num_dq)/(8*1000.0)); 
+    memory.capacity = (int) (memory.banks*memory.rank*memory.cols*memory.rows/memory.data_width);
+    memory.addr_width = (int) log2( (float) memory.capacity );
+    memory.bandwidth = ((memory.data_rate*memory.clock*memory.num_dq)/(8*1000.0)); 
     
     return;
 }
 
-void config::load_accelerator_config(std::string config_path) {
+void config::load_network_config(std::string config_path) {
     
     // load the memory config file
     pugi::xml_document doc;
@@ -41,8 +41,8 @@ void config::load_accelerator_config(std::string config_path) {
     }
 
     // get accelerator name
-    pugi::xml_node root = doc.select_node("/acceleratorspec/partitions").node();
-    std::string accelerator_name = root.attribute("type").value();
+    pugi::xml_node root = doc.select_node("/networkspec").node();
+    std::string network_name = root.attribute("name").value();
 
     // iterate over partitions
     for( pugi::xml_node partition = root.first_child(); partition; partition = partition.next_sibling() ) {
@@ -51,18 +51,22 @@ void config::load_accelerator_config(std::string config_path) {
         int partition_index = partition.attribute("id").as_int();
 
         // get accelerator configuration
-        accelerator_config_t conf;
-        conf.bitwidth       = partition.select_node("parameter[@id='bitwidth']").node().attribute("value").as_int();
-        conf.kernel_size    = partition.select_node("parameter[@id='kernel_size']").node().attribute("value").as_int();
-        conf.stride         = partition.select_node("parameter[@id='stride']").node().attribute("value").as_int();
-        //conf.bandwidth_in       = partition.select_node("parameter[@id='bandwidth_in']").node().attribute("value").as_float();
-        //conf.bandwidth_out      = partition.select_node("parameter[@id='bandwidth_out']").node().attribute("value").as_float();
-        conf.transform          = partition.select_node("parameter[@id='transform']").node().attribute("value").value();
+        network_config_t conf;
+        conf.kernel_size        = partition.select_node("parameter[@id='kernel_size']").node().attribute("value").as_int();
+        conf.stride             = partition.select_node("parameter[@id='stride']").node().attribute("value").as_int();
         conf.input_featuremap   = partition.select_node("parameter[@id='input_featuremap']").node().attribute("value").value();
         conf.output_featuremap  = partition.select_node("parameter[@id='output_featuremap']").node().attribute("value").value();
         
+        // load bandwidth if it exists
+        if( partition.select_node("parameter[@id='bandwidth_in']") ) {
+            conf.bandwidth_in   = partition.select_node("parameter[@id='bandwidth_in']").node().attribute("value").as_float();
+        }
+        if( partition.select_node("parameter[@id='bandwidth_out']") ) { 
+            conf.bandwidth_out  = partition.select_node("parameter[@id='bandwidth_out']").node().attribute("value").as_float();
+        }
+
         // update accelerator configuration
-        accelerator_config[partition_index] = conf;
+        network[partition_index] = conf;
     }
 
 }
@@ -77,14 +81,16 @@ void config::load_platform_config(std::string config_path) {
     }
  
     // get all platform parameters 
-    platform_config.dataflow        = doc.select_node("/acceleratorspec/platformspec/parameter[@id='dataflow']").node().attribute("value").value();
-    platform_config.array_height    = doc.select_node("/acceleratorspec/platformspec/parameter[@id='array_height']").node().attribute("value").as_int();
-    platform_config.array_width     = doc.select_node("/acceleratorspec/platformspec/parameter[@id='array_width']").node().attribute("value").as_int();
-    platform_config.ifmap_sram_size = doc.select_node("/acceleratorspec/platformspec/parameter[@id='ifmap_sram_size']").node().attribute("value").as_int();
-    platform_config.filter_sram_size= doc.select_node("/acceleratorspec/platformspec/parameter[@id='filter_sram_size']").node().attribute("value").as_int();
-    platform_config.ofmap_sram_size = doc.select_node("/acceleratorspec/platformspec/parameter[@id='ofmap_sram_size']").node().attribute("value").as_int();
-    platform_config.clk_freq        = doc.select_node("/acceleratorspec/platformspec/parameter[@id='clk_freq']").node().attribute("value").as_int();
-    platform_config.burst_size      = doc.select_node("/acceleratorspec/platformspec/parameter[@id='burst_size']").node().attribute("value").as_int();
+    platform.dataflow        = doc.select_node("/acceleratorspec/parameter[@id='dataflow']").node().attribute("value").value();
+    platform.array_height    = doc.select_node("/acceleratorspec/parameter[@id='array_height']").node().attribute("value").as_int();
+    platform.array_width     = doc.select_node("/acceleratorspec/parameter[@id='array_width']").node().attribute("value").as_int();
+    platform.ifmap_sram_size = doc.select_node("/acceleratorspec/parameter[@id='ifmap_sram_size']").node().attribute("value").as_int();
+    platform.filter_sram_size= doc.select_node("/acceleratorspec/parameter[@id='filter_sram_size']").node().attribute("value").as_int();
+    platform.ofmap_sram_size = doc.select_node("/acceleratorspec/parameter[@id='ofmap_sram_size']").node().attribute("value").as_int();
+    platform.clk_freq        = doc.select_node("/acceleratorspec/parameter[@id='clk_freq']").node().attribute("value").as_int();
+    platform.burst_size      = doc.select_node("/acceleratorspec/parameter[@id='burst_size']").node().attribute("value").as_int();
+    platform.bitwidth        = doc.select_node("/acceleratorspec/parameter[@id='bitwidth']").node().attribute("value").as_int();
+    platform.transform       = doc.select_node("/acceleratorspec/parameter[@id='transform']").node().attribute("value").value();
     
     return;
 
@@ -96,11 +102,11 @@ void config::generate_ramulator_config(std::string config_path) {
     ctemplate::TemplateDictionary dict("ramulator_config");
 
     // add config
-    dict.SetValue("STANDARD", memory_config.dram_type);
-    dict.SetValue("CHANNELS", "4");
-    dict.SetFormattedValue("RANKS", "%d", memory_config.rank);
-    dict.SetFormattedValue("SPEED", "%s_%dK",memory_config.dram_type.c_str(), memory_config.clock); 
-    dict.SetFormattedValue("ORG", "%s_%dGb_x%d", memory_config.dram_type.c_str(),(int) memory_config.capacity/8589934592, memory_config.data_width);
+    dict.SetValue("STANDARD", memory.dram_type);
+    dict.SetValue("CHANNELS", "1");
+    dict.SetFormattedValue("RANKS", "%d", memory.rank);
+    dict.SetFormattedValue("SPEED", "%s_%dK",memory.dram_type.c_str(), memory.clock); 
+    dict.SetFormattedValue("ORG", "%s_%dGb_x%d", memory.dram_type.c_str(),(int) memory.capacity/8589934592, memory.data_width);
 
     // save to file
     std::string config_out;
@@ -119,16 +125,16 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
 
     // convert DRAMPower config to cacti config
     // DRAM TYPE
-    if ( memory_config.dram_type == "DDR3" ) {
+    if ( memory.dram_type == "DDR3" ) {
         dict.SetValue("DRAM_TYPE", "D");
         dict.SetValue("ADDR_TIMING", "1.0"); 
-    } else if ( memory_config.dram_type == "LPDDR2" ) {
+    } else if ( memory.dram_type == "LPDDR2" ) {
         dict.SetValue("DRAM_TYPE", "L");
         dict.SetValue("ADDR_TIMING", "0.5"); 
-    } else if ( memory_config.dram_type == "LPDDR3" ) {
+    } else if ( memory.dram_type == "LPDDR3" ) {
         dict.SetValue("DRAM_TYPE", "L");
         dict.SetValue("ADDR_TIMING", "0.5"); 
-    } else if ( memory_config.dram_type == "WIDEIO_SDR" ) {
+    } else if ( memory.dram_type == "WIDEIO_SDR" ) {
         dict.SetValue("DRAM_TYPE", "W");
         dict.SetValue("ADDR_TIMING", "1.0"); 
     } else {
@@ -136,18 +142,18 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
     }
 
     dict.SetValue("IO_STATE", direction); 
-    dict.SetFormattedValue("BUS_BW", "%.4f", memory_config.bandwidth);
-    dict.SetFormattedValue("MEM_DENSITY", "%d", memory_config.capacity/(1000000*memory_config.banks*memory_config.rank)); 
-    dict.SetFormattedValue("BUS_FREQ", "%d", memory_config.clock); 
+    dict.SetFormattedValue("BUS_BW", "%.4f", memory.bandwidth);
+    dict.SetFormattedValue("MEM_DENSITY", "%d", memory.capacity/(1000000*memory.banks*memory.rank)); 
+    dict.SetFormattedValue("BUS_FREQ", "%d", memory.clock); 
     dict.SetFormattedValue("DUTY_CYCLE", "%.4f", duty_cycle); 
     dict.SetFormattedValue("ACTIVITY_DQ", "%.4f", data_activity);
     dict.SetFormattedValue("ACTIVITY_CA", "%.4f", address_activity);
-    dict.SetFormattedValue("NUM_DQ", "%d", memory_config.num_dq); 
-    dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory_config.num_dq/8)); // maybe x2 ?
-    dict.SetFormattedValue("NUM_CA", "%d", memory_config.addr_width);
+    dict.SetFormattedValue("NUM_DQ", "%d", memory.num_dq); 
+    dict.SetFormattedValue("NUM_DQS", "%d", (int)(2*memory.num_dq/8)); // maybe x2 ?
+    dict.SetFormattedValue("NUM_CA", "%d", memory.addr_width);
     dict.SetFormattedValue("NUM_CLK", "%d", 2);
-    dict.SetFormattedValue("NUM_MEM_DQ", "%d", memory_config.rank); 
-    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory_config.data_width);
+    dict.SetFormattedValue("NUM_MEM_DQ", "%d", memory.rank); 
+    dict.SetFormattedValue("MEM_DATA_WIDTH", "%d", memory.data_width);
     
     std::string cacti_config_out;
     ctemplate::ExpandTemplate("templates/cacti_template.tpl", 
@@ -166,15 +172,15 @@ void config::generate_scale_sim_config(std::string config_path, std::string outp
     // add config
     std::string test_name = "../" + output_path;
     dict.SetValue("run_name", test_name.c_str());
-    dict.SetFormattedValue("array_height", "%d", platform_config.array_height);
-    dict.SetFormattedValue("array_width" , "%d", platform_config.array_width); 
-    dict.SetFormattedValue("ifmap_sram_size"  , "%d", platform_config.ifmap_sram_size); 
-    dict.SetFormattedValue("filter_sram_size" , "%d", platform_config.filter_sram_size); 
-    dict.SetFormattedValue("ofmap_sram_size"  , "%d", platform_config.ofmap_sram_size); 
-    dict.SetFormattedValue("ifmap_offset"  , "%d", platform_config.ifmap_offset); 
-    dict.SetFormattedValue("filter_offset" , "%d", platform_config.filter_offset); 
-    dict.SetFormattedValue("ofmap_offset"  , "%d", platform_config.ofmap_offset); 
-    dict.SetValue("dataflow", platform_config.dataflow);
+    dict.SetFormattedValue("array_height", "%d", platform.array_height);
+    dict.SetFormattedValue("array_width" , "%d", platform.array_width); 
+    dict.SetFormattedValue("ifmap_sram_size"  , "%d", platform.ifmap_sram_size); 
+    dict.SetFormattedValue("filter_sram_size" , "%d", platform.filter_sram_size); 
+    dict.SetFormattedValue("ofmap_sram_size"  , "%d", platform.ofmap_sram_size); 
+    dict.SetFormattedValue("ifmap_offset"  , "%d", platform.ifmap_offset); 
+    dict.SetFormattedValue("filter_offset" , "%d", platform.filter_offset); 
+    dict.SetFormattedValue("ofmap_offset"  , "%d", platform.ofmap_offset); 
+    dict.SetValue("dataflow", platform.dataflow);
 
     // save to file
     std::string config_out;
@@ -192,10 +198,10 @@ void config::generate_scale_sim_topology(std::string featuremap_path, std::strin
     std::string topology_csv = "Layer name, IFMAP Height, IFMAP Width, Filter Height, Filter Width, Channels, Num Filter, Strides,\n";
 
     // iterate over the partitions
-    for(auto const& partition : accelerator_config) {
+    for(auto const& partition : network) {
 
         // get accelerator configuration        
-        pommel::accelerator_config_t partition_conf = partition.second;
+        pommel::network_config_t partition_conf = partition.second;
         
         // get input and output featuremap
         pommel::featuremap featuremap_in(featuremap_path, partition_conf.input_featuremap);    
@@ -247,10 +253,10 @@ void config::add_scale_sim_bandwidth(std::string report_path) {
         dram_ifmap_bw, dram_filter_bw, dram_ofmap_bw, sram_read_bw, sram_write_bw)) {
 
         // update accelerator bandwidth
-        accelerator_config[std::stoi(partition_index)].bandwidth_in = 
-            (dram_ifmap_bw*platform_config.clk_freq)/1000;
-        accelerator_config[std::stoi(partition_index)].bandwidth_out = 
-            (dram_ofmap_bw*platform_config.clk_freq)/1000;
+        network[std::stoi(partition_index)].bandwidth_in = 
+            (dram_ifmap_bw*platform.clk_freq)/1000;
+        network[std::stoi(partition_index)].bandwidth_out = 
+            (dram_ofmap_bw*platform.clk_freq)/1000;
 
     }
 

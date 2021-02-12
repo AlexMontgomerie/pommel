@@ -56,17 +56,16 @@ typedef struct {
 } memory_config_t;
 
 typedef struct {
-    int bitwidth;
     int kernel_size;
     int stride;
     float bandwidth_in;
     float bandwidth_out;
-    std::string transform;
     std::string input_featuremap;
     std::string output_featuremap;
-} accelerator_config_t;
+} network_config_t;
 
 typedef struct {
+    int bitwidth;
     int burst_size;
     int clk_freq;
     int array_height;
@@ -78,23 +77,24 @@ typedef struct {
     int filter_offset = 10000000;
     int ofmap_offset = 20000000;
     std::string dataflow;
+    std::string transform;
 } platform_config_t;
 
 class config {
     public:
 
         // memory config type
-        memory_config_t memory_config;
+        memory_config_t memory;
 
         // memory config type
-        platform_config_t platform_config;
+        platform_config_t platform;
 
         // accelerator config type
-        std::map<int, accelerator_config_t> accelerator_config;
+        std::map<int, network_config_t> network;
 
         // load config functions
         void load_memory_config(std::string config_path);
-        void load_accelerator_config(std::string config_path);
+        void load_network_config(std::string config_path);
         void load_platform_config(std::string config_path);
 
         // generate config functions

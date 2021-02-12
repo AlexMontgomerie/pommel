@@ -6,8 +6,9 @@ DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 memory_config=$1
 featuremap_path=$2
 encoder_config=$3
-accelerator_config=$4
-output_path=$5
+network_config=$4
+accelerator_config=$5
+output_path=$6
 
 # run silence
 ./bin/main \
@@ -15,6 +16,7 @@ output_path=$5
     --memory $memory_config \
     --featuremap $featuremap_path \
     --encoder $encoder_config \
+    --network $network_config \
     --accelerator $accelerator_config \
     --output $output_path
 
