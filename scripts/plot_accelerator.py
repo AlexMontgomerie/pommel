@@ -4,7 +4,7 @@ import numpy as np
 from scipy.interpolate import griddata
 
 # load report
-with open("outputs/eyeriss_alexnet/report.json", "r") as f:
+with open("outputs/scnn_mobilenet_v2_ddr3/report.json", "r") as f:
     report = json.load(f)
 
 activity_in = []

@@ -12,7 +12,6 @@ output_path=$6
 
 # run silence
 ./bin/main \
-    --baseline \
     --memory $memory_config \
     --featuremap $featuremap_path \
     --encoder $encoder_config \

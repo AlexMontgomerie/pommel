@@ -22,23 +22,30 @@ def get_dimensions(featuremaps):
     # return dimensions
     return dimensions
 
+def add_baseline_parameters(root, layer, platform_info, featuremaps):
+    # add bitwidth
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","null")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value","0")
+    layer.appendChild(parameter)
 
-def add_bi_parameters(root, layer, partition_info, featuremaps):
+def add_bi_parameters(root, layer, platform_info, featuremaps):
     # add bitwidth
     parameter = root.createElement('parameter')
     parameter.setAttribute("id","bitwidth")
     parameter.setAttribute("type","int")
-    parameter.setAttribute("value",partition_info["bitwidth"])
+    parameter.setAttribute("value",platform_info["bitwidth"])
     layer.appendChild(parameter)
 
-def add_def_parameters(root, layer, partition_info, featuremaps):
+def add_def_parameters(root, layer, platform_info, featuremaps):
     # get featuremap dimensions
     dimensions = get_dimensions(featuremaps)
     # add bitwidth
     parameter = root.createElement('parameter')
     parameter.setAttribute("id","bitwidth")
     parameter.setAttribute("type","int")
-    parameter.setAttribute("value",partition_info["bitwidth"])
+    parameter.setAttribute("value",platform_info["bitwidth"])
     layer.appendChild(parameter)
     # add distance
     parameter = root.createElement('parameter')
@@ -47,7 +54,7 @@ def add_def_parameters(root, layer, partition_info, featuremaps):
     parameter.setAttribute("value",str(dimensions[layer.getAttribute("id")][1]))
     layer.appendChild(parameter)
 
-def generate_encoder_config(encoder, accelerator_config_path, featuremaps_path, output_path):
+def generate_encoder_config(encoder, accelerator_config_path, network_config_path, featuremaps_path, output_path):
     # create encoder config
     root = minidom.Document()
     encoderspec = root.createElement("encoderspec")
@@ -55,37 +62,51 @@ def generate_encoder_config(encoder, accelerator_config_path, featuremaps_path, 
     root.appendChild(encoderspec)
     # load accelerator config
     accelerator_config = untangle.parse(accelerator_config_path)
+    platform_info = {}
+    for parameter in accelerator_config.acceleratorspec.parameter:
+        platform_info[parameter["id"]] = parameter["value"]
+    print(platform_info)
+    # load network config
+    network_config =  untangle.parse(network_config_path)
     # load featuremaps
     featuremaps = dd.io.load(featuremaps_path)
     # iterate over partitions of the accelerator
     featuremaps_done = []
-    for partition in accelerator_config.acceleratorspec.partition:
-        # iterate over parameters in partition
-        partition_info = {}
+    for partition in network_config.networkspec.partition:
+        # get featuremaps
+        input_featuremap    = ""
+        output_featuremap   = ""
         for parameter in partition.parameter:
-            partition_info[parameter["id"]] = parameter["value"]
+            if parameter["id"] == "input_featuremap":
+                input_featuremap = parameter["value"]            
+            if parameter["id"] == "output_featuremap":
+                output_featuremap = parameter["value"]
         # add partition input featuremap to encoder spec
-        if partition_info["input_featuremap"] not in featuremaps_done:
-            featuremaps_done.append(partition_info["input_featuremap"])
+        if input_featuremap not in featuremaps_done:
+            featuremaps_done.append(input_featuremap)
             layer = root.createElement("layer")
-            layer.setAttribute("id", partition_info["input_featuremap"])
+            layer.setAttribute("id", input_featuremap)
             # add info for encoding scheme
+            if encoder == "baseline":
+                add_baseline_parameters(root, layer, platform_info, featuremaps)
             if encoder == "bi":
-                add_bi_parameters(root, layer, partition_info, featuremaps)
+                add_bi_parameters(root, layer, platform_info, featuremaps)
             if encoder == "def":
-                add_def_parameters(root, layer, partition_info, featuremaps)
+                add_def_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
         # add partition output featuremap to encoder spec
-        if partition_info["output_featuremap"] not in featuremaps_done:
-            featuremaps_done.append(partition_info["output_featuremap"])
+        if output_featuremap not in featuremaps_done:
+            featuremaps_done.append(output_featuremap)
             layer = root.createElement("layer")
-            layer.setAttribute("id", partition_info["output_featuremap"])
+            layer.setAttribute("id", output_featuremap)
             # add info for encoding scheme
+            if encoder == "baseline":
+                add_baseline_parameters(root, layer, platform_info, featuremaps)
             if encoder == "bi":
-                add_bi_parameters(root, layer, partition_info, featuremaps)
+                add_bi_parameters(root, layer, platform_info, featuremaps)
             if encoder == "def":
-                add_def_parameters(root, layer, partition_info, featuremaps)
+                add_def_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
     # save encoder config
@@ -96,10 +117,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Encoder Config Generator Script")
     parser.add_argument("-e","--encoder",required=True, help="encoder name (def,bi,awr,abe,huffman,rle,pbm)")
     parser.add_argument("-a","--accelerator_config_path",required=True, help="accelerator config path (.xml)")
+    parser.add_argument("-n","--network_config_path",required=True, help="network config path (.xml)")
     parser.add_argument("-f","--featuremaps_path",required=True, help="featuremaps path (.h5)")
     parser.add_argument("-o","--output_path",required=True, help="output path (.xml)")
 
     args = parser.parse_args()
-    generate_encoder_config(args.encoder,args.accelerator_config_path,args.featuremaps_path,args.output_path) 
+    generate_encoder_config(
+            args.encoder,
+            args.accelerator_config_path,
+            args.network_config_path,
+            args.featuremaps_path,
+            args.output_path
+    ) 
 
-    #generate_encoder_config("def","config/accelerator/fpgaconvnet.xml","data/test.h5","config/test_encoder.xml") 

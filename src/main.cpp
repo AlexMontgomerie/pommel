@@ -182,6 +182,9 @@ int main(int argc, char *argv[]) {
         
     }
 
+    // get the data packing factor
+    int data_packing_factor = (int) (config_inst.memory.num_dq/config_inst.platform.bitwidth);
+
     // iterate over partition for a given accelerator
     for( auto const& partition : config_inst.network ) { 
 
@@ -190,16 +193,12 @@ int main(int argc, char *argv[]) {
         pommel::network_config_t partition_conf = partition.second;
       
         // find the actual bandwidth in and out
-        float bandwidth_in = std::min( partition_conf.bandwidth_in,config_inst.memory.bandwidth);
-        float bandwidth_out = std::min( partition_conf.bandwidth_out,config_inst.memory.bandwidth);
+        float bandwidth_in = std::min( partition_conf.bandwidth_in, config_inst.memory.bandwidth );
+        float bandwidth_out = std::min( partition_conf.bandwidth_out, config_inst.memory.bandwidth );
 
         // get period (clk cycles) for input and output featuremaps
-        int period_in = (int) (
-                (config_inst.platform.burst_size*config_inst.memory.data_rate*config_inst.memory.clock*config_inst.platform.bitwidth*1.0)
-                /(bandwidth_in*8*1000.0));
-        int period_out = (int) (
-                (config_inst.platform.burst_size*config_inst.memory.data_rate*config_inst.memory.clock*config_inst.platform.bitwidth*1.0)
-                /(bandwidth_out*8*1000.0));
+        int period_in   = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_in );
+        int period_out  = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_out );
 
         if ( period_in <= config_inst.platform.burst_size ) {
             printf("WARNING: bandwidth in larger than memory bandwidth\n");
@@ -250,7 +249,8 @@ int main(int argc, char *argv[]) {
  
         //  load the featuremap
         pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
-        featuremap_input.generate_stream(stream_output_path, config_inst.platform.transform);
+        featuremap_input.generate_stream(stream_output_path, config_inst.platform.transform, 
+                config_inst.platform.bitwidth, data_packing_factor);
 
         //  encode featuremap
         if(!baseline) {
@@ -293,7 +293,8 @@ int main(int argc, char *argv[]) {
  
         // load the featuremap
         pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
-        featuremap_output.generate_stream(stream_output_path, config_inst.platform.transform);
+        featuremap_output.generate_stream(stream_output_path, config_inst.platform.transform,
+                config_inst.platform.bitwidth, data_packing_factor);
 
         // encode featuremap
         if(!baseline) {
