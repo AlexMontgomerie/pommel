@@ -3,6 +3,8 @@
 
 #include "coding_scheme.hpp"
 
+namespace pommel {
+
 class def: public coding_scheme {
     protected:
         unsigned int channels;    
@@ -12,9 +14,11 @@ class def: public coding_scheme {
         void diff_decoder(std::istream &in, std::ostream &out);
 
     public:
-        def(unsigned int bitwidth, unsigned int channels);
+        def(platform_config_t platform, unsigned int channels);
         void encoder(std::istream &in, std::ostream &out);
         void decoder(std::istream &in, std::ostream &out);
 };
+
+}
 
 #endif

@@ -1,9 +1,11 @@
 #include "coding_schemes/awr.hpp"
 
+namespace pommel {
+
 void awr::encoder(std::istream &in, std::ostream &out) {
    
     // mask
-    uint32_t mask = (1<<bitwidth)-1;
+    uint32_t mask = (1<<platform.bitwidth)-1;
 
     // value buffer
     uint32_t val;
@@ -53,10 +55,12 @@ void awr::encoder(std::istream &in, std::ostream &out) {
             }
 
             // transmit value along with index
-            out << ( val | (sc_idx << bitwidth) ) << std::endl;
+            out << ( val | (sc_idx << platform.bitwidth) ) << std::endl;
 
         }            
     }
 }
 
-awr::awr(unsigned int bitwidth, unsigned int N) : coding_scheme(bitwidth), N(N){}
+awr::awr(platform_config_t platform, unsigned int N) : coding_scheme(platform), N(N){}
+
+}

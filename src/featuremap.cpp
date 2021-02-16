@@ -10,9 +10,9 @@ int featuremap::get_size(void) {
  * Transforms
  */
 
-std::vector<uint64_t> featuremap::channel_major_transform(std::vector<uint64_t> data_in) {
+std::vector<int32_t> featuremap::channel_major_transform(std::vector<int32_t> data_in) {
     
-    std::vector<uint64_t> data_out;
+    std::vector<int32_t> data_out;
 
     for(int i=0;i<batch_size;i++) {
         for(int j=0;j<height;j++) {
@@ -33,9 +33,9 @@ std::vector<uint64_t> featuremap::channel_major_transform(std::vector<uint64_t> 
     return data_out;
 }
 
-std::vector<uint64_t> featuremap::row_major_transform(std::vector<uint64_t> data_in) {
+std::vector<int32_t> featuremap::row_major_transform(std::vector<int32_t> data_in) {
     
-    std::vector<uint64_t> data_out;
+    std::vector<int32_t> data_out;
 
     for(int i=0;i<batch_size;i++) {
         for(int l=0;l<channels;l++) {
@@ -58,12 +58,15 @@ std::vector<uint64_t> featuremap::row_major_transform(std::vector<uint64_t> data
 void featuremap::generate_stream(std::string data_path, std::string transform, int bitwidth, int data_packing_factor) {
 
     // get transformed data 
-    std::vector<uint64_t> transformed_data;
+    std::vector<int32_t> transformed_data;
     if(transform == "channel-major") {
         transformed_data = channel_major_transform(data);
     } else if(transform == "row-major") {
         transformed_data = row_major_transform(data);
     }
+
+    // get mask for bitwidth
+    uint32_t bitmask = (1<<bitwidth)-1;
 
     // save to a .dat file
     std::ofstream datafile(data_path);
@@ -71,10 +74,10 @@ void featuremap::generate_stream(std::string data_path, std::string transform, i
     uint64_t val = 0;
     for(auto const& value: transformed_data) {
         i++;
-        val |= value << bitwidth*j;
+        val |= (value & bitmask) << bitwidth*j;
         j = (j+1)%data_packing_factor;
         if(j==0) {
-            datafile << boost::format("%i %c %i\n") % i % 'R' % val;
+            datafile << boost::format("%i %c %ld\n") % i % 'R' % val;
             val = 0;
         }
     }
@@ -112,7 +115,7 @@ featuremap::featuremap(std::string featuremap_path, std::string layer_name) : fe
 
     // get featuremap
     featuremap_size = get_size();
-    uint64_t* tmp = new uint64_t[featuremap_size];
+    int32_t* tmp = new int32_t[featuremap_size];
     layer.read(tmp);
 
     // convert to vector

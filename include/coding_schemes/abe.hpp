@@ -3,15 +3,19 @@
 
 #include "coding_scheme.hpp"
 
+namespace pommel {
+
 class abe: public coding_scheme {
     protected:
         unsigned int channels;    
         unsigned int window_size;    
 
     public:
-        abe(unsigned int bitwidth, unsigned int window_size);
+        abe(platform_config_t platform, unsigned int window_size);
         void encoder(std::istream &in, std::ostream &out);
         void decoder(std::istream &in, std::ostream &out);
 };
+
+}
 
 #endif

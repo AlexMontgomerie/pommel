@@ -3,7 +3,7 @@
 namespace pommel {
 
 template<>
-encoder<def>::encoder(std::string config_path, std::string featuremap, int bitwidth) {
+encoder<def>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
 
     // load config
     pugi::xml_document doc;
@@ -20,39 +20,47 @@ encoder<def>::encoder(std::string config_path, std::string featuremap, int bitwi
     int distance = layer.select_node("parameter[@id='distance']").node().attribute("value").as_int();
     
     // initialise the coding scheme
-    coder = new def(bitwidth, distance);
+    coder = new def(platform, distance);
 
 }
 
 template<>
-encoder<bi>::encoder(std::string config_path, std::string featuremap, int bitwidth) {
+encoder<bi>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
 
     // initialise the coding scheme
-    coder = new bi(bitwidth);
+    coder = new bi(platform);
 
 }
 
 template<>
-encoder<awr>::encoder(std::string config_path, std::string featuremap, int bitwidth) {
+encoder<awr>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
 
     // initialise the coding scheme
-    coder = new awr(bitwidth, 4);
+    coder = new awr(platform, 4); // TODO
 
 }
 
 template<>
-encoder<abe>::encoder(std::string config_path, std::string featuremap, int bitwidth) {
+encoder<abe>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
 
     // initialise the coding scheme
-    coder = new abe(bitwidth, 32);
+    coder = new abe(platform, 32); //TODO
 
 }
 
 template<>
-encoder<pbm>::encoder(std::string config_path, std::string featuremap, int bitwidth) {
+encoder<pbm>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
 
     // initialise the coding scheme
-    coder = new pbm(bitwidth);
+    coder = new pbm(platform);
+
+}
+
+template<>
+encoder<rle>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+
+    // initialise the coding scheme
+    coder = new rle(platform,((-128)&0xFF));
 
 }
 

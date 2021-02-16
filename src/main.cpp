@@ -20,12 +20,12 @@ using namespace boost::program_options;
 #include "coding_schemes/rle.hpp"
 
 using encoder_t = std::variant<
-    pommel::encoder<bi>,
-    pommel::encoder<def>,
-    pommel::encoder<awr>,
-    pommel::encoder<abe>,
-    pommel::encoder<pbm>,
-    pommel::encoder<rle>
+    pommel::encoder<pommel::bi>,
+    pommel::encoder<pommel::def>,
+    pommel::encoder<pommel::awr>,
+    pommel::encoder<pommel::abe>,
+    pommel::encoder<pommel::pbm>,
+    pommel::encoder<pommel::rle>
 >;
 
 using trace_t = std::variant<
@@ -45,24 +45,24 @@ std::string get_encoder_type(std::string config_path) {
     return doc.select_node("/encoderspec").node().attribute("type").value();
  }
 
-encoder_t get_encoder_inst(std::string config_path, std::string featuremap, int bitwidth) {
+encoder_t get_encoder_inst(std::string config_path, std::string featuremap, pommel::platform_config_t platform) {
 
     // get the encoder type
     std::string encoder_type = get_encoder_type(config_path);
 
     // get encoder
-    if( encoder_type == "bi" ) {    
-        return pommel::encoder<bi>(config_path, featuremap, bitwidth);
+    if( encoder_type == "bi" ) {
+        return pommel::encoder<pommel::bi>(config_path, featuremap, platform);
     } else if( encoder_type == "def" ) {    
-        return pommel::encoder<def>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pommel::def>(config_path, featuremap, platform);
     } else if( encoder_type == "awr" ) {    
-        return pommel::encoder<awr>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pommel::awr>(config_path, featuremap, platform);
     } else if( encoder_type == "abe" ) {    
-        return pommel::encoder<abe>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pommel::abe>(config_path, featuremap, platform);
     } else if( encoder_type == "pbm" ) {    
-        return pommel::encoder<pbm>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pommel::pbm>(config_path, featuremap, platform);
     } else if( encoder_type == "rle" ) {    
-        return pommel::encoder<def>(config_path, featuremap, bitwidth);
+        return pommel::encoder<pommel::rle>(config_path, featuremap, platform);
     //} else if( encoder_type == "huffman" ) {    
     //    return pommel::encoder<huffman>(config_path, featuremap, bitwidth);
     } else {
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 
     // flags
     bool baseline = false;
-    bool use_scale_sim = true;
+    bool use_scale_sim = false;
 
     try {
  
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
     }
 
     // get the data packing factor
-    int data_packing_factor = (int) (config_inst.memory.num_dq/config_inst.platform.bitwidth);
+    config_inst.platform.packing_factor = (int) (config_inst.memory.num_dq/config_inst.platform.bitwidth);
 
     // iterate over partition for a given accelerator
     for( auto const& partition : config_inst.network ) { 
@@ -213,7 +213,9 @@ int main(int argc, char *argv[]) {
         // TODO: scale memory clock speed to match input bandwidth
 
         // print debug information
+        std::string encoding_scheme_type = get_encoder_type(encoder_config_path);
         printf("Running Partition %s of fpgaconvnet\n", partition_index.c_str() );
+        printf("Encoding Scheme: %s\n", encoding_scheme_type.c_str() );
         printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
         printf("---- bitwidth               : %d \n", config_inst.platform.bitwidth ); 
@@ -250,16 +252,22 @@ int main(int argc, char *argv[]) {
         //  load the featuremap
         pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
         featuremap_input.generate_stream(stream_output_path, config_inst.platform.transform, 
-                config_inst.platform.bitwidth, data_packing_factor);
+                config_inst.platform.bitwidth, config_inst.platform.packing_factor);
+
+        // get activity and statistics for baseline trace
+        pommel::analysis analysis_input_baseline(stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
 
         //  encode featuremap
         if(!baseline) {
-            encoder_t encoder_input = get_encoder_inst(encoder_config_path, partition_conf.input_featuremap, config_inst.platform.bitwidth);
+            encoder_t encoder_input = get_encoder_inst(encoder_config_path, partition_conf.input_featuremap, config_inst.platform);
             std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
                     arg.encode_stream(stream_in, stream_out); }, encoder_input);
         } else {
             encoded_stream_output_path = stream_output_path;
         }
+
+        // get activity and statistics for trace
+        pommel::analysis analysis_input(encoded_stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
 
         // generate the trace
         trace_t trace_input = get_trace_inst(config_inst.memory.dram_type, ramulator_config_path, trace_prefix,
@@ -268,11 +276,9 @@ int main(int argc, char *argv[]) {
         std::visit([&stream_in=encoded_stream_output_path](auto&& arg){
                 arg.generate_trace(stream_in); }, trace_input);
 
-        // get activity and statistics for trace
-        pommel::analysis analysis_input(encoded_stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
-
         float data_activity_in = analysis_input.get_data_activity();
         float addr_activity_in = analysis_input.get_addr_activity();
+        float compression_ratio_in = analysis_input_baseline.get_total_samples()/analysis_input.get_total_samples();
  
         // generate output configs
         config_inst.generate_cacti_config("R",cacti_config_path, partition_conf.bandwidth_in, 
@@ -294,11 +300,14 @@ int main(int argc, char *argv[]) {
         // load the featuremap
         pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
         featuremap_output.generate_stream(stream_output_path, config_inst.platform.transform,
-                config_inst.platform.bitwidth, data_packing_factor);
+                config_inst.platform.bitwidth, config_inst.platform.packing_factor);
+
+        // get activity and statistics for baseline trace
+        pommel::analysis analysis_output_baseline(stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
 
         // encode featuremap
         if(!baseline) {
-            encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, config_inst.platform.bitwidth);
+            encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, config_inst.platform);
             std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
                     arg.encode_stream(stream_in, stream_out); }, encoder_output);
         } else {
@@ -317,7 +326,8 @@ int main(int argc, char *argv[]) {
 
         float data_activity_out = analysis_output.get_data_activity();
         float addr_activity_out = analysis_output.get_addr_activity();
- 
+        float compression_ratio_out = analysis_output_baseline.get_total_samples()/analysis_output.get_total_samples();
+
         // generate output configs
         config_inst.generate_cacti_config("W", cacti_config_path, partition_conf.bandwidth_out, 
                 data_activity_out, addr_activity_out, ((config_inst.platform.burst_size)/((float)period_out))); 
@@ -327,6 +337,8 @@ int main(int argc, char *argv[]) {
         printf("---- data activity out      : %f \n", data_activity_out); 
         printf("---- address activity in    : %f \n", addr_activity_in); 
         printf("---- address activity out   : %f \n", addr_activity_out); 
+        printf("---- compression ratio in   : %f \n", compression_ratio_in); 
+        printf("---- compression ratio out  : %f \n", compression_ratio_out); 
 
         // add report information
         report[partition_index.c_str()]["in"] = { 

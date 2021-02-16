@@ -1,19 +1,21 @@
 #include "coding_schemes/def.hpp"
 
+namespace pommel {
+
 int def::int_to_smint(int in) {
 
   // mask
-  uint32_t val_mask = (1 << bitwidth) - 1;
-  uint32_t sign_mask = (1 << (bitwidth - 1));
+  uint32_t val_mask = (1 << platform.bitwidth) - 1;
+  uint32_t sign_mask = (1 << (platform.bitwidth - 1));
 
-  uint32_t sign = ((in & sign_mask) >> (bitwidth - 1)) & 1;
+  uint32_t sign = ((in & sign_mask) >> (platform.bitwidth - 1)) & 1;
   uint32_t val = ((in & val_mask));
 
   if (sign && (val != 0)) {
     val = (~val & val_mask) + 1;
   }
 
-  return (val & val_mask) | (sign << (bitwidth - 1));
+  return (val & val_mask) | (sign << (platform.bitwidth - 1));
 }
 
 void def::diff_encoder(std::istream &in, std::ostream &out) {
@@ -50,4 +52,6 @@ void def::encoder(std::istream &in, std::ostream &out) {
     decorrelator(buf, out);
 }
 
-def::def(unsigned int bitwidth, unsigned int channels) : coding_scheme(bitwidth), channels(channels){}
+def::def(platform_config_t platform, unsigned int channels) : coding_scheme(platform), channels(channels){}
+
+}

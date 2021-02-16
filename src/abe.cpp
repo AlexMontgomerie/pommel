@@ -1,18 +1,20 @@
 #include "coding_schemes/abe.hpp"
 
+namespace pommel {
+
 void abe::encoder(std::istream &in, std::ostream &out) {
     // mask
-    uint32_t mask = (1<<bitwidth)-1;
+    uint32_t mask = (1<<platform.bitwidth)-1;
     
     // caches
     uint32_t window_cache[window_size];
     uint32_t window_transitions[window_size-1];
-    uint32_t savings_cache[bitwidth];
+    uint32_t savings_cache[platform.bitwidth];
 
     while( in.peek() != EOF ) {
         // clusters and savings
-        std::vector<int> clusters[bitwidth];
-        float savings[bitwidth];
+        std::vector<int> clusters[platform.bitwidth];
+        float savings[platform.bitwidth];
 
         // load in window cache
         for(int w=0;w<window_size;w++) {
@@ -30,10 +32,10 @@ void abe::encoder(std::istream &in, std::ostream &out) {
         }
 
         // iterate over each busline
-        for(int i=0;i<bitwidth;i++) {
-            int combined_transitions[bitwidth];
+        for(int i=0;i<platform.bitwidth;i++) {
+            int combined_transitions[platform.bitwidth];
             savings[i] = 0;
-            for(int j=0;j<bitwidth;j++) {
+            for(int j=0;j<platform.bitwidth;j++) {
                 // initialise combined transitions
                 combined_transitions[j] = 0;
                 // skip identical line
@@ -55,7 +57,7 @@ void abe::encoder(std::istream &in, std::ostream &out) {
 
         // find argmax of clusters
         int basis = 0;
-        for(int i=0;i<bitwidth;i++) {
+        for(int i=0;i<platform.bitwidth;i++) {
             if(savings[i] > savings[basis]) {
                 basis = i;
             }
@@ -70,7 +72,7 @@ void abe::encoder(std::istream &in, std::ostream &out) {
         
         // send to stdout
         for(int w=0;w<window_size;w++) {
-            out << (window_cache[w]|(1<<bitwidth)) << std::endl; 
+            out << (window_cache[w]|(1<<platform.bitwidth)) << std::endl; 
         }
         
         // add end of frame
@@ -78,4 +80,6 @@ void abe::encoder(std::istream &in, std::ostream &out) {
     }
 }
 
-abe::abe(unsigned int bitwidth, unsigned int window_size) : coding_scheme(bitwidth), window_size(window_size){}
+abe::abe(platform_config_t platform, unsigned int window_size) : coding_scheme(platform), window_size(window_size){}
+
+}

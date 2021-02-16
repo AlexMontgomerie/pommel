@@ -21,7 +21,7 @@ class encoder {
     protected:
         T * coder;
     public:
-        encoder(std::string config_path, std::string featuremap, int bitwidth);
+        encoder(std::string config_path, std::string featuremap, platform_config_t platform);
 
         void encode_stream(std::string stream_in_path, std::string stream_out_path) {
 

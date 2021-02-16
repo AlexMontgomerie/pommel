@@ -5,19 +5,46 @@ DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 # parameters
 memory_config=$1
 featuremap_path=$2
-encoder_config=$3
+encoder=$3
 network_config=$4
 accelerator_config=$5
 output_path=$6
 
-# run silence
-./bin/main \
-    --memory $memory_config \
-    --featuremap $featuremap_path \
-    --encoder $encoder_config \
-    --network $network_config \
-    --accelerator $accelerator_config \
-    --output $output_path
+if [ "$encoder" = "baseline" ]; then
+
+    # run silence
+    ./bin/main \
+        --baseline \
+        --scale-sim \
+        --memory $memory_config \
+        --featuremap $featuremap_path \
+        --encoder $encoder \
+        --network $network_config \
+        --accelerator $accelerator_config \
+        --output $output_path
+
+else
+
+    # generate encoder config
+    python scripts/generate_encoder_config.py -e $encoder \
+        -a $accelerator_config \
+        -n $network_config \
+        -f $featuremap_path \
+        -o ${output_path}/encoder_config.xml
+
+    encoder_config=${output_path}/encoder_config.xml
+
+    # run silence
+    ./bin/main \
+        --scale-sim \
+        --memory $memory_config \
+        --featuremap $featuremap_path \
+        --encoder $encoder_config \
+        --network $network_config \
+        --accelerator $accelerator_config \
+        --output $output_path
+
+fi
 
 # iterate over folders in output directory
 for partition in $output_path/*/ ; do
@@ -34,3 +61,5 @@ for partition in $output_path/*/ ; do
 
 done
 
+# generate report
+python scripts/add_power_to_report.py -p $output_path

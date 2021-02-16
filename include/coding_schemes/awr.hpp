@@ -3,13 +3,17 @@
 
 #include "coding_scheme.hpp"
 
+namespace pommel {
+
 class awr: public coding_scheme {
     protected:
         unsigned int N;
     public:
-        awr(unsigned int bitwidth, unsigned int N);
+        awr(platform_config_t platform, unsigned int N);
         void encoder(std::istream &in, std::ostream &out);
         void decoder(std::istream &in, std::ostream &out);
 };
+
+}
 
 #endif

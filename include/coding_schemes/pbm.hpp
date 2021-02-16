@@ -3,6 +3,8 @@
 
 #include "coding_scheme.hpp"
 
+namespace pommel {
+
 class pbm: public coding_scheme {
     protected:
         unsigned int channels;    
@@ -11,9 +13,11 @@ class pbm: public coding_scheme {
         void fv_decoder(std::istream &in, std::ostream &out);
 
     public:
-        pbm(unsigned int bitwidth);
+        pbm(platform_config_t platform);
         void encoder(std::istream &in, std::ostream &out);
         void decoder(std::istream &in, std::ostream &out);
 };
+
+}
 
 #endif

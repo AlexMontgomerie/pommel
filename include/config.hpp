@@ -66,6 +66,7 @@ typedef struct {
 
 typedef struct {
     int bitwidth;
+    int packing_factor;
     int burst_size;
     int clk_freq;
     int array_height;

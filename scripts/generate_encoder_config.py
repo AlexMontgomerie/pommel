@@ -65,7 +65,6 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
     platform_info = {}
     for parameter in accelerator_config.acceleratorspec.parameter:
         platform_info[parameter["id"]] = parameter["value"]
-    print(platform_info)
     # load network config
     network_config =  untangle.parse(network_config_path)
     # load featuremaps

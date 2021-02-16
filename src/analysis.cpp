@@ -10,6 +10,18 @@ float analysis::get_data_activity(void) {
     return analysis::get_total_transitions(data_stream)/(data_width*data_stream.size());
 }
 
+float analysis::get_total_samples(void) {
+    return (float) data_stream.size();
+}
+
+float analysis::get_total_data_transitions(void) {
+    return analysis::get_total_transitions(data_stream);
+}
+
+float analysis::get_total_addr_transitions(void) {
+    return analysis::get_total_transitions(addr_stream);
+}
+
 float analysis::get_total_transitions(std::vector<uint64_t> stream) {
     
     // iterate over vector

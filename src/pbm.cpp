@@ -1,9 +1,11 @@
 #include "coding_schemes/pbm.hpp"
 
-void pbm::fv_encoder(std::istream &in, std::ostream &out) { // TODO: add side channels
+namespace pommel {
+
+void pbm::fv_encoder(std::istream &in, std::ostream &out) { 
    
     // mask
-    uint32_t mask = (1<<bitwidth)-1;
+    uint32_t mask = (1<<platform.bitwidth)-1;
 
     // value buffer
     uint32_t val;
@@ -21,4 +23,7 @@ void pbm::encoder(std::istream &in, std::ostream &out) {
     decorrelator(buf, out);
 }
 
-pbm::pbm(unsigned int bitwidth) : coding_scheme(bitwidth){}
+pbm::pbm(platform_config_t platform) : coding_scheme(platform){}
+
+}
+

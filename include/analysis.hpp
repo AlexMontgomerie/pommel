@@ -29,6 +29,9 @@ class analysis {
 
         float get_addr_activity(void);
         float get_data_activity(void);
+        float get_total_samples(void);
+        float get_total_data_transitions(void);
+        float get_total_addr_transitions(void);
         analysis(std::string trace_path, int data_width, int addr_width);
 };
 

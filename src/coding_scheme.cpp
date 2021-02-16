@@ -1,5 +1,7 @@
 #include "coding_scheme.hpp"
 
+namespace pommel {
+
 uint32_t coding_scheme::hamming_distance(uint32_t a, uint32_t b) { 
     return __builtin_popcount(a ^ b); 
 }
@@ -7,7 +9,7 @@ uint32_t coding_scheme::hamming_distance(uint32_t a, uint32_t b) {
 void coding_scheme::decorrelator(std::istream &in, std::ostream &out) {
 
     // mask
-    uint32_t mask = (1<<bitwidth)-1;
+    uint32_t mask = (1<<platform.bitwidth)-1;
 
     // value buffer
     uint32_t val;
@@ -33,4 +35,41 @@ void coding_scheme::decorrelator(std::istream &in, std::ostream &out) {
     }
 }
 
-coding_scheme::coding_scheme(unsigned int bitwidth) : bitwidth(bitwidth){}
+void coding_scheme::interleave(std::istream &in, std::ostream &out) {
+
+    // mask
+    uint32_t mask = ( 1 << platform.bitwidth ) - 1;
+
+    // interleave 
+    uint32_t val;
+    uint64_t val_out = 0;
+    int i = 0;
+    while(in >> val) {
+        val_out |= ( val & mask ) << i*platform.bitwidth;
+        i = ( i + 1 ) % platform.packing_factor;
+        if( i == 0 ) {
+            out << val_out << std::endl;
+            val_out = 0;
+        }
+    }
+}
+
+void coding_scheme::deinterleave(std::istream &in, std::ostream &out) {
+
+    // mask
+    uint32_t mask = ( 1 << platform.bitwidth ) - 1;
+
+    // interleave 
+    uint64_t val;
+    uint32_t val_out = 0;
+    while(in >> val) {
+        for(int i=0;i<platform.packing_factor;i++) {
+            val_out = (val >> i*platform.bitwidth) & mask;
+            out << val_out << std::endl;
+        }
+    }
+}
+
+coding_scheme::coding_scheme(platform_config_t platform) : platform(platform){}
+
+}
