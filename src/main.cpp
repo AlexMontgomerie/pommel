@@ -281,8 +281,8 @@ int main(int argc, char *argv[]) {
         float compression_ratio_in = analysis_input_baseline.get_total_samples()/analysis_input.get_total_samples();
  
         // generate output configs
-        config_inst.generate_cacti_config("R",cacti_config_path, partition_conf.bandwidth_in, 
-                data_activity_in, addr_activity_in, ((config_inst.platform.burst_size)/((float)period_out))); 
+        config_inst.generate_cacti_config("R",cacti_config_path, data_activity_in, addr_activity_in, 
+                (config_inst.platform.burst_size)/((float)period_in) ); 
 
         /**
          * Output Featuremap
@@ -329,8 +329,8 @@ int main(int argc, char *argv[]) {
         float compression_ratio_out = analysis_output_baseline.get_total_samples()/analysis_output.get_total_samples();
 
         // generate output configs
-        config_inst.generate_cacti_config("W", cacti_config_path, partition_conf.bandwidth_out, 
-                data_activity_out, addr_activity_out, ((config_inst.platform.burst_size)/((float)period_out))); 
+        config_inst.generate_cacti_config("W", cacti_config_path, data_activity_out, addr_activity_out, 
+                (config_inst.platform.burst_size)/((float)period_out) ); 
 
         // activity information
         printf("---- data activity in       : %f \n", data_activity_in); 

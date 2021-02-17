@@ -4,7 +4,7 @@ import numpy as np
 from scipy.interpolate import griddata
 
 # load report
-with open("outputs/scnn_mobilenet_v2_ddr3/report.json", "r") as f:
+with open("outputs/tpu_mobilenet_v2_ddr3_baseline/report.json", "r") as f:
     report = json.load(f)
 
 activity_in = []
@@ -57,11 +57,14 @@ plt.show()
 # plot 3D activity, bandwidth
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(activity_in,bandwidth_in, total_power_in)
-ax.scatter(activity_out,bandwidth_out, total_power_out)
+ax.scatter(activity_in,bandwidth_in, dram_in_power,label="DRAM")
+ax.scatter(activity_in,bandwidth_in, io_in_power,label="IO")
+#ax.scatter(activity_in,bandwidth_in, total_power_in)
+#ax.scatter(activity_out,bandwidth_out, total_power_out)
 ax.set_xlabel("Activity")
 ax.set_ylabel("Bandwidth (GB/s)")
 ax.set_zlabel("Power (mW)")
+plt.legend()
 plt.show()
 
 # plot against bandwidth

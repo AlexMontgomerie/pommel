@@ -74,7 +74,7 @@ void featuremap::generate_stream(std::string data_path, std::string transform, i
     uint64_t val = 0;
     for(auto const& value: transformed_data) {
         i++;
-        val |= (value & bitmask) << bitwidth*j;
+        val |= ( (uint64_t) (value & bitmask) ) << bitwidth*j;
         j = (j+1)%data_packing_factor;
         if(j==0) {
             datafile << boost::format("%i %c %ld\n") % i % 'R' % val;

@@ -5,9 +5,9 @@ make -j 8
 # parameters
 memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
 featuremap_path=data/alexnet.h5
-accelerator_config=config/accelerator/example.xml
+accelerator_config=config/accelerator/tpu.xml
 network_config=config/network/example.xml
-output_path=outputs/eyeriss_mobilenet_v2_ddr3
+output_path=outputs/tmp
 encoder=rle
 
 mkdir -p $output_path

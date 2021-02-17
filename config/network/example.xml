@@ -1,14 +1,14 @@
 <networkspec name="alexnet">
     <partition id="0">
-        <parameter id="kernel_size" type="int" value="1" />
-        <parameter id="stride" type="int" value="1" />
-        <parameter id="input_featuremap" type="string" value="classifier.1" />
-        <parameter id="output_featuremap" type="string" value="classifier.4" />
+        <parameter id="kernel_size" type="int" value="11" />
+        <parameter id="stride" type="int" value="4" />
+        <parameter id="input_featuremap" type="string" value="data" />
+        <parameter id="output_featuremap" type="string" value="features.module.0" />
     </partition>
     <partition id="1">
-        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="kernel_size" type="int" value="5" />
         <parameter id="stride" type="int" value="1" />
-        <parameter id="input_featuremap" type="string" value="classifier.4" />
-        <parameter id="output_featuremap" type="string" value="classifier.6" />
+        <parameter id="input_featuremap" type="string" value="features.module.0" />
+        <parameter id="output_featuremap" type="string" value="features.module.2" />
     </partition>
 </networkspec>

@@ -1,5 +1,17 @@
 #include "stream_helper.hpp"
 
+void create_stream(std::istream &addr, std::istream &data, std::string direction, std::ostream &out) {
+
+    // iterate over trace file
+    std::string line;
+    std::string addr_val;
+    std::string data_val;
+    while( std::getline(data, data_val) && std::getline(addr,addr_val) ) {
+        //out << std::stoull(addr_val) << " " << direction " " << std::stoull(data_val) << std::endl;
+        out << addr_val << " " << direction << " " << data_val << std::endl;
+    }
+}
+
 void get_stream_field(std::istream &in, std::ostream &out, field_type field) {
 
     // iterate over trace file

@@ -118,7 +118,7 @@ void config::generate_ramulator_config(std::string config_path) {
 
 }
 
-void config::generate_cacti_config(std::string direction, std::string config_path, float bandwidth, float data_activity, float address_activity, float duty_cycle) {
+void config::generate_cacti_config(std::string direction, std::string config_path, float data_activity, float address_activity, float duty_cycle) {
 
     // create cacti config file
     ctemplate::TemplateDictionary dict("cacti_config");

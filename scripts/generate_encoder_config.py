@@ -3,6 +3,7 @@ import deepdish as dd
 import numpy as np
 import untangle
 import argparse
+import scipy.stats
 
 # function to get dimensions of all the featuremaps
 def get_layers(filepath):
@@ -22,6 +23,15 @@ def get_dimensions(featuremaps):
     # return dimensions
     return dimensions
 
+def get_frequency_table(featuremap):
+    # frequency table initialised
+    freq_table = {}
+    # iterate over values in featuremap
+    for x in featuremap.flatten():
+        freq_table[str(x)] += freq_table.get(str(x),1)
+    # return frequency table
+    return freq_table
+
 def add_baseline_parameters(root, layer, platform_info, featuremaps):
     # add bitwidth
     parameter = root.createElement('parameter')
@@ -36,6 +46,29 @@ def add_bi_parameters(root, layer, platform_info, featuremaps):
     parameter.setAttribute("id","bitwidth")
     parameter.setAttribute("type","int")
     parameter.setAttribute("value",platform_info["bitwidth"])
+    layer.appendChild(parameter)
+
+def add_pbm_parameters(root, layer, platform_info, featuremaps):
+    # get the frequency table for featuremap
+    freq_table = get_frequency_table(featuremaps[layer.getAttribute("id")])
+    # add bitwidth
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","bitwidth")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value",platform_info["bitwidth"])
+    layer.appendChild(parameter)
+
+
+def add_rle_parameters(root, layer,  platform_info, featuremaps):
+    # get the mode of the featuremap
+    rle_zero = scipy.stats.mode(featuremaps[layer.getAttribute("id")].flatten())
+    mask = ( 1 << int(platform_info["bitwidth"]) ) - 1
+    rle_zero = rle_zero.mode[0] & mask
+    # add rle zero
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","rle_zero")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value", str(rle_zero))
     layer.appendChild(parameter)
 
 def add_def_parameters(root, layer, platform_info, featuremaps):
@@ -92,6 +125,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_bi_parameters(root, layer, platform_info, featuremaps)
             if encoder == "def":
                 add_def_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "rle":
+                add_rle_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
         # add partition output featuremap to encoder spec
@@ -106,6 +141,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_bi_parameters(root, layer, platform_info, featuremaps)
             if encoder == "def":
                 add_def_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "rle":
+                add_rle_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
     # save encoder config

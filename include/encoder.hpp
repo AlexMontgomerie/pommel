@@ -34,7 +34,15 @@ class encoder {
             // get the data field stream
             std::stringstream data_stream;
             get_stream_field(in, data_stream, DATA);
-            
+
+            // reset to beginning of input stream
+            in.clear();
+            in.seekg(0, std::ios::beg);
+          
+            // get addr field stream
+            std::stringstream addr_stream;
+            get_stream_field(in, addr_stream, ADDR);
+ 
             // reset to beginning of input stream
             in.clear();
             in.seekg(0, std::ios::beg);
@@ -49,9 +57,9 @@ class encoder {
                 fprintf(stderr,"cannot open output file: %s \n", stream_out_path.c_str());
             } 
 
-            // add data to stream out
-            add_stream_field(in, encoded_data_stream, out, DATA);
-       
+            // create new stream
+            create_stream(addr_stream, encoded_data_stream, "R", out);
+
             // close files
             in.close();
             out.close();

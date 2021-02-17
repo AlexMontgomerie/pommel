@@ -12,7 +12,6 @@ void rle::rle_encoder(std::istream &in, std::ostream &out) {
 
     // iterate over stream
     while(in >> val) {
-        //printf("%d\n", zero_counter);
         if( val != rle_zero ) {
             if( zero_counter == 0 ) {
                 out << val << std::endl;

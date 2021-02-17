@@ -46,10 +46,24 @@ void def::diff_encoder(std::istream &in, std::ostream &out) {
 }
 
 void def::encoder(std::istream &in, std::ostream &out) {
-    // run encoder
-    std::stringstream buf;
-    diff_encoder(in, buf);
-    decorrelator(buf, out);
+
+    // setup string streams
+    std::stringstream diff_in;
+    std::stringstream diff_decorr;
+    std::stringstream def_out;
+
+    // de-interleave stream in
+    deinterleave(in, diff_in); 
+
+    // diff encoder 
+    diff_encoder(diff_in, diff_decorr);
+
+    // decorrelator
+    decorrelator(diff_decorr, def_out);
+    
+    // interleave stream again
+    interleave(def_out, out); 
+
 }
 
 def::def(platform_config_t platform, unsigned int channels) : coding_scheme(platform), channels(channels){}

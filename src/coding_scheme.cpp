@@ -45,7 +45,7 @@ void coding_scheme::interleave(std::istream &in, std::ostream &out) {
     uint64_t val_out = 0;
     int i = 0;
     while(in >> val) {
-        val_out |= ( val & mask ) << i*platform.bitwidth;
+        val_out |=( (uint64_t) ( val & mask ) ) << i*platform.bitwidth;
         i = ( i + 1 ) % platform.packing_factor;
         if( i == 0 ) {
             out << val_out << std::endl;
