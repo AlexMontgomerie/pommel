@@ -35,18 +35,18 @@ void coding_scheme::decorrelator(std::istream &in, std::ostream &out) {
     }
 }
 
-void coding_scheme::interleave(std::istream &in, std::ostream &out) {
+void coding_scheme::interleave(std::istream &in, std::ostream &out, int bitwidth, int packing_factor) {
 
     // mask
-    uint32_t mask = ( 1 << platform.bitwidth ) - 1;
+    uint32_t mask = ( 1 << bitwidth ) - 1;
 
     // interleave 
     uint32_t val;
     uint64_t val_out = 0;
     int i = 0;
     while(in >> val) {
-        val_out |=( (uint64_t) ( val & mask ) ) << i*platform.bitwidth;
-        i = ( i + 1 ) % platform.packing_factor;
+        val_out |=( (uint64_t) ( val & mask ) ) << i*bitwidth;
+        i = ( i + 1 ) % packing_factor;
         if( i == 0 ) {
             out << val_out << std::endl;
             val_out = 0;
@@ -54,17 +54,17 @@ void coding_scheme::interleave(std::istream &in, std::ostream &out) {
     }
 }
 
-void coding_scheme::deinterleave(std::istream &in, std::ostream &out) {
+void coding_scheme::deinterleave(std::istream &in, std::ostream &out, int bitwidth, int packing_factor) {
 
     // mask
-    uint32_t mask = ( 1 << platform.bitwidth ) - 1;
+    uint32_t mask = ( 1 << bitwidth ) - 1;
 
     // interleave 
     uint64_t val;
     uint32_t val_out = 0;
     while(in >> val) {
-        for(int i=0;i<platform.packing_factor;i++) {
-            val_out = (val >> i*platform.bitwidth) & mask;
+        for(int i=0;i<packing_factor;i++) {
+            val_out = (val >> i*bitwidth) & mask;
             out << val_out << std::endl;
         }
     }

@@ -53,7 +53,7 @@ void def::encoder(std::istream &in, std::ostream &out) {
     std::stringstream def_out;
 
     // de-interleave stream in
-    deinterleave(in, diff_in); 
+    deinterleave(in, diff_in, platform.bitwidth, platform.packing_factor); 
 
     // diff encoder 
     diff_encoder(diff_in, diff_decorr);
@@ -62,7 +62,7 @@ void def::encoder(std::istream &in, std::ostream &out) {
     decorrelator(diff_decorr, def_out);
     
     // interleave stream again
-    interleave(def_out, out); 
+    interleave(def_out, out, platform.bitwidth, platform.packing_factor); 
 
 }
 

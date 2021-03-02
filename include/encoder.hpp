@@ -12,7 +12,7 @@
 #include "coding_schemes/bi.hpp"
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
-
+#include "coding_schemes/huffman.hpp"
 
 namespace pommel {
 
@@ -58,7 +58,7 @@ class encoder {
             } 
 
             // create new stream
-            create_stream(addr_stream, encoded_data_stream, "R", out);
+            create_stream(addr_stream, encoded_data_stream, "R", out); //TODO: give correct direction
 
             // close files
             in.close();

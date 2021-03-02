@@ -50,13 +50,13 @@ void rle::encoder(std::istream &in, std::ostream &out) {
     std::stringstream rle_out;
 
     // de-interleave stream in
-    deinterleave(in, rle_in); 
+    deinterleave(in, rle_in, platform.bitwidth, platform.packing_factor); 
 
     // perform run length encoding
     rle_encoder(rle_in, rle_out);
 
     // interleave stream again
-    interleave(rle_out, out); 
+    interleave(rle_out, out, platform.bitwidth, platform.packing_factor); 
 
 }
 

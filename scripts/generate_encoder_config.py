@@ -4,6 +4,7 @@ import numpy as np
 import untangle
 import argparse
 import scipy.stats
+import huffman
 
 # function to get dimensions of all the featuremaps
 def get_layers(filepath):
@@ -28,8 +29,13 @@ def get_frequency_table(featuremap):
     freq_table = {}
     # iterate over values in featuremap
     for x in featuremap.flatten():
-        freq_table[str(x)] += freq_table.get(str(x),1)
+        freq_table[str(x)] = freq_table.get(str(x),1) + 1
     # return frequency table
+    return freq_table
+
+def complete_frequency_table(freq_table, bitwidth=8):
+    for i in range(2**bitwidth):
+        freq_table[str(i)] = freq_table.get(str(i),1)
     return freq_table
 
 def add_baseline_parameters(root, layer, platform_info, featuremaps):
@@ -58,7 +64,6 @@ def add_pbm_parameters(root, layer, platform_info, featuremaps):
     parameter.setAttribute("value",platform_info["bitwidth"])
     layer.appendChild(parameter)
 
-
 def add_rle_parameters(root, layer,  platform_info, featuremaps):
     # get the mode of the featuremap
     rle_zero = scipy.stats.mode(featuremaps[layer.getAttribute("id")].flatten())
@@ -69,6 +74,31 @@ def add_rle_parameters(root, layer,  platform_info, featuremaps):
     parameter.setAttribute("id","rle_zero")
     parameter.setAttribute("type","int")
     parameter.setAttribute("value", str(rle_zero))
+    layer.appendChild(parameter)
+
+def add_huffman_parameters(root, layer,  platform_info, featuremaps):
+    # get the frequency table
+    frequency_table = get_frequency_table(featuremaps[layer.getAttribute("id")])
+    frequency_table = complete_frequency_table(frequency_table, int(platform_info["bitwidth"]))
+    # convert frequency table into code table
+    huffman_inst = huffman.HuffmanCoding("")
+    huffman_inst.make_heap(frequency_table)
+    huffman_inst.merge_nodes()
+    huffman_inst.make_codes()
+    code_table = { key : int(val,2) for key,val in huffman_inst.codes.items() }
+    # add code table
+    code_table_xml = root.createElement("code_table")
+    for key, val in code_table.items():
+        parameter = root.createElement("parameter")
+        parameter.setAttribute("key", str(key))
+        parameter.setAttribute("value", str(val))
+        code_table_xml.appendChild(parameter)
+    layer.appendChild(code_table_xml)
+    # add bitwidth
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","bitwidth")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value",platform_info["bitwidth"])
     layer.appendChild(parameter)
 
 def add_def_parameters(root, layer, platform_info, featuremaps):
@@ -127,6 +157,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_def_parameters(root, layer, platform_info, featuremaps)
             if encoder == "rle":
                 add_rle_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "huffman":
+                add_huffman_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
         # add partition output featuremap to encoder spec
@@ -143,6 +175,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_def_parameters(root, layer, platform_info, featuremaps)
             if encoder == "rle":
                 add_rle_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "huffman":
+                add_huffman_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
     # save encoder config

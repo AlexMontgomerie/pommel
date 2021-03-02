@@ -18,6 +18,7 @@ using namespace boost::program_options;
 #include "coding_schemes/bi.hpp"
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
+#include "coding_schemes/huffman.hpp"
 
 using encoder_t = std::variant<
     pommel::encoder<pommel::bi>,
@@ -25,7 +26,8 @@ using encoder_t = std::variant<
     pommel::encoder<pommel::awr>,
     pommel::encoder<pommel::abe>,
     pommel::encoder<pommel::pbm>,
-    pommel::encoder<pommel::rle>
+    pommel::encoder<pommel::rle>,
+    pommel::encoder<pommel::huffman>
 >;
 
 using trace_t = std::variant<
@@ -63,8 +65,8 @@ encoder_t get_encoder_inst(std::string config_path, std::string featuremap, pomm
         return pommel::encoder<pommel::pbm>(config_path, featuremap, platform);
     } else if( encoder_type == "rle" ) {    
         return pommel::encoder<pommel::rle>(config_path, featuremap, platform);
-    //} else if( encoder_type == "huffman" ) {    
-    //    return pommel::encoder<huffman>(config_path, featuremap, bitwidth);
+    } else if( encoder_type == "huffman" ) {    
+        return pommel::encoder<pommel::huffman>(config_path, featuremap, platform);
     } else {
         fprintf(stderr,"ERROR (encoder) : %s not specified!\n", encoder_type.c_str());
     }
@@ -279,10 +281,11 @@ int main(int argc, char *argv[]) {
         float data_activity_in = analysis_input.get_data_activity();
         float addr_activity_in = analysis_input.get_addr_activity();
         float compression_ratio_in = analysis_input_baseline.get_total_samples()/analysis_input.get_total_samples();
+        float total_samples_in = analysis_input.get_total_samples();
  
         // generate output configs
         config_inst.generate_cacti_config("R",cacti_config_path, data_activity_in, addr_activity_in, 
-                (config_inst.platform.burst_size)/((float)period_in) ); 
+                (config_inst.platform.burst_size)/((float)period_in*compression_ratio_in) ); 
 
         /**
          * Output Featuremap
@@ -327,10 +330,11 @@ int main(int argc, char *argv[]) {
         float data_activity_out = analysis_output.get_data_activity();
         float addr_activity_out = analysis_output.get_addr_activity();
         float compression_ratio_out = analysis_output_baseline.get_total_samples()/analysis_output.get_total_samples();
+        float total_samples_out = analysis_output.get_total_samples();
 
         // generate output configs
         config_inst.generate_cacti_config("W", cacti_config_path, data_activity_out, addr_activity_out, 
-                (config_inst.platform.burst_size)/((float)period_out) ); 
+                (config_inst.platform.burst_size)/((float)period_out*compression_ratio_out) ); 
 
         // activity information
         printf("---- data activity in       : %f \n", data_activity_in); 
@@ -343,11 +347,13 @@ int main(int argc, char *argv[]) {
         // add report information
         report[partition_index.c_str()]["in"] = { 
             {"bandwidth", bandwidth_in},
+            {"samples", total_samples_in},
             {"data_activity", data_activity_in},
             {"addr_activity", addr_activity_in}
         };
         report[partition_index.c_str()]["out"] = { 
             {"bandwidth", bandwidth_out},
+            {"samples", total_samples_out},
             {"data_activity", data_activity_out},
             {"addr_activity", addr_activity_out}
         };

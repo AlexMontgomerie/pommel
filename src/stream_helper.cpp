@@ -6,9 +6,13 @@ void create_stream(std::istream &addr, std::istream &data, std::string direction
     std::string line;
     std::string addr_val;
     std::string data_val;
-    while( std::getline(data, data_val) && std::getline(addr,addr_val) ) {
+    //while( std::getline(data, data_val) && std::getline(addr,addr_val) ) {
+    int i=0;
+    while( std::getline(data, data_val) ) {
         //out << std::stoull(addr_val) << " " << direction " " << std::stoull(data_val) << std::endl;
-        out << addr_val << " " << direction << " " << data_val << std::endl;
+        //out << addr_val << " " << direction << " " << data_val << std::endl;
+        out << i << " " << direction << " " << data_val << std::endl;
+        i++;
     }
 }
 

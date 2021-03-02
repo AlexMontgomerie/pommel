@@ -16,8 +16,8 @@ class coding_scheme {
         void correlator(std::istream &in, std::ostream &out);
         void decorrelator(std::istream &in, std::ostream &out);
         
-        void interleave(std::istream &in, std::ostream &out);
-        void deinterleave(std::istream &in, std::ostream &out);
+        void interleave(std::istream &in, std::ostream &out, int bitwidth, int packing_factor);
+        void deinterleave(std::istream &in, std::ostream &out, int bitwidth, int packing_factor);
 
     public:
 
