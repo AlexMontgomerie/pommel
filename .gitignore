@@ -8,3 +8,5 @@ outputs/*
 *.csv
 *.stats
 *.dat
+
+**__pycache__/

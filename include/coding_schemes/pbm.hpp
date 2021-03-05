@@ -7,13 +7,12 @@ namespace pommel {
 
 class pbm: public coding_scheme {
     protected:
-        unsigned int channels;    
-        unsigned int * code_table;    
+        std::map<uint32_t,uint32_t> code_table;
         void fv_encoder(std::istream &in, std::ostream &out);
         void fv_decoder(std::istream &in, std::ostream &out);
 
     public:
-        pbm(platform_config_t platform);
+        pbm(platform_config_t platform, std::map<uint32_t,uint32_t> code_table);
         void encoder(std::istream &in, std::ostream &out);
         void decoder(std::istream &in, std::ostream &out);
 };

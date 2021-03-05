@@ -5,6 +5,7 @@ make clean
 make -j 8
 
 ddr3_path=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
+ddr4_path=config/memory/MICRON_4Gb_DDR4-2400_8bit_A.xml
 
 mobilenet_v2_network=config/network/mobilenet_v2.xml
 mobilenet_v2_featuremap=data/mobilenet_v2.h5
@@ -29,36 +30,62 @@ run() {
     sh ./run_pommel.sh $memory_config $featuremap_path $encoder $network_config $accelerator_config $output_path
 }
 
-memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
-featuremap_path=data/alexnet.h5
-accelerator_config=config/accelerator/tpu.xml
-network_config=config/network/example.xml
-output_path=outputs/tmp
-encoder=rle
-
-
+: '
 run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_def def
+run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_pbm pbm 
 run $ddr3_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_huffman huffman 
 
 run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_def def
+run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_pbm pbm
 run $ddr3_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_huffman huffman 
 
 run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_def def
+run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_pbm pbm 
 run $ddr3_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_huffman huffman
 
 run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_def def
+run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_pbm pbm
 run $ddr3_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_huffman huffman
+'
+
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_baseline baseline
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_bi bi
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_rle rle
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_def def
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_pbm pbm
+run $ddr4_path $mobilenet_v2_featuremap $tpu $mobilenet_v2_network outputs/tpu_mobilenet_v2_ddr3_huffman huffman 
+
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_baseline baseline
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_bi bi
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_rle rle
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_def def
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_pbm pbm
+run $ddr4_path $mobilenet_v2_featuremap $eyeriss $mobilenet_v2_network outputs/eyeriss_mobilenet_v2_ddr3_huffman huffman 
+
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_baseline baseline
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_bi bi
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_rle rle
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_def def
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_pbm pbm
+run $ddr4_path $mobilenet_v2_featuremap $scnn $mobilenet_v2_network outputs/scnn_mobilenet_v2_ddr3_huffman huffman
+
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_baseline baseline
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_bi bi
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_rle rle
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_def def
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_pbm pbm
+run $ddr4_path $mobilenet_v2_featuremap $shidiannao $mobilenet_v2_network outputs/shidiannao_mobilenet_v2_ddr3_huffman huffman
 
 

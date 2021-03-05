@@ -32,6 +32,7 @@ using encoder_t = std::variant<
 
 using trace_t = std::variant<
     pommel::trace<ramulator::DDR3>,
+    pommel::trace<ramulator::DDR4>,
     pommel::trace<ramulator::WideIO>,
     pommel::trace<ramulator::LPDDR3>
 >;
@@ -77,11 +78,14 @@ trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
     if( dram_type == "DDR3" ) { 
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
+    if( dram_type == "DDR4" ) { 
+        return pommel::trace<ramulator::DDR4>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    }
     if( dram_type == "WIDEIO_SDR" ) { 
-        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     if( dram_type == "LPDDR3" ) { 
-        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::LPDDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
         fprintf(stderr,"ERROR (trace) : %s not specified!\n", dram_type.c_str());

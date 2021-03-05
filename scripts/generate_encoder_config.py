@@ -11,7 +11,9 @@ def get_layers(filepath):
     # load file
     featuremaps = dd.io.load(filepath)
     # return keys
-    return featuremaps["layers"]
+    layers = featuremaps["layers"] 
+    layers.append["data"]
+    return layers
 
 def get_dimensions(featuremaps):
     # get dimensions of each layer
@@ -21,6 +23,7 @@ def get_dimensions(featuremaps):
     # iterate over layers
     for layer in layers:
         dimensions[layer] = featuremaps[layer].shape
+    dimensions["data"] = featuremaps["data"].shape
     # return dimensions
     return dimensions
 
@@ -55,14 +58,17 @@ def add_bi_parameters(root, layer, platform_info, featuremaps):
     layer.appendChild(parameter)
 
 def add_pbm_parameters(root, layer, platform_info, featuremaps):
-    # get the frequency table for featuremap
-    freq_table = get_frequency_table(featuremaps[layer.getAttribute("id")])
-    # add bitwidth
-    parameter = root.createElement('parameter')
-    parameter.setAttribute("id","bitwidth")
-    parameter.setAttribute("type","int")
-    parameter.setAttribute("value",platform_info["bitwidth"])
-    layer.appendChild(parameter)
+    # get the frequency table
+    frequency_table = get_frequency_table(featuremaps[layer.getAttribute("id")])
+    frequency_table = complete_frequency_table(frequency_table, int(platform_info["bitwidth"]))
+    # add code table
+    code_table_xml = root.createElement("code_table")
+    for key, val in frequency_table.items():
+        parameter = root.createElement("parameter")
+        parameter.setAttribute("key", str(key))
+        parameter.setAttribute("value", str(val))
+        code_table_xml.appendChild(parameter)
+    layer.appendChild(code_table_xml)
 
 def add_rle_parameters(root, layer,  platform_info, featuremaps):
     # get the mode of the featuremap
@@ -159,6 +165,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_rle_parameters(root, layer, platform_info, featuremaps)
             if encoder == "huffman":
                 add_huffman_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "pbm":
+                add_pbm_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
         # add partition output featuremap to encoder spec
@@ -177,6 +185,8 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_rle_parameters(root, layer, platform_info, featuremaps)
             if encoder == "huffman":
                 add_huffman_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "pbm":
+                add_pbm_parameters(root, layer, platform_info, featuremaps)
             # add layer to encoderspec
             encoderspec.appendChild(layer)
     # save encoder config

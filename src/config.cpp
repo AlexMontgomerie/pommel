@@ -126,16 +126,19 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
     // convert DRAMPower config to cacti config
     // DRAM TYPE
     if ( memory.dram_type == "DDR3" ) {
-        dict.SetValue("DRAM_TYPE", "D");
+        dict.SetValue("DRAM_TYPE", "DDR3");
+        dict.SetValue("ADDR_TIMING", "1.0"); 
+    } else if ( memory.dram_type == "DDR4" ) {
+        dict.SetValue("DRAM_TYPE", "DDR4");
         dict.SetValue("ADDR_TIMING", "1.0"); 
     } else if ( memory.dram_type == "LPDDR2" ) {
-        dict.SetValue("DRAM_TYPE", "L");
+        dict.SetValue("DRAM_TYPE", "LPDDR2");
         dict.SetValue("ADDR_TIMING", "0.5"); 
     } else if ( memory.dram_type == "LPDDR3" ) {
-        dict.SetValue("DRAM_TYPE", "L");
+        dict.SetValue("DRAM_TYPE", "LPDDR2");
         dict.SetValue("ADDR_TIMING", "0.5"); 
     } else if ( memory.dram_type == "WIDEIO_SDR" ) {
-        dict.SetValue("DRAM_TYPE", "W");
+        dict.SetValue("DRAM_TYPE", "WideIO");
         dict.SetValue("ADDR_TIMING", "1.0"); 
     } else {
         // TODO: raise error
