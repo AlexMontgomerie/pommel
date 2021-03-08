@@ -63,3 +63,12 @@ done
 
 # generate report
 python scripts/add_power_to_report.py -p $output_path
+
+# clean up
+for partition in $output_path/*/ ; do
+    # remove these files
+    rm -r $partition
+done
+
+rm $output_path/scale-sim*
+

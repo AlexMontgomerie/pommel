@@ -352,12 +352,14 @@ int main(int argc, char *argv[]) {
         report[partition_index.c_str()]["in"] = { 
             {"bandwidth", bandwidth_in},
             {"samples", total_samples_in},
+            {"compression_ratio", compression_ratio_in},
             {"data_activity", data_activity_in},
             {"addr_activity", addr_activity_in}
         };
         report[partition_index.c_str()]["out"] = { 
             {"bandwidth", bandwidth_out},
             {"samples", total_samples_out},
+            {"compression_ratio", compression_ratio_out},
             {"data_activity", data_activity_out},
             {"addr_activity", addr_activity_out}
         };

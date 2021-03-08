@@ -28,8 +28,11 @@ coding_schemes = [
     "bi",
     "huffman",
     "rle",
+    "def",
+    "pbm",
 ]
 
+"""
 # plot power against total execution time for all accelerators for mobilenet_v2 on DDR3
 x = []
 y = []
@@ -68,6 +71,7 @@ for coding_scheme in coding_schemes:
 plt.xticks(x,accelerators)
 plt.legend()
 plt.show()
+"""
 
 # plot layer-wise power for different coding schemes for mobilenet_v2, TPU, DDR3
 for coding_scheme in coding_schemes:
@@ -79,5 +83,27 @@ for coding_scheme in coding_schemes:
     dram_power = metrics.get_total_dram_power_sequence(report, "in")
     total_power = io_power + dram_power
     plt.plot(np.arange(len(total_power)),total_power,label=coding_scheme)
+plt.legend()
+plt.show() 
+
+# plot layer-wise compression for different coding schemes for mobilenet_v2, TPU, DDR3
+for coding_scheme in coding_schemes:
+    # open report
+    with open(f"outputs/tpu_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+        report = json.load(f)
+    # get sequence of total power
+    compression_ratio = metrics.get_sequence(report, "compression_ratio", direction="in")
+    plt.plot(np.arange(len(compression_ratio)),compression_ratio,label=coding_scheme)
+plt.legend()
+plt.show() 
+
+# plot layer-wise activity for different coding schemes for mobilenet_v2, TPU, DDR3
+for coding_scheme in coding_schemes:
+    # open report
+    with open(f"outputs/tpu_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+        report = json.load(f)
+    # get sequence of total power
+    activity = metrics.get_sequence(report, "data_activity", direction="out")
+    plt.plot(np.arange(len(activity)),activity,label=coding_scheme)
 plt.legend()
 plt.show() 
