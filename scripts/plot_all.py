@@ -12,8 +12,8 @@ networks = [
 # all accelerators
 accelerators = [
     "tpu",
-    "scnn",
-    "shidiannao",
+#    "scnn",
+#    "shidiannao",
     "eyeriss",
 ]
 
@@ -31,14 +31,13 @@ coding_schemes = [
     "def",
     "pbm",
 ]
-
 """
 # plot power against total execution time for all accelerators for mobilenet_v2 on DDR3
 x = []
 y = []
 for accelerator in accelerators:
     # open report
-    with open(f"outputs/{accelerator}_mobilenet_v2_ddr3_baseline/report.json", "r") as f:
+    with open(f"outputs/{accelerator}_mobilenet_v2_ddr4_baseline/report.json", "r") as f:
         report = json.load(f)
     # get average power
     average_power = max(metrics.get_average_power(report,"in"),metrics.get_average_power(report,"out"))
@@ -60,7 +59,7 @@ for coding_scheme in coding_schemes:
     y[coding_scheme] = []
     for accelerator in accelerators:
         # open report
-        with open(f"outputs/{accelerator}_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+        with open(f"outputs/{accelerator}_mobilenet_v2_ddr4_{coding_scheme}/report.json", "r") as f:
             report = json.load(f)
         # get average power
         average_power = max(metrics.get_average_power(report,"in"),metrics.get_average_power(report,"out"))
@@ -72,11 +71,10 @@ plt.xticks(x,accelerators)
 plt.legend()
 plt.show()
 """
-
 # plot layer-wise power for different coding schemes for mobilenet_v2, TPU, DDR3
 for coding_scheme in coding_schemes:
     # open report
-    with open(f"outputs/tpu_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+    with open(f"outputs/tpu_alexnet_ddr3_{coding_scheme}/report.json", "r") as f:
         report = json.load(f)
     # get sequence of total power
     io_power = metrics.get_total_io_power_sequence(report, "in")
@@ -89,7 +87,7 @@ plt.show()
 # plot layer-wise compression for different coding schemes for mobilenet_v2, TPU, DDR3
 for coding_scheme in coding_schemes:
     # open report
-    with open(f"outputs/tpu_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+    with open(f"outputs/tpu_mobilenet_v2_ddr4_{coding_scheme}/report.json", "r") as f:
         report = json.load(f)
     # get sequence of total power
     compression_ratio = metrics.get_sequence(report, "compression_ratio", direction="in")
@@ -100,7 +98,7 @@ plt.show()
 # plot layer-wise activity for different coding schemes for mobilenet_v2, TPU, DDR3
 for coding_scheme in coding_schemes:
     # open report
-    with open(f"outputs/tpu_mobilenet_v2_ddr3_{coding_scheme}/report.json", "r") as f:
+    with open(f"outputs/tpu_mobilenet_v2_ddr4_{coding_scheme}/report.json", "r") as f:
         report = json.load(f)
     # get sequence of total power
     activity = metrics.get_sequence(report, "data_activity", direction="out")

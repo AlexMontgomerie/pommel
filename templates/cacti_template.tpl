@@ -169,15 +169,15 @@
 
 # Memory Type (D=DDR3, L=LPDDR2, W=WideIO, S=Low-swing differential)
 
--dram_type "{{DRAM_TYPE}}"
+-dram type "{{DRAM_TYPE}}"
 
 # Memory State (R=Read, W=Write, I=Idle  or S=Sleep) 
 
--iostate "{{IO_STATE}}"
+-io state "{{IO_STATE}}"
 
 # Is ECC Enabled (Y=Yes, N=No)
 
--dram_ecc "N"
+-dram ecc "NO_ECC"
 
 #Address bus timing 
 
