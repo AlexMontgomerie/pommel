@@ -2,6 +2,7 @@ obj/*
 bin/*
 data/*
 outputs/*
+featuremaps/*
 
 *.trace
 *.cmdtrace

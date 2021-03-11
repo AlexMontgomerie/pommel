@@ -50,8 +50,8 @@ fi
 for partition in $output_path/*/ ; do
     
     # run DRAM Power estimation
-    $DRAMPOWER_PATH -m $memory_config -c $partition/input-chan-0-rank-0.cmdtrace  > $partition/input_dram_power.rpt
-    $DRAMPOWER_PATH -m $memory_config -c $partition/output-chan-0-rank-0.cmdtrace > $partition/output_dram_power.rpt
+    ./DRAMPower/drampower -m $memory_config -c $partition/input-chan-0-rank-0.cmdtrace  > $partition/input_dram_power.rpt
+    ./DRAMPower/drampower -m $memory_config -c $partition/output-chan-0-rank-0.cmdtrace > $partition/output_dram_power.rpt
 
     # run cacti IO estimation 
     cd cacti

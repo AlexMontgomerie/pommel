@@ -1,0 +1,128 @@
+<networkspec name="alexnet">
+    <partition id="0">
+        <parameter id="kernel_size" type="int" value="7" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="data" />
+        <parameter id="output_featuremap" type="string" value="module.conv1" />
+    </partition>
+    <partition id="1">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer1.0.conv1" />
+    </partition>
+    <partition id="2">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer1.0.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer1.0.conv2" />
+    </partition>
+    <partition id="3">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer1.0.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer1.1.conv1" />
+    </partition>
+    <partition id="4">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer1.1.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer1.1.conv2" />
+    </partition>
+    <partition id="5">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer1.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer2.0.conv1" />
+    </partition>
+    <partition id="6">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer2.0.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer2.0.conv2" />
+    </partition>
+    <partition id="7">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer1.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer2.0.downsample.0" />
+    </partition>
+    <partition id="8">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer2.0.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer2.1.conv1" />
+    </partition>
+    <partition id="9">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer2.1.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer2.1.conv2" />
+    </partition>
+    <partition id="10">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer2.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer3.0.conv1" />
+    </partition>
+    <partition id="11">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer3.0.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer3.0.conv2" />
+    </partition>
+    <partition id="12">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer2.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer3.0.downsample.0" />
+    </partition>
+    <partition id="13">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer3.0.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer3.1.conv1" />
+    </partition>
+    <partition id="14">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer3.1.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer3.1.conv2" />
+    </partition>
+    <partition id="15">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer3.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer4.0.conv1" />
+    </partition>
+    <partition id="16">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer4.0.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer4.0.conv2" />
+    </partition>
+    <partition id="17">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="2" />
+        <parameter id="input_featuremap" type="string" value="module.layer3.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer4.0.downsample.0" />
+    </partition>
+    <partition id="18">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer4.0.add" />
+        <parameter id="output_featuremap" type="string" value="module.layer4.1.conv1" />
+    </partition>
+    <partition id="19">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer4.1.conv1" />
+        <parameter id="output_featuremap" type="string" value="module.layer4.1.conv2" />
+    </partition>
+    <partition id="20">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="module.layer4.1.add" />
+        <parameter id="output_featuremap" type="string" value="module.fc" />
+    </partition>
+</networkspec> 

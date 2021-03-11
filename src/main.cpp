@@ -78,13 +78,17 @@ trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
     if( dram_type == "DDR3" ) { 
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    if( dram_type == "DDR4" ) { 
+    else if( dram_type == "DDR3L" ) { 
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    }
+    else if( dram_type == "DDR4" ) { 
         return pommel::trace<ramulator::DDR4>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    if( dram_type == "WIDEIO_SDR" ) { 
-        return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    else if( dram_type == "WIDEIO_SDR" ) { 
+        //return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    if( dram_type == "LPDDR3" ) { 
+    else if( dram_type == "LPDDR3" ) { 
         return pommel::trace<ramulator::LPDDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
@@ -349,6 +353,11 @@ int main(int argc, char *argv[]) {
         printf("---- compression ratio out  : %f \n", compression_ratio_out); 
 
         // add report information
+        report[partition_index.c_str()] = { 
+            { "bitwidth", config_inst.platform.bitwidth },
+            { "clk_freq", config_inst.platform.clk_freq },
+            { "mem_bandwidth", config_inst.memory.bandwidth }
+        };
         report[partition_index.c_str()]["in"] = { 
             {"bandwidth", bandwidth_in},
             {"samples", total_samples_in},

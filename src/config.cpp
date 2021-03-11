@@ -105,8 +105,8 @@ void config::generate_ramulator_config(std::string config_path) {
     dict.SetValue("STANDARD", memory.dram_type);
     dict.SetValue("CHANNELS", "1");
     dict.SetFormattedValue("RANKS", "%d", memory.rank);
-    dict.SetFormattedValue("SPEED", "%s_%dK",memory.dram_type.c_str(), memory.clock); 
-    dict.SetFormattedValue("ORG", "%s_%dGb_x%d", memory.dram_type.c_str(),(int) memory.capacity/8589934592, memory.data_width);
+    dict.SetFormattedValue("SPEED", "%s_%dK",memory.dram_type.c_str(), memory.clock);
+    dict.SetFormattedValue("ORG", "%s_%dGb_x%d", memory.dram_type.c_str(),ceil(memory.capacity/8589934592), memory.data_width);
 
     // save to file
     std::string config_out;
@@ -127,6 +127,9 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
     // DRAM TYPE
     if ( memory.dram_type == "DDR3" ) {
         dict.SetValue("DRAM_TYPE", "DDR3");
+        dict.SetValue("ADDR_TIMING", "1.0"); 
+    } else if ( memory.dram_type == "DDR3L" ) {
+        dict.SetValue("DRAM_TYPE", "DDR3L");
         dict.SetValue("ADDR_TIMING", "1.0"); 
     } else if ( memory.dram_type == "DDR4" ) {
         dict.SetValue("DRAM_TYPE", "DDR4");

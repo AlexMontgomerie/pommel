@@ -1,0 +1,74 @@
+<networkspec name="vgg11">
+    <partition id="0">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="data" />
+        <parameter id="output_featuremap" type="string" value="features.module.0" />
+    </partition>
+    <partition id="1">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.0" />
+        <parameter id="output_featuremap" type="string" value="features.module.3" />
+    </partition>
+    <partition id="2">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.3" />
+        <parameter id="output_featuremap" type="string" value="features.module.6" />
+    </partition>
+    <partition id="3">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.6" />
+        <parameter id="output_featuremap" type="string" value="features.module.8" />
+    </partition>
+    <partition id="4">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.6" />
+        <parameter id="output_featuremap" type="string" value="features.module.8" />
+    </partition>
+    <partition id="5">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.8" />
+        <parameter id="output_featuremap" type="string" value="features.module.11" />
+    </partition>
+    <partition id="6">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.11" />
+        <parameter id="output_featuremap" type="string" value="features.module.13" />
+    </partition>
+    <partition id="7">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.13" />
+        <parameter id="output_featuremap" type="string" value="features.module.16" />
+    </partition>
+    <partition id="8">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.16" />
+        <parameter id="output_featuremap" type="string" value="features.module.18" />
+    </partition>
+    <partition id="9">
+        <parameter id="kernel_size" type="int" value="3" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="features.module.18" />
+        <parameter id="output_featuremap" type="string" value="classifier.0" />
+    </partition>
+    <partition id="10">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="classifier.0" />
+        <parameter id="output_featuremap" type="string" value="classifier.3" />
+    </partition>
+    <partition id="11">
+        <parameter id="kernel_size" type="int" value="1" />
+        <parameter id="stride" type="int" value="1" />
+        <parameter id="input_featuremap" type="string" value="classifier.3" />
+        <parameter id="output_featuremap" type="string" value="classifier.6" />
+    </partition>
+</networkspec>

@@ -2,7 +2,7 @@
 <memspec>
 
   <parameter id="memoryId" type="string" value="zedboard" />
-  <parameter id="memoryType" type="string" value="DDR3" />
+  <parameter id="memoryType" type="string" value="DDR3L" />
   <memarchitecturespec>
     <parameter id="width" type="uint" value="16" />
     <parameter id="nbrDQ" type="uint" value="32" />
