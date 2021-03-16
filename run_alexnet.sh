@@ -10,7 +10,7 @@ wide_io_path=config/memory/JEDEC_256Mb_WIDEIO_SDR-266_128bit.xml
 zedboard_path=config/memory/zedboard.xml
 
 alexnet_network=config/network/alexnet.xml
-alexnet_featuremap=data/alexnet.h5
+alexnet_featuremap=featuremaps/alexnet_8b.h5
 
 tpu=config/accelerator/tpu.xml
 eyeriss=config/accelerator/eyeriss.xml

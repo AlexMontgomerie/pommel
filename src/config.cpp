@@ -14,7 +14,7 @@ void config::load_memory_config(std::string config_path) {
     // get all memory parameters 
     memory.dram_type       = doc.select_node("/memspec/parameter[@id='memoryType']").node().attribute("value").value();
     memory.data_width      = doc.select_node("/memspec/memarchitecturespec/parameter[@id='width']").node().attribute("value").as_int();
-    memory.num_dq          = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrDQ']").node().attribute("value").as_int();
+    memory.num_chips       = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfChips']").node().attribute("value").as_int();
     memory.banks           = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfBanks']").node().attribute("value").as_int();
     memory.rank            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfRanks']").node().attribute("value").as_int();
     memory.cols            = doc.select_node("/memspec/memarchitecturespec/parameter[@id='nbrOfColumns']").node().attribute("value").as_int();
@@ -25,9 +25,12 @@ void config::load_memory_config(std::string config_path) {
 
     // get other memory parameters
     memory.capacity = (int) (memory.banks*memory.rank*memory.cols*memory.rows/memory.data_width);
-    memory.addr_width = (int) log2( (float) memory.capacity );
     memory.bandwidth = ((memory.data_rate*memory.clock*memory.num_dq)/(8*1000.0)); 
     
+    // get number of pins
+    memory.addr_width = (int) log2( (float) memory.capacity );
+    memory.num_dq     = (int) ( memory.num_chips*memory.data_width / memory.rank );
+
     return;
 }
 

@@ -8,7 +8,7 @@ ddr3_path=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
 ddr4_path=config/memory/MICRON_4Gb_DDR4-2400_8bit_A.xml
 
 mobilenet_v2_network=config/network/mobilenet_v2.xml
-mobilenet_v2_featuremap=data/mobilenet_v2.h5
+mobilenet_v2_featuremap=featuremaps/mobilenet_v2_8b.h5
 
 tpu=config/accelerator/tpu.xml
 eyeriss=config/accelerator/eyeriss.xml
