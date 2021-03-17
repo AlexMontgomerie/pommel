@@ -2,6 +2,7 @@
 #define FEATUREMAP_HPP_ 
 
 #include "common.hpp"
+#include "stream_helper.hpp"
 #include <boost/format.hpp>
 
 #include <highfive/H5File.hpp>

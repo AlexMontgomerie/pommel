@@ -29,7 +29,7 @@ void config::load_memory_config(std::string config_path) {
     
     // get number of pins
     memory.addr_width = (int) log2( (float) memory.capacity );
-    memory.num_dq     = (int) ( memory.num_chips*memory.data_width / memory.rank );
+    memory.num_dq     = (int) ( (memory.num_chips*memory.data_width) );// /memory.rank );
 
     return;
 }

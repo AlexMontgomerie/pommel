@@ -23,4 +23,9 @@
 
 #define uint128_t __uint128_t
 
+template<typename T>
+uint32_t popcount(T val) {
+    return 0; // TODO
+}
+
 #endif

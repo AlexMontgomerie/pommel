@@ -11,7 +11,7 @@ class coding_scheme {
 
         platform_config_t platform;
 
-        uint32_t hamming_distance(uint32_t a, uint32_t b); 
+        //uint32_t hamming_distance(auto a, uint128_t b); 
 
         void correlator(std::istream &in, std::ostream &out);
         void decorrelator(std::istream &in, std::ostream &out);

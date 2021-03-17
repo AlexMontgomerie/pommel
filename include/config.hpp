@@ -42,6 +42,7 @@ namespace pommel {
 typedef struct {
     std::string dram_type;
     int num_dq;
+    int num_chips;
     int data_width;
     int addr_width;
     int banks;

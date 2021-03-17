@@ -22,11 +22,11 @@ float analysis::get_total_addr_transitions(void) {
     return analysis::get_total_transitions(addr_stream);
 }
 
-float analysis::get_total_transitions(std::vector<uint64_t> stream) {
+float analysis::get_total_transitions(std::vector<uint128_t> stream) {
     
     // iterate over vector
-    uint64_t transitions = 0;
-    uint64_t value_prev = 0;
+    uint32_t transitions = 0;
+    uint128_t value_prev = 0;
     for(auto const& value: stream) {
         transitions += __builtin_popcountl(value^value_prev);
         value_prev = value;
@@ -60,13 +60,15 @@ analysis::analysis(std::string trace_path, int data_width, int addr_width) : dat
     trace.clear();
     trace.seekg(0, std::ios::beg);
 
-    // get address stream
+    // get data stream
     std::stringstream data_stream_raw;
     get_stream_field(trace, data_stream_raw, DATA);
 
     // convert stream to a vector
     while( std::getline(data_stream_raw, line) ) {
-        data_stream.push_back(std::stoull(line));
+        
+        // push to stream
+        data_stream.push_back(convert_to_uint128(line));
     }
 
     // close file

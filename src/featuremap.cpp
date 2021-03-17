@@ -71,13 +71,14 @@ void featuremap::generate_stream(std::string data_path, std::string transform, i
     // save to a .dat file
     std::ofstream datafile(data_path);
     int i=0, j=0;
-    uint64_t val = 0;
+    uint128_t val = 0;
     for(auto const& value: transformed_data) {
-        i++;
-        val |= ( (uint64_t) (value & bitmask) ) << bitwidth*j;
-        j = (j+1)%data_packing_factor;
+        val |= ( (uint128_t) (value & bitmask) ) << bitwidth*j;
+        j = (j+1) % data_packing_factor;
         if(j==0) {
-            datafile << boost::format("%i %c %ld\n") % i % 'R' % val;
+            std::string data = convert_from_uint128(val);
+            datafile << boost::format("%i %c %s\n") % i % 'R' % data;
+            i++;
             val = 0;
         }
     }

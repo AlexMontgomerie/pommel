@@ -79,7 +79,7 @@ class trace {
             // create new ramulator config instance
             configs = new ramulator::Config(ramulator_config_path);
 
-            // add cmd trace prefix TODO: make it for each run
+            // add cmd trace prefix
             configs->add("cmd_trace_prefix",output_path.c_str());
 
             const std::string& standard = (*configs)["standard"];

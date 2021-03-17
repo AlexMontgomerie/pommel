@@ -8,27 +8,31 @@ void bi::encoder(std::istream &in, std::ostream &out) {
     uint32_t bus_width = platform.bitwidth*platform.packing_factor;
     
     // mask
-    uint64_t mask = (1 << bus_width) - 1;
+    uint128_t mask = (1 << bus_width) - 1;
 
     // value buffer
-    uint64_t val;
+    std::string val_tmp;
+    uint128_t val;
 
     // queue (depth = 1)
-    std::queue<uint64_t> fifo;
+    std::queue<uint128_t> fifo;
 
     // fill buffer, and send first value
-    in >> val;
+    in >> val_tmp;
+    val = convert_to_uint128(val_tmp);
+    
     fifo.push(val);
-    out << val << std::endl;
+    out << convert_from_uint128(val) << std::endl;
 
     // iterate over the rest of the stream
-    while (in >> val) {
+    while (in >> val_tmp) {
+        val = convert_to_uint128(val_tmp);
         // get delayed value
-        uint64_t val_delay = fifo.front();
+        uint128_t val_delay = fifo.front();
         fifo.pop();
         bool invert = false;
         // check hamming distance
-        if (hamming_distance(val, val_delay) > bus_width / 2) {
+        if (__builtin_popcount(val ^ val_delay) > bus_width / 2) {
             invert = true;
             val = ~val & mask;
         }
@@ -37,7 +41,7 @@ void bi::encoder(std::istream &in, std::ostream &out) {
             val |= 1 << bus_width;
         }
         fifo.push(val);
-        out << val << std::endl;
+        out << convert_from_uint128(val) << std::endl;
     }
 }
 

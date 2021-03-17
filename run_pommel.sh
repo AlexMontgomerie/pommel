@@ -14,8 +14,8 @@ if [ "$encoder" = "baseline" ]; then
 
     # run silence
     ./bin/main \
-        --baseline \
         --scale-sim \
+        --baseline \
         --memory $memory_config \
         --featuremap $featuremap_path \
         --encoder $encoder \
@@ -42,7 +42,7 @@ else
         --encoder $encoder_config \
         --network $network_config \
         --accelerator $accelerator_config \
-        --output $output_path
+        --output $output_path 
 
 fi
 
@@ -67,7 +67,7 @@ python scripts/add_power_to_report.py -p $output_path
 # clean up
 for partition in $output_path/*/ ; do
     # remove these files
-    rm -r $partition
+    #rm -r $partition
 done
 
 rm $output_path/scale-sim*

@@ -34,7 +34,7 @@ void awr::encoder(std::istream &in, std::ostream &out) {
             uint32_t min_distance = 0xFFFFFFFF;
             int min_distance_idx = 0;
             for(int j=0; j<window.size(); j++) {
-                uint32_t distance = hamming_distance(window[j],prev_val);
+                uint32_t distance = (__builtin_popcount(window[j]^prev_val));
                 if( distance < min_distance ) {
                     min_distance = distance;
                     min_distance_idx = j;
