@@ -23,14 +23,16 @@ void config::load_memory_config(std::string config_path) {
     memory.burst_length    = doc.select_node("/memspec/memarchitecturespec/parameter[@id='burstLength']").node().attribute("value").as_int();
     memory.clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
 
-    // get other memory parameters
+    // get capacity
     memory.capacity = (int) (memory.banks*memory.rank*memory.cols*memory.rows/memory.data_width);
-    memory.bandwidth = ((memory.data_rate*memory.clock*memory.num_dq)/(8*1000.0)); 
-    
+ 
     // get number of pins
     memory.addr_width = (int) log2( (float) memory.capacity );
     memory.num_dq     = (int) ( (memory.num_chips*memory.data_width) );// /memory.rank );
-
+   
+    // get memory bandwidth
+    memory.bandwidth = ((memory.data_rate*memory.clock*memory.num_dq)/(8*1000.0)); 
+    
     return;
 }
 
@@ -170,104 +172,6 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
     std::ofstream cacti_config_path(config_path);
     cacti_config_path << cacti_config_out;
     cacti_config_path.close();
-
-}
-
-void config::generate_scale_sim_config(std::string config_path, std::string output_path) { 
-
-    // create ramulator config file
-    ctemplate::TemplateDictionary dict("scale_sim_config");
-
-    // add config
-    std::string test_name = "../" + output_path;
-    dict.SetValue("run_name", test_name.c_str());
-    dict.SetFormattedValue("array_height", "%d", platform.array_height);
-    dict.SetFormattedValue("array_width" , "%d", platform.array_width); 
-    dict.SetFormattedValue("ifmap_sram_size"  , "%d", platform.ifmap_sram_size); 
-    dict.SetFormattedValue("filter_sram_size" , "%d", platform.filter_sram_size); 
-    dict.SetFormattedValue("ofmap_sram_size"  , "%d", platform.ofmap_sram_size); 
-    dict.SetFormattedValue("ifmap_offset"  , "%d", platform.ifmap_offset); 
-    dict.SetFormattedValue("filter_offset" , "%d", platform.filter_offset); 
-    dict.SetFormattedValue("ofmap_offset"  , "%d", platform.ofmap_offset); 
-    dict.SetValue("dataflow", platform.dataflow);
-
-    // save to file
-    std::string config_out;
-    ctemplate::ExpandTemplate("templates/scale_sim_config_template.tpl", 
-        ctemplate::DO_NOT_STRIP, &dict, &config_out);
-    std::ofstream scale_sim_config_path(config_path);
-    scale_sim_config_path << config_out;
-    scale_sim_config_path.close();
-
-}
-
-void config::generate_scale_sim_topology(std::string featuremap_path, std::string topology_path) { 
-
-    // header for CSV file
-    std::string topology_csv = "Layer name, IFMAP Height, IFMAP Width, Filter Height, Filter Width, Channels, Num Filter, Strides,\n";
-
-    // iterate over the partitions
-    for(auto const& partition : network) {
-
-        // get accelerator configuration        
-        pommel::network_config_t partition_conf = partition.second;
-        
-        // get input and output featuremap
-        pommel::featuremap featuremap_in(featuremap_path, partition_conf.input_featuremap);    
-        pommel::featuremap featuremap_out(featuremap_path, partition_conf.output_featuremap);    
-    
-        // write to csv
-        topology_csv += std::to_string(partition.first) + ", ";
-        topology_csv += std::to_string(featuremap_in.height) + ", ";
-        topology_csv += std::to_string(featuremap_in.width) + ", ";
-        topology_csv += std::to_string(partition_conf.kernel_size) + ", ";
-        topology_csv += std::to_string(partition_conf.kernel_size) + ", ";
-        topology_csv += std::to_string(featuremap_in.channels) + ", ";
-        topology_csv += std::to_string(featuremap_out.channels) + ", ";
-        topology_csv += std::to_string(partition_conf.stride) + ",\n";
-
-    } 
-
-    // save to output path
-    std::ofstream scale_sim_topology_path(topology_path);
-    scale_sim_topology_path << topology_csv;
-    scale_sim_topology_path.close();
-
-}
-
-void config::add_scale_sim_bandwidth(std::string report_path) {
-
-    // load csv file 
-    io::CSVReader<9> bw_csv(report_path.c_str());
-    bw_csv.read_header(io::ignore_extra_column, 
-        "IFMAP SRAM Size",
-        "Filter SRAM Size",
-        "OFMAP SRAM Size",
-        "Conv Layer Num",
-        "DRAM IFMAP Read BW",
-        "DRAM Filter Read BW",
-        "DRAM OFMAP Write BW",
-        "SRAM Read BW",
-        "SRAM OFMAP Write BW"
-    );
-    
-    // setup variables
-    int ifmap_sram_size, filter_sram_size, ofmap_sram_size;
-    std::string partition_index;
-    float dram_ifmap_bw, dram_filter_bw, dram_ofmap_bw,
-          sram_read_bw, sram_write_bw;
-    
-    // iterate over each line
-    while(bw_csv.read_row(ifmap_sram_size, filter_sram_size, ofmap_sram_size, partition_index,
-        dram_ifmap_bw, dram_filter_bw, dram_ofmap_bw, sram_read_bw, sram_write_bw)) {
-
-        // update accelerator bandwidth
-        network[std::stoi(partition_index)].bandwidth_in = 
-            (dram_ifmap_bw*platform.clk_freq)/1000;
-        network[std::stoi(partition_index)].bandwidth_out = 
-            (dram_ofmap_bw*platform.clk_freq)/1000;
-
-    }
 
 }
 

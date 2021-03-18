@@ -112,7 +112,6 @@ int main(int argc, char *argv[]) {
 
     // file path names
     std::string featuremap_path;
-    std::string scale_sim_trace_path;
     std::string trace_path;
     std::string data_path;
     std::string output_path;
@@ -127,7 +126,6 @@ int main(int argc, char *argv[]) {
         options_description desc("Allowed Options");
         desc.add_options()
         ("help,h", "help message")
-        ("scale-sim", "use SCALE-Sim to get bandwidth estimates")
         ("baseline", "compute baseline power readings (no encoding)")
         ("memory", value(&memory_config_path)->required(), "file path for memory config (.xml)")
         ("encoder", value(&encoder_config_path), "file path for encoding scheme config (.xml)")
@@ -149,10 +147,6 @@ int main(int argc, char *argv[]) {
             baseline = true;
         }
 
-        if (vm.count("scale-sim")) {
-            use_scale_sim = true;
-        }
-        
         notify(vm);
 
     }
@@ -172,26 +166,6 @@ int main(int argc, char *argv[]) {
     // create a report
     nlohmann::json report;
 
-    // run scale-sim to get bandwidths
-    if ( use_scale_sim ) {
-        
-        //  create platform config
-        std::string scale_sim_config_path   = output_path + "/scale-sim-config.cfg";
-        std::string scale_sim_topology_path = output_path + "/scale-sim-topology.csv";
-        config_inst.generate_scale_sim_config(scale_sim_config_path, output_path);
-        config_inst.generate_scale_sim_topology(featuremap_path, scale_sim_topology_path);
-
-        //  run scale-sim command
-        std::string scale_sim_cmd = "python SCALE-Sim/scale.py";
-        scale_sim_cmd += " -arch_config=" + scale_sim_config_path; 
-        scale_sim_cmd += " -network=" + scale_sim_topology_path; 
-        system( scale_sim_cmd.c_str() );
-
-        // add bandwidth 
-        config_inst.add_scale_sim_bandwidth(output_path + "/scale-sim-topology_avg_bw.csv");
-        
-    }
-
     // get the data packing factor
     config_inst.platform.packing_factor = (int) (config_inst.memory.num_dq/config_inst.platform.bitwidth);
 
@@ -210,6 +184,9 @@ int main(int argc, char *argv[]) {
         int period_in   = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_in );
         int period_out  = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_out );
 
+        period_in  = std::min( period_in , 10000000 );
+        period_out = std::min( period_out, 10000000 );
+
         if ( period_in <= config_inst.platform.burst_size ) {
             printf("WARNING: bandwidth in larger than memory bandwidth\n");
             period_in = config_inst.platform.burst_size+1;
@@ -220,11 +197,9 @@ int main(int argc, char *argv[]) {
             period_out = config_inst.platform.burst_size+1;
         }
 
-        // TODO: scale memory clock speed to match input bandwidth
-
         // print debug information
         std::string encoding_scheme_type = get_encoder_type(encoder_config_path);
-        printf("Running Partition %s of fpgaconvnet\n", partition_index.c_str() );
+        printf("Running Partition %s of %s \n", partition_index.c_str(), output_path.c_str() );
         printf("Encoding Scheme: %s\n", encoding_scheme_type.c_str() );
         printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
@@ -356,7 +331,8 @@ int main(int argc, char *argv[]) {
         report[partition_index.c_str()] = { 
             { "bitwidth", config_inst.platform.bitwidth },
             { "clk_freq", config_inst.platform.clk_freq },
-            { "mem_bandwidth", config_inst.memory.bandwidth }
+            { "mem_bandwidth", config_inst.memory.bandwidth },
+            { "chips", config_inst.memory.num_chips }
         };
         report[partition_index.c_str()]["in"] = { 
             {"bandwidth", bandwidth_in},

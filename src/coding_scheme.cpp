@@ -9,21 +9,21 @@ namespace pommel {
 void coding_scheme::decorrelator(std::istream &in, std::ostream &out) {
 
     // value buffer
-    std::string val_tmp;
+    std::string line;
     uint128_t val;
 
     // queue (depth = channels)
     std::queue<uint128_t> fifo;
 
     // fill buffer, and send first value
-    in >> val_tmp;
-    val = convert_to_uint128(val_tmp);
+    std::getline(in, line);
+    val = convert_to_uint128(line);
     fifo.push(val);
     out << convert_from_uint128(val) << std::endl;
 
     // iterate over the rest of the stream
-    while(in >> val_tmp) {
-        val = convert_to_uint128(val_tmp);
+    while( std::getline(in, line) ) {
+        val = convert_to_uint128(line);
         // get delayed value
         uint128_t val_delay = fifo.front();
         fifo.pop();
@@ -61,10 +61,10 @@ void coding_scheme::deinterleave(std::istream &in, std::ostream &out, int bitwid
 
     // interleave 
     uint128_t val;
-    std::string val_tmp;
+    std::string line;
     uint32_t val_out = 0;
-    while(in >> val_tmp) {
-        val = convert_to_uint128(val_tmp);
+    while( std::getline(in, line) ) {
+        val = convert_to_uint128(line);
         for(int i=0;i<packing_factor;i++) {
             val_out = (val >> i*bitwidth) & mask;
             out << val_out << std::endl;

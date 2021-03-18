@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<networkspec name="resnet18">
+	<partition id="0">
+		<parameter id="kernel_size" type="int" value="7"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer1.0.add_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="1.0134199596304634"></parameter>
+		<parameter id="bandwidth_out" type="string" value="5.1652511450974306"></parameter>
+	</partition>
+	<partition id="1">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer1.0.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer1.0.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="3.0669926650366746"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.851833740831296"></parameter>
+	</partition>
+	<partition id="2">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer1.0.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer1.0.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="3.0669926650366746"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.851833740831296"></parameter>
+	</partition>
+	<partition id="3">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer1.1.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer1.1.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="3.0669926650366746"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.851833740831296"></parameter>
+	</partition>
+	<partition id="4">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer1.1.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer1.1.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="3.0669926650366746"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.851833740831296"></parameter>
+	</partition>
+	<partition id="5">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer2.0.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer2.0.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="4.405292071644508"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.123277963787667"></parameter>
+	</partition>
+	<partition id="6">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer2.0.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer2.0.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="2.587820961503039"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.2313354208878247"></parameter>
+	</partition>
+	<partition id="7">
+		<parameter id="kernel_size" type="int" value="1"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer2.0.downsample.0_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer2.0.add_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="2.1913651110556525"></parameter>
+		<parameter id="bandwidth_out" type="string" value="4.382730222111305"></parameter>
+	</partition>
+	<partition id="8">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer2.1.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer2.1.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="2.587820961503039"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.2313354208878247"></parameter>
+	</partition>
+	<partition id="9">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer2.1.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer2.1.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="2.587820961503039"></parameter>
+		<parameter id="bandwidth_out" type="string" value="2.2313354208878247"></parameter>
+	</partition>
+	<partition id="10">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer3.0.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer3.0.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="1.845465333107306"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.8556478499180652"></parameter>
+	</partition>
+	<partition id="11">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer3.0.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer3.0.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.5372820167655877"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.394737808235942"></parameter>
+	</partition>
+	<partition id="12">
+		<parameter id="kernel_size" type="int" value="1"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer3.0.downsample.0_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer3.0.add_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="1.9792178519102894"></parameter>
+		<parameter id="bandwidth_out" type="string" value="3.958435703820579"></parameter>
+	</partition>
+	<partition id="13">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer3.1.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer3.1.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.5372820167655877"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.394737808235942"></parameter>
+	</partition>
+	<partition id="14">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer3.1.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer3.1.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.5372820167655877"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.394737808235942"></parameter>
+	</partition>
+	<partition id="15">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer4.0.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer4.0.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.24291581108829566"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.10349075975359343"></parameter>
+	</partition>
+	<partition id="16">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer4.0.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer4.0.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.07119153887003864"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.03632221370920338"></parameter>
+	</partition>
+	<partition id="17">
+		<parameter id="kernel_size" type="int" value="1"></parameter>
+		<parameter id="stride" type="int" value="2"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer4.0.downsample.0_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer4.0.add_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.5359375"></parameter>
+		<parameter id="bandwidth_out" type="string" value="1.071875"></parameter>
+	</partition>
+	<partition id="18">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer4.1.conv1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer4.1.conv2_i_0"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.07119153887003864"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.03632221370920338"></parameter>
+	</partition>
+	<partition id="19">
+		<parameter id="kernel_size" type="int" value="3"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.layer4.1.conv2_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.layer4.1.add_i_1"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.07119153887003864"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.03632221370920338"></parameter>
+	</partition>
+	<partition id="20">
+		<parameter id="kernel_size" type="int" value="1"></parameter>
+		<parameter id="stride" type="int" value="1"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.fc_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="output"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.0066891879281061615"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.013064820172082346"></parameter>
+	</partition>
+</networkspec>

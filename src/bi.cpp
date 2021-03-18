@@ -11,22 +11,25 @@ void bi::encoder(std::istream &in, std::ostream &out) {
     uint128_t mask = (1 << bus_width) - 1;
 
     // value buffer
-    std::string val_tmp;
+    std::string line;
     uint128_t val;
 
     // queue (depth = 1)
     std::queue<uint128_t> fifo;
 
     // fill buffer, and send first value
-    in >> val_tmp;
-    val = convert_to_uint128(val_tmp);
+    std::getline(in, line);
+    val = convert_to_uint128(line);
     
     fifo.push(val);
     out << convert_from_uint128(val) << std::endl;
 
     // iterate over the rest of the stream
-    while (in >> val_tmp) {
-        val = convert_to_uint128(val_tmp);
+    while ( std::getline(in, line) ) {
+
+        // convert line to string stream
+        val = convert_to_uint128(line);
+
         // get delayed value
         uint128_t val_delay = fifo.front();
         fifo.pop();

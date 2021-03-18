@@ -70,6 +70,13 @@ def add_power_to_report(output_path):
         report[partition]["in"]["dram"] = parse_dram_power_report(os.path.join(output_path,partition,"input_dram_power.rpt"))
         report[partition]["out"]["io"]   = parse_cacti_report(os.path.join(output_path,partition,"output_cacti.rpt"))
         report[partition]["out"]["dram"] = parse_dram_power_report(os.path.join(output_path,partition,"output_dram_power.rpt"))
+
+        # update DRAM power by number of chips
+        report[partition]["in"]["dram"]["trace_power"] *= report[partition]["chips"]
+        report[partition]["in"]["dram"]["trace_energy"] *= report[partition]["chips"]
+        report[partition]["out"]["dram"]["trace_power"] *= report[partition]["chips"]
+        report[partition]["out"]["dram"]["trace_energy"] *= report[partition]["chips"]
+
     # save report to output path
     with open(os.path.join(output_path,"report.json"),"w") as f:
         json.dump(report,f,indent=4)

@@ -13,6 +13,7 @@ def get_layers(filepath):
     # return keys
     layers = featuremaps["layers"] 
     layers.append["data"]
+    layers.append["output"]
     return layers
 
 def get_dimensions(featuremaps):
@@ -24,6 +25,7 @@ def get_dimensions(featuremaps):
     for layer in layers:
         dimensions[layer] = featuremaps[layer].shape
     dimensions["data"] = featuremaps["data"].shape
+    dimensions["output"] = featuremaps["output"].shape
     # return dimensions
     return dimensions
 

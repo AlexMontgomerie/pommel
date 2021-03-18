@@ -7,21 +7,22 @@ import metrics
 # all networks
 networks = [
     "alexnet",
+    "vgg11",
     #"mobilenet_v2",
 ]
 
 # all accelerators
 accelerators = [
     "tpu",
-    "scnn",
-    "shidiannao",
-    "eyeriss",
+    #"scnn",
+    #"shidiannao",
+    #"eyeriss",
 ]
 
 # all memory types
 memories = [
-    #"ddr3",
-    "ddr4",
+    "ddr3",
+    #"ddr4",
     #"wide_io",
 ]
 
@@ -80,7 +81,6 @@ for network in networks:
         plt.legend()
         plt.show()
 
-"""
 # plot layer-wise power for different coding schemes for mobilenet_v2, TPU, DDR3
 for accelerator in accelerators:
     for memory in memories:
@@ -114,7 +114,6 @@ for accelerator in accelerators:
         plt.title(f"Bandwidth per layer for {accelerator} running {network}")
         plt.legend()
         plt.show() 
-"""
 
 # plot layer-wise compression for different coding schemes for mobilenet_v2, TPU, DDR3
 for network in networks:

@@ -104,11 +104,7 @@ class config {
         //void generate_cacti_config(std::string config_path);
         void generate_cacti_config(std::string direction, std::string config_path, float data_activity, float address_activity, float duty_cycle);
         void generate_dram_power_config(std::string config_path);
-        void generate_scale_sim_config(std::string config_path, std::string output_path); 
-        void generate_scale_sim_topology(std::string featuremap_path, std::string topology_path);
 
-
-        void add_scale_sim_bandwidth(std::string report_path);
 };
 
 }
