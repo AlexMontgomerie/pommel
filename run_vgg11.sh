@@ -67,7 +67,6 @@ run $ddr3_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg1
 run $ddr3_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr3_def def
 run $ddr3_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr3_pbm pbm
 run $ddr3_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr3_huffman huffman
-'
 
 # DDR4
 
@@ -78,7 +77,6 @@ run $ddr4_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_ddr4_def def
 run $ddr4_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_ddr4_pbm pbm
 run $ddr4_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_ddr4_huffman huffman 
 
-: '
 run $ddr4_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_ddr4_baseline baseline
 run $ddr4_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_ddr4_bi bi
 run $ddr4_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_ddr4_rle rle
@@ -99,7 +97,6 @@ run $ddr4_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg1
 run $ddr4_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr4_def def
 run $ddr4_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr4_pbm pbm
 run $ddr4_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_ddr4_huffman huffman
-'
 
 # WIDE-IO
 
@@ -110,7 +107,6 @@ run $wide_io_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_wide_io_def def
 run $wide_io_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_wide_io_pbm pbm
 run $wide_io_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_wide_io_huffman huffman
 
-: '
 run $wide_io_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_wide_io_baseline baseline
 run $wide_io_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_wide_io_bi bi
 run $wide_io_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_wide_io_rle rle

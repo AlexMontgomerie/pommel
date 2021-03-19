@@ -1,6 +1,12 @@
 import json
 import numpy as np
 
+def get_base_sequence(report, field):
+    seq = []
+    for i in report:
+        seq.append(report[i][field])
+    return np.array(seq)
+
 def get_sequence(report, field, direction="in"):
     seq = []
     for i in report:

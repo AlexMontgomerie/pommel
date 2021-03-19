@@ -22,8 +22,8 @@ accelerators = [
 # all memory types
 memories = [
     "ddr3",
-    #"ddr4",
-    #"wide_io",
+    "ddr4",
+    "wide_io",
 ]
 
 # all coding schemes
@@ -107,11 +107,27 @@ for accelerator in accelerators:
             # open report
             with open(f"outputs/{accelerator}_{network}_ddr3_{coding_scheme}/report.json", "r") as f:
                 report = json.load(f)
-            bandwidth = metrics.get_sequence(report,"samples","in")
+            bandwidth = metrics.get_sequence(report,"bandwidth","in")
             plt.plot(np.arange(len(bandwidth)),bandwidth,label=coding_scheme)
         plt.xlabel("Partition Index")
         plt.ylabel("Bandwidth (GB/s)")
         plt.title(f"Bandwidth per layer for {accelerator} running {network}")
+        plt.legend()
+        plt.show() 
+
+# plot layer-wise Bandwidth ratio for different coding schemes for mobilenet_v2, TPU, DDR3
+for accelerator in accelerators:
+    for network in networks:
+        for coding_scheme in coding_schemes:
+            # open report
+            with open(f"outputs/{accelerator}_{network}_ddr3_{coding_scheme}/report.json", "r") as f:
+                report = json.load(f)
+            bandwidth = metrics.get_sequence(report,"bandwidth","in")
+            bandwidth_mem = metrics.get_base_sequence(report,"mem_bandwidth")
+            plt.plot(np.arange(len(bandwidth)),bandwidth/bandwidth_mem,label=coding_scheme)
+        plt.xlabel("Partition Index")
+        plt.ylabel("Bandwidth Ratio")
+        plt.title(f"Bandwidth Ratio to Memory per layer for {accelerator} running {network}")
         plt.legend()
         plt.show() 
 
