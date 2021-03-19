@@ -6,7 +6,7 @@ import metrics
 
 # all networks
 networks = [
-    "alexnet",
+    #"alexnet",
     "vgg11",
     #"mobilenet_v2",
 ]
@@ -24,6 +24,7 @@ memories = [
     "ddr3",
     "ddr4",
     "wide_io",
+    #"zedboard",
 ]
 
 # all coding schemes

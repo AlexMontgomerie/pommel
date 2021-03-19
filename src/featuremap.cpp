@@ -55,7 +55,7 @@ std::vector<int32_t> featuremap::row_major_transform(std::vector<int32_t> data_i
     return data_out;
 }
 
-void featuremap::generate_stream(std::string data_path, std::string transform, int bitwidth, int data_packing_factor) {
+void featuremap::generate_stream(std::string data_path, std::string transform, int bitwidth, int data_packing_factor, std::string direction) {
 
     // get transformed data 
     std::vector<int32_t> transformed_data;
@@ -77,7 +77,7 @@ void featuremap::generate_stream(std::string data_path, std::string transform, i
         j = (j+1) % data_packing_factor;
         if(j==0) {
             std::string data = convert_from_uint128(val);
-            datafile << boost::format("%i %c %s\n") % i % 'R' % data;
+            datafile << boost::format("%i %s %s\n") % i % direction % data;
             i++;
             val = 0;
         }

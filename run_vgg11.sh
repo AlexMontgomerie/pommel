@@ -8,6 +8,7 @@ ddr3_path=config/memory/ddr3_single.xml
 ddr3l_path=config/memory/ddr3l_single.xml
 ddr4_path=config/memory/ddr4_single.xml
 wide_io_path=config/memory/wide_io_single.xml
+zedboard_path=config/memory/zedboard.xml
 
 vgg11_fm_8=featuremaps/vgg11_8b.h5
 vgg11_fm_16=featuremaps/vgg11_16b.h5
@@ -128,6 +129,7 @@ run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_v
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_pbm pbm
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_huffman huffman
 '
+
 # zedboard 
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_baseline baseline
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_bi bi

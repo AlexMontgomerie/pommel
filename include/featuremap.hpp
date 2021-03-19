@@ -39,7 +39,7 @@ class featuremap {
         int get_size(void);
     
         void generate_stream(std::string data_path, std::string transform, 
-                int bitwidth, int data_packing_factor);
+                int bitwidth, int data_packing_factor, std::string direction);
         featuremap(std::string featuremap_path, std::string layer_name);
 
 };

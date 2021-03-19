@@ -3,7 +3,7 @@
 namespace pommel {
 
 template<>
-encoder<def>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<def>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // load config
     pugi::xml_document doc;
@@ -25,7 +25,7 @@ encoder<def>::encoder(std::string config_path, std::string featuremap, platform_
 }
 
 template<>
-encoder<bi>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<bi>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // initialise the coding scheme
     coder = new bi(platform);
@@ -33,7 +33,7 @@ encoder<bi>::encoder(std::string config_path, std::string featuremap, platform_c
 }
 
 template<>
-encoder<awr>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<awr>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // initialise the coding scheme
     coder = new awr(platform, 4); // TODO
@@ -41,7 +41,7 @@ encoder<awr>::encoder(std::string config_path, std::string featuremap, platform_
 }
 
 template<>
-encoder<abe>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<abe>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // initialise the coding scheme
     coder = new abe(platform, 32); //TODO
@@ -49,7 +49,7 @@ encoder<abe>::encoder(std::string config_path, std::string featuremap, platform_
 }
 
 template<>
-encoder<pbm>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<pbm>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // load config
     pugi::xml_document doc;
@@ -80,7 +80,7 @@ encoder<pbm>::encoder(std::string config_path, std::string featuremap, platform_
 }
 
 template<>
-encoder<rle>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<rle>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // load config
     pugi::xml_document doc;
@@ -101,7 +101,7 @@ encoder<rle>::encoder(std::string config_path, std::string featuremap, platform_
 }
 
 template<>
-encoder<huffman>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) {
+encoder<huffman>::encoder(std::string config_path, std::string featuremap, platform_config_t platform) : platform(platform) {
 
     // load config
     pugi::xml_document doc;

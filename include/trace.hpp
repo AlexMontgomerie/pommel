@@ -2,6 +2,7 @@
 #define TRACE_HPP_ 
 
 #include "common.hpp"
+#include "stream_helper.hpp"
 #include <boost/format.hpp>
 
 #include "ramulator/src/Config.h"
@@ -162,6 +163,101 @@ class trace {
 
             // close file in
             in.close();
+
+            delete configs;
+            delete memory;
+        }
+
+        void generate_combined_trace(std::string stream_in_path, std::string stream_out_path) {
+            
+            // setup requests
+            map<int, int> latencies;
+            auto read_complete = [&latencies](ramulator::Request& r){latencies[r.depart - r.arrive]++;};
+            ramulator::Request req(0, ramulator::Request::Type::WRITE, read_complete);
+
+            // load stream in
+            std::ifstream in (stream_in_path);
+            if( !in.is_open() ) {
+                perror("file error");
+                fprintf(stderr,"cannot open input file: %s \n", stream_in_path.c_str());
+            }
+
+            // load stream out
+            std::ifstream out (stream_out_path);
+            if( !out.is_open() ) {
+                perror("file error");
+                fprintf(stderr,"cannot open output file: %s \n", stream_out_path.c_str());
+            }
+           
+            // get all streams
+            std::stringstream addr_in_stream;
+            get_stream_field(in, addr_in_stream, ADDR);
+                
+            std::stringstream addr_out_stream;
+            get_stream_field(out, addr_out_stream, ADDR);
+
+            // iterate over stream
+            uint32_t addr_val;
+            while( addr_in_stream.rdbuf()->in_avail() || addr_out_stream.rdbuf()->in_avail() ) {
+
+                // size of buffers
+                int buffer_size_in = 0;
+                int buffer_size_out = 0;
+
+                // iterate over batch
+                for(int i=0;i<burst_size;i++) {
+
+                    // log buffer size
+                    buffer_size_in++;
+
+                    // break if buffer empty
+                    if( !addr_in_stream.rdbuf()->in_avail() ) {
+                        break;
+                    }
+                    
+                    // read in address val
+                    addr_in_stream >> addr_val;
+
+                    // send to memory        }
+                    req.addr = addr_val;
+                    req.type = ramulator::Request::Type::READ;
+                    memory->send(req);
+                    memory->tick();
+                }
+
+                // iterate over batch
+                for(int i=0;i<burst_size;i++) {
+
+                    // log buffer size
+                    buffer_size_out++;
+
+                    // break if buffer empty
+                    if( !addr_out_stream.rdbuf()->in_avail() ) {
+                        break;
+                    }
+                    
+                    // read in address val
+                    addr_out_stream >> addr_val;
+
+                    // send to memory        }
+                    req.addr = addr_val;
+                    req.type = ramulator::Request::Type::WRITE;
+                    memory->send(req);
+                    memory->tick();
+                }
+
+                // iterate over rest of burst
+                for(int i=0;i<period-buffer_size_in-buffer_size_out;i++) {
+                    memory->tick();
+                } 
+            }
+
+            // finish memory transactions
+            memory->finish();
+
+            // close file in and out
+            in.close();
+            out.close();
 
             delete configs;
             delete memory;

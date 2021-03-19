@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
         //  load the featuremap
         pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
         featuremap_input.generate_stream(stream_output_path, config_inst.platform.transform, 
-                config_inst.platform.bitwidth, config_inst.platform.packing_factor);
+                config_inst.platform.bitwidth, config_inst.platform.packing_factor, "R");
 
         // get activity and statistics for baseline trace
         pommel::analysis analysis_input_baseline(stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
         if(!baseline) {
             encoder_t encoder_input = get_encoder_inst(encoder_config_path, partition_conf.input_featuremap, config_inst.platform);
             std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
-                    arg.encode_stream(stream_in, stream_out); }, encoder_input);
+                    arg.encode_stream(stream_in, stream_out, "R"); }, encoder_input);
         } else {
             encoded_stream_output_path = stream_output_path;
         }
@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
         // load the featuremap
         pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
         featuremap_output.generate_stream(stream_output_path, config_inst.platform.transform,
-                config_inst.platform.bitwidth, config_inst.platform.packing_factor);
+                config_inst.platform.bitwidth, config_inst.platform.packing_factor, "W");
 
         // get activity and statistics for baseline trace
         pommel::analysis analysis_output_baseline(stream_output_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
         if(!baseline) {
             encoder_t encoder_output = get_encoder_inst(encoder_config_path, partition_conf.output_featuremap, config_inst.platform);
             std::visit([&stream_in=stream_output_path,&stream_out=encoded_stream_output_path](auto&& arg){
-                    arg.encode_stream(stream_in, stream_out); }, encoder_output);
+                    arg.encode_stream(stream_in, stream_out, "W"); }, encoder_output);
         } else {
             encoded_stream_output_path = stream_output_path;
         }

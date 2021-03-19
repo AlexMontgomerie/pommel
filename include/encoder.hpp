@@ -20,10 +20,11 @@ template<class T>
 class encoder {
     protected:
         T * coder;
+        platform_config_t platform;
     public:
         encoder(std::string config_path, std::string featuremap, platform_config_t platform);
 
-        void encode_stream(std::string stream_in_path, std::string stream_out_path) {
+        void encode_stream(std::string stream_in_path, std::string stream_out_path, std::string direction) {
 
             // open stream in
             std::ifstream in  (stream_in_path);
@@ -48,9 +49,21 @@ class encoder {
             in.seekg(0, std::ios::beg);
 
             // run encoder
-            std::stringstream encoded_data_stream;
-            coder->encoder(data_stream, encoded_data_stream);
- 
+            std::stringstream output_data_stream;
+            while( data_stream.rdbuf()->in_avail() ) {
+                // create buffer
+                std::stringstream buffer;
+                std::string line;
+                for(int i=0; i<platform.burst_size;i++) {
+                    std::getline(data_stream, line);
+                    if( line.empty() )
+                        break;
+                    buffer << line << std::endl;
+                }
+                // encode buffer
+                coder->encoder(buffer, output_data_stream);
+            }
+
             // open stream out
             std::ofstream out (stream_out_path);
             if( !out.is_open() ) {
@@ -58,7 +71,7 @@ class encoder {
             } 
 
             // create new stream
-            create_stream(addr_stream, encoded_data_stream, "R", out); //TODO: give correct direction
+            create_stream(addr_stream, output_data_stream, direction, out); 
 
             // close files
             in.close();
