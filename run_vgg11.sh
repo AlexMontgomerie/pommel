@@ -4,10 +4,10 @@
 make clean
 make -j 8
 
-ddr3_path=config/memory/ddr3_single.xml
-ddr3l_path=config/memory/ddr3l_single.xml
-ddr4_path=config/memory/ddr4_single.xml
-wide_io_path=config/memory/wide_io_single.xml
+ddr3_path=config/memory/ddr3.xml
+ddr3l_path=config/memory/ddr3l.xml
+ddr4_path=config/memory/ddr4.xml
+wide_io_path=config/memory/wide_io.xml
 zedboard_path=config/memory/zedboard.xml
 
 vgg11_fm_8=featuremaps/vgg11_8b.h5
@@ -39,7 +39,7 @@ vgg11_eyeriss=config/network/vgg11_eyeriss.xml
 vgg11_scnn=config/network/vgg11_scnn.xml
 vgg11_shidiannao=config/network/vgg11_shidiannao.xml
 
-: '
+
 # DDR3
 run $ddr3_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_ddr3_baseline baseline
 run $ddr3_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_ddr3_bi bi
@@ -128,7 +128,6 @@ run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_v
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_def def
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_pbm pbm
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_huffman huffman
-'
 
 # zedboard 
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_baseline baseline
@@ -138,7 +137,6 @@ run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_def de
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_pbm pbm
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_huffman huffman
 
-: '
 run $zedboard_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_zedboard_baseline baseline
 run $zedboard_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_zedboard_bi bi
 run $zedboard_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss outputs/eyeriss_vgg11_zedboard_rle rle
@@ -159,5 +157,4 @@ run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_def def
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_pbm pbm
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_huffman huffman
-'
 

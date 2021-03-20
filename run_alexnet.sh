@@ -4,10 +4,10 @@
 make clean
 make -j 8
 
-ddr3_path=config/memory/ddr3_single.xml
-ddr3l_path=config/memory/ddr3l_single.xml
-ddr4_path=config/memory/ddr4_single.xml
-wide_io_path=config/memory/wide_io_single.xml
+ddr3_path=config/memory/ddr3.xml
+ddr3l_path=config/memory/ddr3l.xml
+ddr4_path=config/memory/ddr4.xml
+wide_io_path=config/memory/wide_io.xml
 
 alexnet_fm_8=featuremaps/alexnet_8b.h5
 alexnet_fm_16=featuremaps/alexnet_16b.h5
