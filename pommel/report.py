@@ -142,7 +142,7 @@ class report:
 
     def get_average_bandwidth(self):
         # get bandwidth
-        bandwidth = self.get_base_sequence(report,"bandwidth")
+        bandwidth = self.get_sequence("bandwidth","in")
         # get all samples
         samples = self.get_dram_sequence("trace_length")
         # return weighted average of power

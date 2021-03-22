@@ -37,6 +37,9 @@ coding_schemes = [
 # create plot instance
 plot = pommel.plot(networks, accelerators, memories, coding_schemes)
 
+
+plot.average_power_performance_scatter_plot()
+
 # generate all plots
 plot.average_power_coding_scheme_bar_plot()
 

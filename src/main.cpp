@@ -342,6 +342,7 @@ int main(int argc, char *argv[]) {
 
         // add report information
         report["partitions"][partition_index.c_str()] = { 
+            {"bandwidth" , bandwidth},
             {"read_duty_cycle" , read_duty_cycle},
             {"write_duty_cycle", write_duty_cycle},
             {"idle_duty_cycle" , idle_duty_cycle}

@@ -62,6 +62,25 @@ class plot:
         plt.show()
 
 
+    def average_power_performance_scatter_plot(self):
+        
+        fig, ax = plt.subplots(1, sharey="row")
+        for memory in self.memories:
+            for network in self.networks:
+                y = [] 
+                x = []
+                for coding_scheme in self.coding_schemes:
+                    for accelerator in self.accelerators:
+                        # open report
+                        report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                        # get average power
+                        average_power = report.get_average_power()
+                        average_bandwidth = report.get_average_bandwidth()
+                        y.append(average_power)
+                        x.append(average_bandwidth)
+                plt.scatter(x,y)
+        plt.show()
+
 
     def average_power_coding_scheme_bar_plot(self):
         
