@@ -412,14 +412,14 @@
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.18.0_i_0"></parameter>
-		<parameter id="output_featuremap" type="string" value="module.mean32.1_i_0"></parameter>
+		<parameter id="output_featuremap" type="string" value="module.mean32.0_i_0"></parameter>
 		<parameter id="bandwidth_in" type="string" value="0.22426087489528634"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.8970434995811454"></parameter>
 	</partition>
 	<partition id="52">
 		<parameter id="kernel_size" type="int" value="7"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
-		<parameter id="input_featuremap" type="string" value="module.mean32.1_i_0"></parameter>
+		<parameter id="input_featuremap" type="string" value="module.mean32.0_i_0"></parameter>
 		<parameter id="output_featuremap" type="string" value="module.classifier.1_i_0"></parameter>
 		<parameter id="bandwidth_in" type="string" value="0.010077484504829372"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.019379777893902637"></parameter>

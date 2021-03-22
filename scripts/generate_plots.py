@@ -11,8 +11,8 @@ networks = [
 # all accelerators
 accelerators = [
     "tpu",
-    #"scnn",
-    #"shidiannao",
+    "scnn",
+    "shidiannao",
     "eyeriss",
 ]
 
@@ -20,7 +20,7 @@ accelerators = [
 memories = [
     "ddr3",
     "ddr4",
-    #"wide_io",
+    "wide_io",
     #"zedboard",
 ]
 
@@ -38,7 +38,7 @@ coding_schemes = [
 plot = pommel.plot(networks, accelerators, memories, coding_schemes)
 
 
-plot.average_power_performance_scatter_plot()
+plot.average_power_performance_scatter_plot("alexnet")
 
 # generate all plots
 plot.average_power_coding_scheme_bar_plot()

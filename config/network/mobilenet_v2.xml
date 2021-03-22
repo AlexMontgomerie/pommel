@@ -309,12 +309,12 @@
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.18.0_i_0" />
-        <parameter id="output_featuremap" type="string" value="module.mean32.1_i_0" />
+        <parameter id="output_featuremap" type="string" value="module.mean32.0_i_0" />
     </partition>
     <partition id="52">
         <parameter id="kernel_size" type="int" value="7" />
         <parameter id="stride" type="int" value="1" />
-        <parameter id="input_featuremap" type="string" value="module.mean32.1_i_0" />
+        <parameter id="input_featuremap" type="string" value="module.mean32.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.classifier.1_i_0" />
     </partition>
     <partition id="53">

@@ -62,24 +62,25 @@ class plot:
         plt.show()
 
 
-    def average_power_performance_scatter_plot(self):
+    def average_power_performance_scatter_plot(self, network):
         
-        fig, ax = plt.subplots(1, sharey="row")
-        for memory in self.memories:
-            for network in self.networks:
+        fig, axs = plt.subplots(len(self.accelerators), sharey="row")
+        for accelerator in self.accelerators:
+            ax = axs[self.accelerators.index(accelerator)]
+            for memory in self.memories:
                 y = [] 
                 x = []
                 for coding_scheme in self.coding_schemes:
-                    for accelerator in self.accelerators:
                         # open report
                         report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                        #print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
                         # get average power
                         average_power = report.get_average_power()
                         average_bandwidth = report.get_average_bandwidth()
                         y.append(average_power)
                         x.append(average_bandwidth)
-                plt.scatter(x,y)
-        plt.show()
+                ax.scatter(x,y)
+        self.create_plot(fig, axs, "Accelerator", "Average Power (mW)", "Comparision of Average Power for Coding Schemes")
 
 
     def average_power_coding_scheme_bar_plot(self):
@@ -96,6 +97,7 @@ class plot:
                     for accelerator in self.accelerators:
                         # open report
                         report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                        print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
                         # get average power
                         average_power = report.get_average_power()
                         y[coding_scheme].append(average_power)
