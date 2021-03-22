@@ -40,5 +40,16 @@ plot = pommel.plot(networks, accelerators, memories, coding_schemes)
 # generate all plots
 plot.average_power_coding_scheme_bar_plot()
 
-for accelerator in accelerators:
-    plot.layerwise_average_power_coding_scheme_plot(accelerator)
+#for accelerator in accelerators:
+#    plot.layerwise_average_power_coding_scheme_plot(accelerator)
+    
+plot.layerwise_bandwidth_coding_scheme_plot("ddr3")
+
+plot.layerwise_bandwidth_ratio_coding_scheme_plot("ddr3")
+
+plot.layerwise_compression_ratio_coding_scheme_plot("tpu", "ddr3")
+
+plot.layerwise_activity_coding_scheme_plot("tpu", "ddr3")
+
+
+

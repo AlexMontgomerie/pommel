@@ -50,18 +50,35 @@ class encoder {
 
             // run encoder
             std::stringstream output_data_stream;
+            std::stringstream output_addr_stream;
             while( data_stream.rdbuf()->in_avail() ) {
                 // create buffer
-                std::stringstream buffer;
-                std::string line;
+                std::stringstream data_buffer;
+                std::stringstream addr_buffer;
+                std::string data_line;
+                std::string addr_line;
                 for(int i=0; i<platform.burst_size;i++) {
-                    std::getline(data_stream, line);
-                    if( line.empty() )
+                    // read in streams
+                    std::getline(data_stream, data_line);
+                    std::getline(addr_stream, addr_line);
+                    // check if empty
+                    if( data_line.empty() || addr_line.empty() )
                         break;
-                    buffer << line << std::endl;
+                    // write to buffer
+                    data_buffer << data_line << std::endl;
+                    addr_buffer << addr_line << std::endl;
                 }
                 // encode buffer
-                coder->encoder(buffer, output_data_stream);
+                std::stringstream encoded_data_buffer;
+                coder->encoder(data_buffer, encoded_data_buffer);
+                // send to output
+                while( std::getline(encoded_data_buffer, data_line) ) {
+                    // read address buffer also
+                    std::getline(addr_buffer, addr_line);
+                    // write to output streams
+                    output_data_stream << data_line << std::endl;
+                    output_addr_stream << addr_line << std::endl;
+                }
             }
 
             // open stream out
@@ -71,7 +88,7 @@ class encoder {
             } 
 
             // create new stream
-            create_stream(addr_stream, output_data_stream, direction, out); 
+            create_stream(output_addr_stream, output_data_stream, direction, out); 
 
             // close files
             in.close();

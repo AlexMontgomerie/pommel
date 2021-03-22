@@ -132,7 +132,8 @@ run $wide_io_path $mobilenet_v2_fm_8 $shidiannao $mobilenet_v2_shidiannao output
 
 
 # zedboard 
-run $zedboard_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_zedboard_baseline baseline
+
+: 'run $zedboard_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_zedboard_baseline baseline
 run $zedboard_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_zedboard_bi bi
 run $zedboard_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_zedboard_rle rle
 run $zedboard_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_zedboard_def def
@@ -159,5 +160,5 @@ run $zedboard_path $mobilenet_v2_fm_8 $shidiannao $mobilenet_v2_shidiannao outpu
 run $zedboard_path $mobilenet_v2_fm_8 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_zedboard_def def
 run $zedboard_path $mobilenet_v2_fm_8 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_zedboard_pbm pbm
 run $zedboard_path $mobilenet_v2_fm_8 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_zedboard_huffman huffman
-
+'
 

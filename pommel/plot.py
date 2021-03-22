@@ -108,3 +108,69 @@ class plot:
         # create plot
         self.create_plot(fig, axs, "Partition Index", "Average Power (mW)", "Comparision of Average Power for Coding Schemes across Layers")
 
+    def layerwise_bandwidth_coding_scheme_plot(self, memory):
+
+        fig, axs = plt.subplots(len(self.accelerators), len(self.networks))
+        for accelerator in self.accelerators:
+            for network in self.networks:
+                ax = axs[self.accelerators.index(accelerator),self.networks.index(network)]
+                for coding_scheme in self.coding_schemes:
+                    # open report
+                    report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                    bandwidth = report.get_sequence("bandwidth","in")
+                    ax.plot(np.arange(len(bandwidth)),bandwidth,label=coding_scheme)
+                ax.set_title(f"Bandwidth per layer for {accelerator} running {network}")
+
+        # create plot
+        self.create_plot(fig, axs, "Partition Index", "Bandwidth (GB/s)", "Comparision of Bandwidth for Coding Schemes across Layers")
+
+    def layerwise_bandwidth_ratio_coding_scheme_plot(self, memory):
+
+        fig, axs = plt.subplots(len(self.accelerators), len(self.networks))
+        for accelerator in self.accelerators:
+            for network in self.networks:
+                ax = axs[self.accelerators.index(accelerator),self.networks.index(network)]
+                for coding_scheme in self.coding_schemes:
+                    # open report
+                    report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                    bandwidth = report.get_sequence("bandwidth","in")
+                    bandwidth_mem = report.get_base_sequence("mem_bandwidth")
+                    ax.plot(np.arange(len(bandwidth)),bandwidth/bandwidth_mem,label=coding_scheme)
+                ax.set_title(f"Bandwidth Ratio per layer for {accelerator} running {network}")
+
+        # create plot
+        self.create_plot(fig, axs, "Partition Index", "Bandwidth Ratio", "Comparision of Bandwidth Ratio for Coding Schemes across Layers")
+
+    
+    def layerwise_compression_ratio_coding_scheme_plot(self, accelerator, memory):
+
+        fig, axs = plt.subplots(len(self.networks))
+        for network in self.networks:
+            ax = axs[self.networks.index(network)]
+            for coding_scheme in self.coding_schemes:
+                # open report
+                report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                # get sequence of total power
+                compression_ratio = report.get_sequence("compression_ratio","in")
+                ax.plot(np.arange(len(compression_ratio)),compression_ratio,label=coding_scheme)
+                ax.set_title(f"Compression Ratio per layer for {accelerator} running {network}")
+
+        # create plot
+        self.create_plot(fig, axs, "Partition Index", "Compression Ratio", "Comparision of Compression Ratio for Coding Schemes across Layers")
+
+    def layerwise_activity_coding_scheme_plot(self, accelerator, memory):
+
+        fig, axs = plt.subplots(len(self.networks))
+        for network in self.networks:
+            ax = axs[self.networks.index(network)]
+            for coding_scheme in self.coding_schemes:
+                # open report
+                report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                # get sequence of total power
+                activity = report.get_sequence("data_activity","in")
+                ax.plot(np.arange(len(activity)),activity,label=coding_scheme)
+                ax.set_title(f"Activity per layer for {accelerator} running {network}")
+
+        # create plot
+        self.create_plot(fig, axs, "Partition Index", "Activity", "Comparision of Compression Ratio for Coding Schemes across Layers")
+

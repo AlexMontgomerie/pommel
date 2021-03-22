@@ -130,6 +130,7 @@ run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_v
 run $wide_io_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_huffman huffman
 
 # zedboard 
+: '
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_baseline baseline
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_bi bi
 run $zedboard_path $vgg11_fm_8 $tpu $vgg11_tpu outputs/tpu_vgg11_zedboard_rle rle
@@ -157,4 +158,4 @@ run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_def def
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_pbm pbm
 run $zedboard_path $vgg11_fm_8 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_zedboard_huffman huffman
-
+'

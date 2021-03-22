@@ -80,6 +80,7 @@ typedef struct {
     int ofmap_offset = 20000000;
     std::string dataflow;
     std::string transform;
+    std::string name;
 } platform_config_t;
 
 class config {
@@ -96,7 +97,7 @@ class config {
 
         // load config functions
         void load_memory_config(std::string config_path);
-        void load_network_config(std::string config_path);
+        std::string load_network_config(std::string config_path);
         void load_platform_config(std::string config_path);
 
         // generate config functions

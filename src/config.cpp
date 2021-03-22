@@ -36,7 +36,7 @@ void config::load_memory_config(std::string config_path) {
     return;
 }
 
-void config::load_network_config(std::string config_path) {
+std::string config::load_network_config(std::string config_path) {
     
     // load the memory config file
     pugi::xml_document doc;
@@ -74,6 +74,9 @@ void config::load_network_config(std::string config_path) {
         network[partition_index] = conf;
     }
 
+    // return name
+    return network_name;
+
 }
 
 void config::load_platform_config(std::string config_path) {
@@ -85,7 +88,8 @@ void config::load_platform_config(std::string config_path) {
         fprintf(stderr,"Couldn't open config file: %s\n", config_path.c_str());
     }
  
-    // get all platform parameters 
+    // get all platform parameters
+    platform.name            = doc.select_node("/acceleratorspec").node().attribute("name").value();
     platform.dataflow        = doc.select_node("/acceleratorspec/parameter[@id='dataflow']").node().attribute("value").value();
     platform.array_height    = doc.select_node("/acceleratorspec/parameter[@id='array_height']").node().attribute("value").as_int();
     platform.array_width     = doc.select_node("/acceleratorspec/parameter[@id='array_width']").node().attribute("value").as_int();

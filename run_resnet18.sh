@@ -129,6 +129,7 @@ run $wide_io_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidia
 run $wide_io_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidiannao_resnet18_wide_io_huffman huffman
 
 # zedboard 
+: '
 run $zedboard_path $resnet18_fm_8 $tpu $resnet18_tpu outputs/tpu_resnet18_zedboard_baseline baseline
 run $zedboard_path $resnet18_fm_8 $tpu $resnet18_tpu outputs/tpu_resnet18_zedboard_bi bi
 run $zedboard_path $resnet18_fm_8 $tpu $resnet18_tpu outputs/tpu_resnet18_zedboard_rle rle
@@ -156,5 +157,5 @@ run $zedboard_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidi
 run $zedboard_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidiannao_resnet18_zedboard_def def
 run $zedboard_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidiannao_resnet18_zedboard_pbm pbm
 run $zedboard_path $resnet18_fm_8 $shidiannao $resnet18_shidiannao outputs/shidiannao_resnet18_zedboard_huffman huffman
-
+'
 

@@ -34,13 +34,10 @@ std::string convert_from_uint128(uint128_t val) {
 void create_stream(std::istream &addr, std::istream &data, std::string direction, std::ostream &out) {
 
     // iterate over trace file
-    std::string line;
     std::string addr_val;
     std::string data_val;
-    int i=0;
-    while( std::getline(data, data_val) ) {
-        out << i << " " << direction << " " << data_val << " " << std::endl;
-        i++;
+    while( std::getline(data, data_val) && std::getline(addr, addr_val) ) {
+        out << addr_val << " " << direction << " " << data_val << " " << std::endl;
     }
 }
 

@@ -48,19 +48,19 @@ fi
 for partition in $output_path/*/ ; do
     
     # run DRAM Power estimation
-    ./DRAMPower/drampower -m $memory_config -c $partition/input-chan-0-rank-0.cmdtrace  > $partition/input_dram_power.rpt
-    ./DRAMPower/drampower -m $memory_config -c $partition/output-chan-0-rank-0.cmdtrace > $partition/output_dram_power.rpt
+    ./DRAMPower/drampower -m $memory_config -c $partition/trace-chan-0-rank-0.cmdtrace  > $partition/dram_power.rpt
 
     # run cacti IO estimation 
     cd cacti
-        ./cacti -infile ../$partition/input_cacti.cfg  > ../$partition/input_cacti.rpt
-        ./cacti -infile ../$partition/output_cacti.cfg > ../$partition/output_cacti.rpt
+        ./cacti -infile ../$partition/read_cacti.cfg  > ../$partition/read_cacti.rpt
+        ./cacti -infile ../$partition/write_cacti.cfg > ../$partition/write_cacti.rpt
+        ./cacti -infile ../$partition/idle_cacti.cfg  > ../$partition/idle_cacti.rpt
     cd ..
 
 done
 
 # generate report
-python scripts/add_power_to_report.py -p $output_path
+python -m scripts.generate_report -p $output_path
 
 # clean up
 for partition in $output_path/*/ ; do

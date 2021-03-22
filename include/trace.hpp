@@ -118,7 +118,11 @@ class trace {
                 perror("file error");
                 fprintf(stderr,"cannot open input file: %s \n", stream_path.c_str());
             }
-            
+
+            // get address stream
+            std::stringstream addr_stream;
+            get_stream_field(in, addr_stream, ADDR);
+
             // iterate over stream
             while( in.rdbuf()->in_avail() ) {
                 // iterate over batch
@@ -128,28 +132,16 @@ class trace {
                         break;
                     }
 
-                    // read from buffer
-                    std::string line;
-                    std::getline(in, line);
-
-                    // convert line to string stream
-                    std::stringstream row(line);
-                    std::string val;
-
-                    // get address
-                    std::getline(row,val,' ');
-                    int addr = stoi(val);
-
-                    // get direction
-                    std::getline(row,val,' ');
-                    ramulator::Request::Type RW = (val == "R") ? 
-                        ramulator::Request::Type::READ : ramulator::Request::Type::WRITE;
+                    // read in address val
+                    uint32_t addr_val;
+                    addr_stream >> addr_val;
 
                     // send to memory        }
-                    req.addr = addr;
-                    req.type = RW;
+                    req.addr = addr_val;
+                    req.type = ramulator::Request::Type::READ;
                     memory->send(req);
                     memory->tick();
+
                 }
 
                 // iterate over rest of burst

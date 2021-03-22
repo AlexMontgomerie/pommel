@@ -129,6 +129,7 @@ run $wide_io_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidiann
 run $wide_io_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidiannao_alexnet_wide_io_huffman huffman
 
 # zedboard 
+: '
 run $zedboard_path $alexnet_fm_8 $tpu $alexnet_tpu outputs/tpu_alexnet_zedboard_baseline baseline
 run $zedboard_path $alexnet_fm_8 $tpu $alexnet_tpu outputs/tpu_alexnet_zedboard_bi bi
 run $zedboard_path $alexnet_fm_8 $tpu $alexnet_tpu outputs/tpu_alexnet_zedboard_rle rle
@@ -156,5 +157,5 @@ run $zedboard_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidian
 run $zedboard_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidiannao_alexnet_zedboard_def def
 run $zedboard_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidiannao_alexnet_zedboard_pbm pbm
 run $zedboard_path $alexnet_fm_8 $shidiannao $alexnet_shidiannao outputs/shidiannao_alexnet_zedboard_huffman huffman
-
+'
 
