@@ -72,10 +72,15 @@ class encoder {
                 std::stringstream encoded_data_buffer;
                 coder->encoder(data_buffer, encoded_data_buffer);
                 // send to output
+                std::string addr_line_prev;
                 while( std::getline(encoded_data_buffer, data_line) ) {
                     // read address buffer also
                     std::getline(addr_buffer, addr_line);
+                    if( addr_line.empty() ) {
+                        addr_line = addr_line_prev;
+                    }
                     // write to output streams
+                    addr_line_prev = addr_line;
                     output_data_stream << data_line << std::endl;
                     output_addr_stream << addr_line << std::endl;
                 }

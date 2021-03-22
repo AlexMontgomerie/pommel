@@ -12,7 +12,7 @@ featuremap_path=featuremaps/alexnet_8b.h5
 accelerator_config=config/accelerator/tpu.xml
 network_config=config/network/alexnet_tpu.xml
 output_path=outputs/tmp
-encoder=bi
+encoder=rle
 
 mkdir -p $output_path
 #rm -r $output_path/*

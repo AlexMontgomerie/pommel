@@ -3,7 +3,7 @@ import pommel
 # all networks
 networks = [
     "alexnet",
-    "vgg11",
+    #"vgg11",
     "resnet18",
     #"mobilenet_v2",
 ]
@@ -11,8 +11,8 @@ networks = [
 # all accelerators
 accelerators = [
     "tpu",
-    "scnn",
-    "shidiannao",
+    #"scnn",
+    #"shidiannao",
     "eyeriss",
 ]
 

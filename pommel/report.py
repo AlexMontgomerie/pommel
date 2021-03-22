@@ -101,58 +101,58 @@ class report:
 
     def get_base_sequence(self, field):
         seq = []
-        for i in self.report:
-            seq.append(self.report[i][field])
+        for i in self.report["partitions"]:
+            seq.append(self.report["partitions"][i][field])
         return np.array(seq)
 
     def get_sequence(self, field, direction="in"):
         seq = []
-        for i in self.report:
-            seq.append(self.report[i][direction][field])
+        for i in self.report["partitions"]:
+            seq.append(self.report["partitions"][i][direction][field])
         return np.array(seq)
 
-    def get_io_sequence(self, field, direction="in"):
+    def get_io_sequence(self, field):
         seq = []
-        for i in self.report:
-            seq.append(self.report[i][direction]["io"][field])
+        for i in self.report["partitions"]:
+            seq.append(self.report["partitions"][i]["io"][field])
         return np.array(seq)
 
-    def get_dram_sequence(self, field, direction="in"):
+    def get_dram_sequence(self, field):
         seq = []
-        for i in self.report:
-            seq.append(self.report[i][direction]["dram"][field])
+        for i in self.report["partitions"]:
+            seq.append(self.report["partitions"][i]["dram"][field])
         return np.array(seq)
 
-    def get_total_io_power_sequence(self, direction="in"):
-        io_phy      = self.get_io_sequence("io_phy", direction)
-        io_dynamic  = self.get_io_sequence("io_dynamic", direction)
-        io_bias     = self.get_io_sequence("io_bias", direction)
+    def get_total_io_power_sequence(self):
+        io_phy      = self.get_io_sequence("io_phy")
+        io_dynamic  = self.get_io_sequence("io_dynamic")
+        io_bias     = self.get_io_sequence("io_bias")
         return io_phy + io_dynamic + io_bias
 
-    def get_total_dram_power_sequence(self, direction="in"):
-        return self.get_dram_sequence("trace_power", direction)
+    def get_total_dram_power_sequence(self):
+        return self.get_dram_sequence("trace_power")
 
     def get_average_activity(self, direction="in"):
         # get activity 
         activity = self.get_sequence("activity",direction)
         # get all samples
-        samples = self.get_dram_sequence("trace_length",direction)
+        samples = self.get_dram_sequence("trace_length")
         # return weighted average of power
         return np.sum(activity*samples)/np.sum(samples)
 
-    def get_average_bandwidth(self, direction="in"):
+    def get_average_bandwidth(self):
         # get bandwidth
-        bandwidth = self.get_sequence(report,"bandwidth",direction)
+        bandwidth = self.get_base_sequence(report,"bandwidth")
         # get all samples
-        samples = self.get_dram_sequence("trace_length",direction)
+        samples = self.get_dram_sequence("trace_length")
         # return weighted average of power
         return np.sum(bandwidth*samples)/np.sum(samples)
    
-    def get_average_power(self, direction="in"):
+    def get_average_power(self):
         # get total power
-        total_power = self.get_total_io_power_sequence(direction) + self.get_total_dram_power_sequence(direction)
+        total_power = self.get_total_io_power_sequence() + self.get_total_dram_power_sequence()
         # get all samples
-        samples = self.get_dram_sequence("trace_length",direction)
+        samples = self.get_dram_sequence("trace_length")
         # return weighted average of power
         return np.sum(total_power*samples)/np.sum(samples)
    
