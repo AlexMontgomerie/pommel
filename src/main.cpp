@@ -88,8 +88,11 @@ trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
         //return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
+    else if( dram_type == "LPDDR2" ) { 
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+    }
     else if( dram_type == "LPDDR3" ) { 
-        return pommel::trace<ramulator::LPDDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
+        return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
         fprintf(stderr,"ERROR (trace) : %s not specified!\n", dram_type.c_str());
@@ -163,6 +166,12 @@ int main(int argc, char *argv[]) {
     std::string network_name = config_inst.load_network_config(network_config_path);
     config_inst.load_platform_config(accelerator_config_path);
 
+    if ( baseline ) {
+        coder_name = "baseline";
+    } else {
+        coder_name = get_encoder_type(encoder_config_path);
+    }
+
     // create a report
     nlohmann::json report;
 
@@ -171,6 +180,7 @@ int main(int argc, char *argv[]) {
     report["network_path"]      = network_config_path.c_str();
     report["accelerator_path"]  = accelerator_config_path.c_str();
     report["encoder_path"]      = encoder_config_path.c_str();
+    report["featuremap_path"]   = featuremap_path.c_str();
 
     //get types 
     report["dram_type"] = config_inst.memory.dram_type.c_str();
@@ -300,8 +310,14 @@ int main(int argc, char *argv[]) {
         trace_t trace = get_trace_inst(config_inst.memory.dram_type, ramulator_config_path, trace_prefix,
                 config_inst.platform.burst_size, period, config_inst.platform.bitwidth);
         
-        std::visit([&stream_in=encoded_stream_in_path,&stream_out=encoded_stream_out_path](auto&& arg){
-                arg.generate_combined_trace(stream_in, stream_out); }, trace);
+        std::visit([
+                &stream_in=encoded_stream_in_path,
+                &stream_out=encoded_stream_out_path,
+                &in_addr_offset=config_inst.platform.ifmap_offset,
+                &out_addr_offset=config_inst.platform.ofmap_offset
+                ](auto&& arg){
+                arg.generate_combined_trace(stream_in, stream_out, 
+                        in_addr_offset, out_addr_offset); }, trace);
 
         // calculate read, write and idle duty cycles
         float read_duty_cycle  = config_inst.platform.burst_size / ((float) period);
@@ -319,9 +335,8 @@ int main(int argc, char *argv[]) {
                 0.0, idle_duty_cycle);
 
         // print debug information
-        std::string encoding_scheme_type = get_encoder_type(encoder_config_path);
         printf("Running Partition %s of %s \n", partition_index.c_str(), output_path.c_str() );
-        printf("Encoding Scheme: %s\n", encoding_scheme_type.c_str() );
+        printf("Encoding Scheme: %s\n", coder_name.c_str() );
         printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
         printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
         printf("---- bitwidth               : %d \n", config_inst.platform.bitwidth ); 

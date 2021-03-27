@@ -4,13 +4,13 @@ make -j 8
 
 # parameters
 #memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
-memory_config=config/memory/ddr4.xml
+memory_config=config/memory/ddr3l.xml
 #memory_config=config/memory/JEDEC_256Mb_WIDEIO_SDR-266_128bit.xml
 #memory_config=config/memory/wide_io_single.xml
 #memory_config=config/memory/zedboard.xml
-featuremap_path=featuremaps/mobilenet_v2_8b.h5
-accelerator_config=config/accelerator/tpu.xml
-network_config=config/network/tmp.xml
+featuremap_path=featuremaps/alexnet_8b.h5
+accelerator_config=config/accelerator/eyeriss.xml
+network_config=config/network/alexnet_eyeriss.xml
 output_path=outputs/tmp
 encoder=baseline
 

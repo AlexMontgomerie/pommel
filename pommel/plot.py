@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.style
 import matplotlib as mpl
 from cycler import cycler
+from tabulate import tabulate
 
 import pommel
 
@@ -62,25 +63,42 @@ class plot:
         plt.show()
 
 
-    def average_power_performance_scatter_plot(self, network):
+    def average_power_performance_scatter_plot(self, accelerator, network):
         
-        fig, axs = plt.subplots(len(self.accelerators), sharey="row")
-        for accelerator in self.accelerators:
-            ax = axs[self.accelerators.index(accelerator)]
-            for memory in self.memories:
-                y = [] 
-                x = []
-                for coding_scheme in self.coding_schemes:
-                        # open report
-                        report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
-                        #print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
-                        # get average power
-                        average_power = report.get_average_power()
-                        average_bandwidth = report.get_average_bandwidth()
-                        y.append(average_power)
-                        x.append(average_bandwidth)
-                ax.scatter(x,y)
-        self.create_plot(fig, axs, "Accelerator", "Average Power (mW)", "Comparision of Average Power for Coding Schemes")
+        #fig, axs = plt.subplots(len(self.accelerators), sharey="row")
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        #for accelerator in self.accelerators:
+        #ax = axs[self.accelerators.index(accelerator)]
+        for memory in self.memories:
+            y = [] 
+            x = []
+            for coding_scheme in self.coding_schemes:
+                    # open report
+                    report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                    #print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                    #print("workload = ", report.get_total_workload())
+                    #print("performance = ",report.get_performance())
+                    # get average power
+                    average_power = report.get_average_power()
+                    performance = report.get_performance()
+                    y.append(average_power)
+                    x.append(performance)
+            ax.scatter(x,y, label=memory)
+            
+        ax.grid()
+        #ax.set(xlabel=xlabel, ylabel=ylabel)
+
+        # place legend in the corner
+        handles, labels = ax.get_legend_handles_labels()
+        fig.legend(handles, labels, loc='upper right')
+
+        # plot
+        #fig.suptitle(title)
+        plt.show()
+
+
+        #self.create_plot(fig, ax, "Accelerator", "Average Power (mW)", "Comparision of Average Power for Coding Schemes")
 
 
     def average_power_coding_scheme_bar_plot(self):
@@ -97,7 +115,7 @@ class plot:
                     for accelerator in self.accelerators:
                         # open report
                         report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
-                        print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
+                        #print(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
                         # get average power
                         average_power = report.get_average_power()
                         y[coding_scheme].append(average_power)
@@ -188,10 +206,26 @@ class plot:
                 # open report
                 report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json")
                 # get sequence of total power
-                activity = report.get_sequence("data_activity")
+                activity = report.get_average_activity_sequence()
                 ax.plot(np.arange(len(activity)),activity,label=coding_scheme)
                 ax.set_title(f"Activity per layer for {accelerator} running {network}")
 
         # create plot
         self.create_plot(fig, axs, "Partition Index", "Activity", "Comparision of Compression Ratio for Coding Schemes across Layers")
 
+    def coefficients_table(self, accelerator, network):
+
+        # get table headers
+        headers = ["Memory Type", "Static Power (mW)", "Bandwidth Coefficient (mW/GB/s)", "Activity Coefficient (mw/GT/s)"]
+        table = []
+
+        # iterate over memory types
+        for memory in self.memories:
+            # open report
+            report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_baseline/report.json")
+            # get coefficents
+            static_term, bandwidth_coefficient, activity_coefficient = report.get_power_model()
+            table.append([memory, static_term, bandwidth_coefficient, activity_coefficient])
+
+        # output table
+        print(tabulate(table, headers=headers))

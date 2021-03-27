@@ -24,10 +24,10 @@ void config::load_memory_config(std::string config_path) {
     memory.clock           = doc.select_node("/memspec/memtimingspec/parameter[@id='clkMhz']").node().attribute("value").as_int();
 
     // get capacity
-    memory.capacity = (int) (memory.banks*memory.rank*memory.cols*memory.rows/memory.data_width);
+    memory.capacity = (int) (memory.banks*memory.cols*memory.rows*memory.data_width);
  
     // get number of pins
-    memory.addr_width = (int) log2( (float) memory.capacity );
+    memory.addr_width = (int) log2( (float) memory.rows );
     memory.num_dq     = (int) ( (memory.num_chips*memory.data_width) );// /memory.rank );
    
     // get memory bandwidth
@@ -158,7 +158,7 @@ void config::generate_cacti_config(std::string direction, std::string config_pat
 
     dict.SetValue("IO_STATE", direction); 
     dict.SetFormattedValue("BUS_BW", "%.4f", memory.bandwidth);
-    dict.SetFormattedValue("MEM_DENSITY", "%d", memory.capacity/(1000000*memory.banks*memory.rank)); 
+    dict.SetFormattedValue("MEM_DENSITY", "%d", ceil(memory.capacity/(1000000000.0))); 
     dict.SetFormattedValue("BUS_FREQ", "%d", memory.clock); 
     dict.SetFormattedValue("DUTY_CYCLE", "%.4f", duty_cycle); 
     dict.SetFormattedValue("ACTIVITY_DQ", "%.4f", data_activity);

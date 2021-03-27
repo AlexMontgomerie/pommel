@@ -1,4 +1,5 @@
 import xmltodict
+import collections
 
 class network:
 
@@ -9,6 +10,9 @@ class network:
             self.network = xmltodict.parse(f.read())
     
     # get fields
+    def get_all_partitions(self):
+        return range(len(self.network["networkspec"]["partition"]))
+
     def get_kernel_size(self, index):
         return int(self.network["networkspec"]["partition"][index]["parameter"][0]["@value"])
 
@@ -45,6 +49,58 @@ class network:
     
     def update_bandwidth_out(self, index, val):
         self.network["networkspec"]["partition"][index]["parameter"][5]["@value"] = val
+
+    def add_partition(self, index, fm_in, fm_out, bw_in, bw_out, k=1, s=1):
+        # kernel size
+        kernel_size = collections.OrderedDict({
+            "@id"   : "kernel_size",
+            "@type" : "int",
+            "@value": k
+        })
+        # stride
+        stride = collections.OrderedDict({
+            "@id"   : "stride",
+            "@type" : "int",
+            "@value": s
+        })
+        # featuremap in
+        featuremap_in = collections.OrderedDict({
+            "@id"   : "input_featuremap",
+            "@type" : "string",
+            "@value": fm_in
+        })
+        # featuremap out 
+        featuremap_out = collections.OrderedDict({
+            "@id"   : "output_featuremap",
+            "@type" : "string",
+            "@value": fm_out
+        })
+        # bandwidth in 
+        bandwidth_in = collections.OrderedDict({
+            "@id"   : "bandwidth_in",
+            "@type" : "float",
+            "@value": bw_in
+        })
+        # bandwidth out 
+        bandwidth_out = collections.OrderedDict({
+            "@id"   : "bandwidth_out",
+            "@type" : "float",
+            "@value": bw_out
+        })
+        # add new partition
+        partition = collections.OrderedDict({
+            "@id" : index,
+            "parameter" : [
+                kernel_size,
+                stride,
+                featuremap_in,
+                featuremap_out,
+                bandwidth_in,
+                bandwidth_out
+            ]
+        })
+        # add partition
+        self.network["networkspec"]["partition"].append(partition)
 
     #save to xml
     def save_to_xml(self, output_path):

@@ -171,6 +171,10 @@
 
 -dram type "{{DRAM_TYPE}}"
 
+# dimm type
+
+-dram dimm "LRDIMM"
+
 # Memory State (R=Read, W=Write, I=Idle  or S=Sleep) 
 
 -io state "{{IO_STATE}}"

@@ -160,7 +160,7 @@ class trace {
             delete memory;
         }
 
-        void generate_combined_trace(std::string stream_in_path, std::string stream_out_path) {
+        void generate_combined_trace(std::string stream_in_path, std::string stream_out_path, int in_addr_offset=0, int out_addr_offset=0) {
             
             // setup requests
             map<int, int> latencies;
@@ -211,7 +211,7 @@ class trace {
                     addr_in_stream >> addr_val;
 
                     // send to memory        }
-                    req.addr = addr_val;
+                    req.addr = addr_val + in_addr_offset;
                     req.type = ramulator::Request::Type::READ;
                     memory->send(req);
                     memory->tick();
@@ -232,7 +232,7 @@ class trace {
                     addr_out_stream >> addr_val;
 
                     // send to memory        }
-                    req.addr = addr_val;
+                    req.addr = addr_val + out_addr_offset;
                     req.type = ramulator::Request::Type::WRITE;
                     memory->send(req);
                     memory->tick();

@@ -2,6 +2,7 @@ import re
 import os
 import json
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 import pommel
 
@@ -14,7 +15,7 @@ class report:
             self.report = json.load(f)
    
         # open config instances
-        #self.network = pommel.network(self.report["network_path"])
+        self.network = pommel.network(self.report["network_path"])
         #self.accelerator = pommel.accelerator(self.report["accelerator_path"])
         self.memory = pommel.memory(self.report["memory_path"])
 
@@ -132,6 +133,9 @@ class report:
     def get_total_dram_power_sequence(self):
         return self.get_dram_sequence("trace_power")
 
+    def get_total_power_sequence(self):
+        return self.get_total_dram_power_sequence()+self.get_total_io_power_sequence()
+
     def get_average_activity(self, direction="in"):
         # get activity 
         activity = self.get_sequence("activity",direction)
@@ -148,6 +152,9 @@ class report:
         # return weighted average of power
         return np.sum(bandwidth*samples)/np.sum(samples)
    
+    def get_average_activity_sequence(self):
+        return 0.5*(self.get_sequence("data_activity","in") + self.get_sequence("data_activity","out")) 
+
     def get_average_power(self):
         # get total power
         total_power = self.get_total_io_power_sequence() + self.get_total_dram_power_sequence()
@@ -156,11 +163,34 @@ class report:
         # return weighted average of power
         return np.sum(total_power*samples)/np.sum(samples)
    
-    def get_latency(self, dram_freq):
+    def get_latency(self):
+        # get memory freq
+        dram_freq = self.memory.clock
         # get latencies in and out
-        latency_seq_in  = self.get_dram_sequence("trace_length","in")/dram_freq
-        latency_seq_out = self.get_dram_sequence("trace_length","out")/dram_freq
-        return np.sum(np.maximum(latency_seq_in, latency_seq_out))
+        return np.sum(self.get_dram_sequence("trace_length"))/(dram_freq*1000000.0)
+
+    def get_total_workload(self):
+        self.featuremaps = pommel.featuremap(self.report["featuremap_path"])
+        workload = 0
+        for partition in self.network.get_all_partitions():
+            # get featuremaps
+            input_featuremap  = self.network.get_input_featuremap(partition)
+            output_featuremap = self.network.get_output_featuremap(partition)
+            # get kernel size
+            kernel_size = self.network.get_kernel_size(partition)
+            # get dimensions
+            channels = self.featuremaps.get_channels(input_featuremap)
+            filters = self.featuremaps.get_channels(output_featuremap)
+            rows = self.featuremaps.get_rows(output_featuremap)
+            cols = self.featuremaps.get_cols(output_featuremap)
+            # add workload for partition
+            workload += channels*filters*rows*cols*kernel_size*kernel_size
+        return workload/1000000000.0
+
+    def get_performance(self):
+        workload = self.get_total_workload()
+        latency = self.get_latency()
+        return workload/latency
 
     def save_report(self, output_path):
         # save to json
@@ -168,3 +198,28 @@ class report:
             json.dump(self.report,f,indent=4)
 
 
+    def get_power_model(self):
+
+        # get relevant readings
+        bandwidth = self.get_base_sequence("bandwidth")
+        activity = 0.5*(self.get_sequence("data_activity","in")+self.get_sequence("data_activity","out"))
+        power = self.get_total_power_sequence()
+
+        X = []
+        y = []
+
+        for i in range(power.shape[0]):
+            X.append([activity[i]*bandwidth[i], bandwidth[i]])
+            y.append(power[i])
+
+        # fit model
+        X = np.array(X)
+        y = np.array(y)
+        reg = LinearRegression().fit(X,y)
+
+        # get coefficients
+        bandwidth_coefficient   = reg.coef_[1]
+        activity_coefficient    = reg.coef_[0]/8
+        static_term = reg.intercept_
+
+        return static_term, bandwidth_coefficient, activity_coefficient

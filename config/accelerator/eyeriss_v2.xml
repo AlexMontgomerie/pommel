@@ -1,0 +1,12 @@
+<acceleratorspec name="EYERISS v2">
+    <parameter id="dataflow" type="string" value="ws" />
+    <parameter id="array_height" type="int" value="12" />
+    <parameter id="array_width" type="int" value="16" />
+    <parameter id="ifmap_sram_size" type="int" value="108" />
+    <parameter id="filter_sram_size" type="int" value="108" />
+    <parameter id="ofmap_sram_size" type="int" value="108" />
+    <parameter id="clk_freq" type="int" value="200" />
+    <parameter id="burst_size" type="int" value="256" />
+    <parameter id="bitwidth" type="int" value="8" />
+    <parameter id="transform" type="string" value="channel-major" />
+</acceleratorspec>

@@ -27,28 +27,20 @@ def generate_activity_stream(size, activity, width):
 
 if __name__ == "__main__":
     SIZE=10000
-    WIDTH=64
+    WIDTH=32
     # create different streams
     data = {
-        "activity_05" : generate_activity_stream(SIZE,0.05,WIDTH),
+        "activity_0" : generate_activity_stream(SIZE,0.0,WIDTH),
         "activity_10" : generate_activity_stream(SIZE,0.10,WIDTH),
-        "activity_15" : generate_activity_stream(SIZE,0.15,WIDTH),
         "activity_20" : generate_activity_stream(SIZE,0.20,WIDTH),
-        "activity_25" : generate_activity_stream(SIZE,0.25,WIDTH),
         "activity_30" : generate_activity_stream(SIZE,0.30,WIDTH),
-        "activity_35" : generate_activity_stream(SIZE,0.35,WIDTH),
         "activity_40" : generate_activity_stream(SIZE,0.40,WIDTH),
-        "activity_45" : generate_activity_stream(SIZE,0.45,WIDTH),
         "activity_50" : generate_activity_stream(SIZE,0.50,WIDTH),
-        "activity_55" : generate_activity_stream(SIZE,0.55,WIDTH),
         "activity_60" : generate_activity_stream(SIZE,0.60,WIDTH),
-        "activity_65" : generate_activity_stream(SIZE,0.65,WIDTH),
         "activity_70" : generate_activity_stream(SIZE,0.70,WIDTH),
-        "activity_75" : generate_activity_stream(SIZE,0.75,WIDTH),
         "activity_80" : generate_activity_stream(SIZE,0.80,WIDTH),
-        "activity_85" : generate_activity_stream(SIZE,0.85,WIDTH),
         "activity_90" : generate_activity_stream(SIZE,0.90,WIDTH),
-        "activity_95" : generate_activity_stream(SIZE,0.95,WIDTH)
+        "activity_100" : generate_activity_stream(SIZE,1.00,WIDTH),
     }
 
     # save as a .h5 file

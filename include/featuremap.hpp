@@ -21,12 +21,12 @@ class featuremap {
         std::string featuremap_path;
 
         // featuremap dimensions
-        std::vector<int32_t> data;
+        std::vector<uint32_t> data;
         std::string layer_name;
         
         // transforms
-        std::vector<int32_t> row_major_transform(std::vector<int32_t> data_in);
-        std::vector<int32_t> channel_major_transform(std::vector<int32_t> data_in);
+        std::vector<uint32_t> row_major_transform(std::vector<uint32_t> data_in);
+        std::vector<uint32_t> channel_major_transform(std::vector<uint32_t> data_in);
 
     public:
  
