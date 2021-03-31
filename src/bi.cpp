@@ -2,7 +2,10 @@
 
 namespace pommel {
 
-void bi::encoder(std::istream &in, std::ostream &out) {
+void bi::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
+
+    // send addresses in to addresses out
+    addr_out << addr_in.rdbuf();
 
     // effective bus width
     uint32_t bus_width = platform.bitwidth*platform.packing_factor;
@@ -18,14 +21,14 @@ void bi::encoder(std::istream &in, std::ostream &out) {
     std::queue<uint128_t> fifo;
 
     // fill buffer, and send first value
-    std::getline(in, line);
+    std::getline(data_in, line);
     val = convert_to_uint128(line);
     
     fifo.push(val);
-    out << convert_from_uint128(val) << std::endl;
+    data_out << convert_from_uint128(val) << std::endl;
 
     // iterate over the rest of the stream
-    while ( std::getline(in, line) ) {
+    while ( std::getline(data_in, line) ) {
 
         // convert line to string stream
         val = convert_to_uint128(line);
@@ -44,7 +47,7 @@ void bi::encoder(std::istream &in, std::ostream &out) {
             val |= 1 << bus_width;
         }
         fifo.push(val);
-        out << convert_from_uint128(val) << std::endl;
+        data_out << convert_from_uint128(val) << std::endl;
     }
 }
 

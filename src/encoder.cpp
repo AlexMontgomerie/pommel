@@ -93,10 +93,14 @@ encoder<rle>::encoder(std::string config_path, std::string featuremap, platform_
     std::string featuremap_path = boost::str( boost::format("/encoderspec/layer[@id='%s']") % featuremap );
     pugi::xml_node layer = doc.select_node(featuremap_path.c_str()).node(); 
 
-    // get distance
-    int rle_zero = layer.select_node("parameter[@id='rle_zero']").node().attribute("value").as_int();
-        // initialise the coding scheme
-    coder = new rle(platform,rle_zero);
+    // get rle zero
+    uint32_t rle_zero = layer.select_node("parameter[@id='rle_zero']").node().attribute("value").as_int();
+
+    // get batch_size
+    uint32_t batch_size = layer.select_node("parameter[@id='batch_size']").node().attribute("value").as_int();
+
+    // initialise the coding scheme
+    coder = new rle(platform, rle_zero, batch_size);
 
 }
 
@@ -126,8 +130,11 @@ encoder<huffman>::encoder(std::string config_path, std::string featuremap, platf
         code_table.insert(std::make_pair(key,value));
     }    
 
+    // get batch_size
+    uint32_t batch_size = layer.select_node("parameter[@id='batch_size']").node().attribute("value").as_int();
+
     // initialise the coding scheme
-    coder = new huffman(platform, code_table);
+    coder = new huffman(platform, code_table, batch_size);
 
 }
 

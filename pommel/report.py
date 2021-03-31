@@ -146,7 +146,7 @@ class report:
 
     def get_average_bandwidth(self):
         # get bandwidth
-        bandwidth = self.get_sequence("bandwidth","in")
+        bandwidth = self.get_base_sequence("bandwidth")
         # get all samples
         samples = self.get_dram_sequence("trace_length")
         # return weighted average of power
@@ -187,6 +187,11 @@ class report:
             workload += channels*filters*rows*cols*kernel_size*kernel_size
         return workload/1000000000.0
 
+    def get_max_bandwidth(self):
+        max_bandwidth_in  = max(self.get_sequence("bandwidth", "in"))
+        max_bandwidth_out = max(self.get_sequence("bandwidth", "out"))
+        return max(max_bandwidth_in, max_bandwidth_out)
+
     def get_performance(self):
         workload = self.get_total_workload()
         latency = self.get_latency()
@@ -196,7 +201,6 @@ class report:
         # save to json
         with open(output_path,"w") as f:
             json.dump(self.report,f,indent=4)
-
 
     def get_power_model(self):
 

@@ -8,8 +8,7 @@ namespace pommel {
 class bi: public coding_scheme {
     public:
         bi(platform_config_t platform);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

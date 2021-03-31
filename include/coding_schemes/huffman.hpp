@@ -8,11 +8,11 @@ namespace pommel {
 class huffman: public coding_scheme {
     protected:
         std::map<uint32_t,uint32_t> code_table;
+        unsigned int batch_size;
         void huffman_bitstream_encoder(std::istream &in, std::ostream &out) ;
     public:
-        huffman(platform_config_t platform, std::map<uint32_t,uint32_t> code_table);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        huffman(platform_config_t platform, std::map<uint32_t,uint32_t> code_table, unsigned int batch_size);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

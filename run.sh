@@ -12,7 +12,7 @@ featuremap_path=featuremaps/alexnet_8b.h5
 accelerator_config=config/accelerator/eyeriss.xml
 network_config=config/network/alexnet_eyeriss.xml
 output_path=outputs/tmp
-encoder=baseline
+encoder=huffman
 
 mkdir -p $output_path
 #rm -r $output_path/*

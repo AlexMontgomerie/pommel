@@ -28,9 +28,14 @@ void def::diff_encoder(std::istream &in, std::ostream &out) {
 
   // fill buffer, and send first value
   for (int i = 0; i < channels; i++) {
+    // break if empty early
+    if( !in.rdbuf()->in_avail() ) {
+      break;
+    }
+    // fill input buffer
     in >> val;
     fifo.push(val);
-    out << val << std::endl;
+    out << int_to_smint(val) << std::endl;
   }
 
   // iterate over the rest of the stream
@@ -43,9 +48,15 @@ void def::diff_encoder(std::istream &in, std::ostream &out) {
     // write difference to output
     out << int_to_smint(val - val_delay) << std::endl;
   }
+
+  // send rest of the buffer
+
 }
 
-void def::encoder(std::istream &in, std::ostream &out) {
+void def::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
+
+    // send addresses in to addresses out
+    addr_out << addr_in.rdbuf();
 
     // setup string streams
     std::stringstream diff_in;
@@ -53,7 +64,7 @@ void def::encoder(std::istream &in, std::ostream &out) {
     std::stringstream def_out;
 
     // de-interleave stream in
-    deinterleave(in, diff_in, platform.bitwidth, platform.packing_factor); 
+    deinterleave(data_in, diff_in, platform.bitwidth, platform.packing_factor); 
 
     // diff encoder 
     diff_encoder(diff_in, diff_interleave);
@@ -62,7 +73,7 @@ void def::encoder(std::istream &in, std::ostream &out) {
     interleave(diff_interleave, def_out, platform.bitwidth, platform.packing_factor); 
 
     // decorrelator
-    decorrelator(def_out, out);
+    decorrelator(def_out, data_out);
  
 }
 

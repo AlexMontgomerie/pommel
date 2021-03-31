@@ -12,8 +12,7 @@ class abe: public coding_scheme {
 
     public:
         abe(platform_config_t platform, unsigned int window_size);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

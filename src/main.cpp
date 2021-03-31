@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
         // get readings
         float data_activity_in = analysis_input.get_data_activity();
         float addr_activity_in = analysis_input.get_addr_activity();
-        float compression_ratio_in = analysis_input_baseline.get_total_samples()/analysis_input.get_total_samples();
+        float compression_ratio_in = (float) analysis_input_baseline.get_total_samples()/((float) analysis_input.get_total_samples());
         float total_samples_in = analysis_input.get_total_samples();
         
         /**
@@ -279,7 +279,7 @@ int main(int argc, char *argv[]) {
         // get readings
         float data_activity_out = analysis_output.get_data_activity();
         float addr_activity_out = analysis_output.get_addr_activity();
-        float compression_ratio_out = analysis_output_baseline.get_total_samples()/analysis_output.get_total_samples();
+        float compression_ratio_out = (float) analysis_output_baseline.get_total_samples() / ((float) analysis_output.get_total_samples());
         float total_samples_out = analysis_output.get_total_samples();
         
         // output paths for external tools

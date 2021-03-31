@@ -75,13 +75,19 @@ def add_pbm_parameters(root, layer, platform_info, featuremaps):
 def add_rle_parameters(root, layer,  platform_info, featuremaps):
     # get the mode of the featuremap
     rle_zero = scipy.stats.mode(featuremaps[layer.getAttribute("id")].flatten())
-    mask = ( 1 << int(platform_info["bitwidth"]) ) - 1
-    rle_zero = rle_zero.mode[0] & mask
+    mask = np.uint64( 1 << int(platform_info["bitwidth"]) ) - np.uint64(1)
+    rle_zero = np.uint64(rle_zero.mode[0]) & mask
     # add rle zero
     parameter = root.createElement('parameter')
     parameter.setAttribute("id","rle_zero")
     parameter.setAttribute("type","int")
     parameter.setAttribute("value", str(rle_zero))
+    layer.appendChild(parameter)
+    # add batch size
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","batch_size")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value", "512")
     layer.appendChild(parameter)
 
 def add_huffman_parameters(root, layer,  platform_info, featuremaps):
@@ -107,6 +113,12 @@ def add_huffman_parameters(root, layer,  platform_info, featuremaps):
     parameter.setAttribute("id","bitwidth")
     parameter.setAttribute("type","int")
     parameter.setAttribute("value",platform_info["bitwidth"])
+    layer.appendChild(parameter)
+    # add batch size
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","batch_size")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value", "512")
     layer.appendChild(parameter)
 
 def add_def_parameters(root, layer, platform_info, featuremaps):

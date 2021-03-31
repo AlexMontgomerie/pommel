@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # build tool TODO: remove later on
-make clean
-make -j 8
+#make clean
+#make -j 8
 
 ddr3_path=config/memory/ddr3.xml
 ddr3l_path=config/memory/ddr3l.xml
@@ -41,18 +41,18 @@ vgg11_scnn=config/network/vgg11_scnn.xml
 vgg11_shidiannao=config/network/vgg11_shidiannao.xml
 
 # LPDDR2
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_baseline baseline
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_bi bi
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_rle rle
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_def def
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_pbm pbm 
-run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_huffman huffman 
-run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_baseline baseline
-run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_bi bi
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_baseline baseline
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_bi bi
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_rle rle
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_def def
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_pbm pbm 
+#run $lpddr3_path $vgg11_fm_8 $tpu $vgg11_tpu                outputs/tpu_vgg11_lpddr3_huffman huffman 
+#run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_baseline baseline
+#run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_bi bi
 run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_rle rle
-run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_def def
-run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_pbm pbm
-run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_huffman huffman 
+#run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_def def
+#run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_pbm pbm
+#run $lpddr3_path $vgg11_fm_16 $eyeriss $vgg11_eyeriss       outputs/eyeriss_vgg11_lpddr3_huffman huffman 
 run $lpddr3_path $vgg11_fm_16 $scnn $vgg11_scnn             outputs/scnn_vgg11_lpddr3_baseline baseline
 run $lpddr3_path $vgg11_fm_16 $scnn $vgg11_scnn             outputs/scnn_vgg11_lpddr3_bi bi
 run $lpddr3_path $vgg11_fm_16 $scnn $vgg11_scnn             outputs/scnn_vgg11_lpddr3_rle rle
@@ -210,4 +210,3 @@ run $wide_io_path $vgg11_fm_16 $shidiannao $vgg11_shidiannao outputs/shidiannao_
 run $wide_io_path $vgg11_fm_16 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_def def
 run $wide_io_path $vgg11_fm_16 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_pbm pbm
 run $wide_io_path $vgg11_fm_16 $shidiannao $vgg11_shidiannao outputs/shidiannao_vgg11_wide_io_huffman huffman
-

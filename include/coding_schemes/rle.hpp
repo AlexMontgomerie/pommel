@@ -8,11 +8,11 @@ namespace pommel {
 class rle: public coding_scheme {
     protected:
         unsigned int rle_zero;
+        unsigned int batch_size;
         void rle_encoder(std::istream &in, std::ostream &out);
     public:
-        rle(platform_config_t platform, unsigned int rle_zero);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        rle(platform_config_t platform, unsigned int rle_zero, unsigned int batch_size);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

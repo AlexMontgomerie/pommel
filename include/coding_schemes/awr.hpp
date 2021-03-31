@@ -10,8 +10,7 @@ class awr: public coding_scheme {
         unsigned int N;
     public:
         awr(platform_config_t platform, unsigned int N);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

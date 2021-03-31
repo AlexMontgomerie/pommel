@@ -19,7 +19,7 @@ accelerators = [
 # all memory types
 memories = [
     "lpddr2",
-    "lpddr3",
+    #"lpddr3",
     "ddr3",
     "ddr3l",
     "ddr4",
@@ -34,7 +34,7 @@ coding_schemes = [
     "huffman",
     "rle",
     "def",
-    "pbm",
+    #"pbm",
 ]
 
 """
@@ -54,12 +54,25 @@ for network in networks:
                 report.save_report(report_path)
 """
 
+for network in networks:
+    for accelerator in accelerators:
+        for memory in memories:
+            for coding_scheme in coding_schemes:
+                # get report
+                report_path = f"outputs/{accelerator}_{network}_{memory}_{coding_scheme}/report.json"
+                report = pommel.report(report_path)
+                # get max bandwidth
+                max_bw = report.get_max_bandwidth()
+                mem_bw = report.memory.bandwidth
+                print(max_bw, mem_bw)
+
 # create plot instance
 plot = pommel.plot(networks, accelerators, memories, coding_schemes)
 
 # create table of power model
 plot.coefficients_table("eyeriss", "vgg11")
 
+plot.layerwise_trace_length_bar_plot("vgg11", "lpddr2")
 # plot average power
 #plot.average_power_performance_scatter_plot("tpu", "vgg11")
 

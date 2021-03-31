@@ -2,7 +2,11 @@
 
 namespace pommel {
 
-void abe::encoder(std::istream &in, std::ostream &out) {
+void abe::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
+
+    // send addresses in to addresses out
+    addr_out << addr_in.rdbuf();
+ 
     // mask
     uint32_t mask = (1<<platform.bitwidth)-1;
     
@@ -11,18 +15,18 @@ void abe::encoder(std::istream &in, std::ostream &out) {
     uint32_t window_transitions[window_size-1];
     uint32_t savings_cache[platform.bitwidth];
 
-    while( in.peek() != EOF ) {
+    while( data_in.peek() != EOF ) {
         // clusters and savings
         std::vector<int> clusters[platform.bitwidth];
         float savings[platform.bitwidth];
 
         // load in window cache
         for(int w=0;w<window_size;w++) {
-            if( in.peek() == EOF ) {
+            if( data_in.peek() == EOF ) {
                 break;
             }
             // read into window cache
-            in >> window_cache[w];
+            data_in >> window_cache[w];
         }
 
         // get window transitions
@@ -72,11 +76,11 @@ void abe::encoder(std::istream &in, std::ostream &out) {
         
         // send to stdout
         for(int w=0;w<window_size;w++) {
-            out << (window_cache[w]|(1<<platform.bitwidth)) << std::endl; 
+            data_out << (window_cache[w]|(1<<platform.bitwidth)) << std::endl; 
         }
         
         // add end of frame
-        out << (1<<basis) << std::endl;
+        data_out << (1<<basis) << std::endl;
     }
 }
 

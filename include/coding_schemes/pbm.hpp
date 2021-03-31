@@ -13,8 +13,7 @@ class pbm: public coding_scheme {
 
     public:
         pbm(platform_config_t platform, std::map<uint32_t,uint32_t> code_table);
-        void encoder(std::istream &in, std::ostream &out);
-        void decoder(std::istream &in, std::ostream &out);
+        void encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out);
 };
 
 }

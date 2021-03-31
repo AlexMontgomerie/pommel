@@ -13,7 +13,10 @@ void pbm::fv_encoder(std::istream &in, std::ostream &out) {
     }
 }
 
-void pbm::encoder(std::istream &in, std::ostream &out) {
+void pbm::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
+
+    // send addresses in to addresses out
+    addr_out << addr_in.rdbuf();
 
     // setup string streams
     std::stringstream fv_in;
@@ -21,7 +24,7 @@ void pbm::encoder(std::istream &in, std::ostream &out) {
     std::stringstream intr_decorr;
 
     // de-interleave stream in
-    deinterleave(in, fv_in, platform.bitwidth, platform.packing_factor); 
+    deinterleave(data_in, fv_in, platform.bitwidth, platform.packing_factor); 
 
     // frequent value encoder
     fv_encoder(fv_in, fv_intr);
@@ -30,7 +33,7 @@ void pbm::encoder(std::istream &in, std::ostream &out) {
     interleave(fv_intr, intr_decorr, platform.bitwidth, platform.packing_factor); 
 
     // decorrrelation
-    decorrelator(intr_decorr, out);
+    decorrelator(intr_decorr, data_out);
  
 }
 

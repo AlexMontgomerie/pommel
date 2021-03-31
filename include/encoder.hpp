@@ -51,40 +51,9 @@ class encoder {
             // run encoder
             std::stringstream output_data_stream;
             std::stringstream output_addr_stream;
-            while( data_stream.rdbuf()->in_avail() ) {
-                // create buffer
-                std::stringstream data_buffer;
-                std::stringstream addr_buffer;
-                std::string data_line;
-                std::string addr_line;
-                for(int i=0; i<platform.burst_size;i++) {
-                    // read in streams
-                    std::getline(data_stream, data_line);
-                    std::getline(addr_stream, addr_line);
-                    // check if empty
-                    if( data_line.empty() || addr_line.empty() )
-                        break;
-                    // write to buffer
-                    data_buffer << data_line << std::endl;
-                    addr_buffer << addr_line << std::endl;
-                }
-                // encode buffer
-                std::stringstream encoded_data_buffer;
-                coder->encoder(data_buffer, encoded_data_buffer);
-                // send to output
-                std::string addr_line_prev;
-                while( std::getline(encoded_data_buffer, data_line) ) {
-                    // read address buffer also
-                    std::getline(addr_buffer, addr_line);
-                    if( addr_line.empty() ) {
-                        addr_line = addr_line_prev;
-                    }
-                    // write to output streams
-                    addr_line_prev = addr_line;
-                    output_data_stream << data_line << std::endl;
-                    output_addr_stream << addr_line << std::endl;
-                }
-            }
+
+            // run encoder
+            coder->encoder(data_stream, output_data_stream, addr_stream, output_addr_stream);
 
             // open stream out
             std::ofstream out (stream_out_path);

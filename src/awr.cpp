@@ -2,8 +2,11 @@
 
 namespace pommel {
 
-void awr::encoder(std::istream &in, std::ostream &out) {
-   
+void awr::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
+ 
+    // send addresses in to addresses out
+    addr_out << addr_in.rdbuf();
+  
     // mask
     uint32_t mask = (1<<platform.bitwidth)-1;
 
@@ -12,15 +15,15 @@ void awr::encoder(std::istream &in, std::ostream &out) {
     uint32_t prev_val = 0;
 
     // iterate over the rest of the stream
-    while( !in.eof() ) {
+    while( !data_in.eof() ) {
        
         // get a window from stream
         std::vector<uint32_t> window;
         for(int i=0;i<N;i++) {
-            if( in.eof() ) {
+            if( data_in.eof() ) {
                 break;
             }
-            in >> val;
+            data_in >> val;
             window.push_back(val);
         }
 
@@ -55,7 +58,7 @@ void awr::encoder(std::istream &in, std::ostream &out) {
             }
 
             // transmit value along with index
-            out << ( val | (sc_idx << platform.bitwidth) ) << std::endl;
+            data_out << ( val | (sc_idx << platform.bitwidth) ) << std::endl;
 
         }            
     }
