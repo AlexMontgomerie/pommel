@@ -25,10 +25,13 @@ float analysis::get_total_addr_transitions(void) {
 float analysis::get_total_transitions(std::vector<uint128_t> stream) {
     
     // iterate over vector
-    uint32_t transitions = 0;
+    float transitions = 0.0;
     uint128_t value_prev = 0;
     for(auto const& value: stream) {
-        transitions += __builtin_popcountl(value^value_prev);
+        for(int i=0;i<128;i++) {
+            transitions += (float) ( ( (value^value_prev) >> i ) & 1 );
+        }
+        //transitions += __builtin_popcountl(value^value_prev);
         value_prev = value;
     }
     

@@ -9,10 +9,10 @@ memory_config=config/memory/ddr3l.xml
 #memory_config=config/memory/wide_io_single.xml
 #memory_config=config/memory/zedboard.xml
 featuremap_path=featuremaps/alexnet_8b.h5
-accelerator_config=config/accelerator/eyeriss.xml
-network_config=config/network/alexnet_eyeriss.xml
+accelerator_config=config/accelerator/tpu.xml
+network_config=config/network/alexnet_tpu.xml
 output_path=outputs/tmp
-encoder=huffman
+encoder=rle
 
 mkdir -p $output_path
 #rm -r $output_path/*

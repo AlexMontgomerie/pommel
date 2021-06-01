@@ -1,4 +1,4 @@
-<acceleratorspec name="diannao" >
+<acceleratorspec name="DianNao" >
     <parameter id="dataflow" type="string" value="os" />
     <parameter id="array_height" type="int" value="8" />
     <parameter id="array_width" type="int" value="8" />

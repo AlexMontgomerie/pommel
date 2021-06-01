@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<networkspec name="mobilenet_v2">
+<networkspec name="MobileNet-v2">
 	<partition id="0">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="2"></parameter>
@@ -184,7 +184,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.3626431718061674"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.26643171806167404"></parameter>
 	</partition>
-	<partition id="24">
+	<partition id="23">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.8.conv.2_i_0"></parameter>
@@ -192,7 +192,7 @@
 		<parameter id="bandwidth_in" type="string" value="5.590492359932088"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.931748726655348"></parameter>
 	</partition>
-	<partition id="25">
+	<partition id="24">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.9.conv.0.0_i_0"></parameter>
@@ -200,7 +200,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.8210191678354372"></parameter>
 		<parameter id="bandwidth_out" type="string" value="4.926115007012623"></parameter>
 	</partition>
-	<partition id="26">
+	<partition id="25">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.9.conv.1.0_i_0"></parameter>
@@ -208,7 +208,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.3626431718061674"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.26643171806167404"></parameter>
 	</partition>
-	<partition id="27">
+	<partition id="26">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.9.conv.2_i_0"></parameter>
@@ -216,7 +216,7 @@
 		<parameter id="bandwidth_in" type="string" value="5.590492359932088"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.931748726655348"></parameter>
 	</partition>
-	<partition id="28">
+	<partition id="27">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.10.conv.0.0_i_0"></parameter>
@@ -224,7 +224,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.8210191678354372"></parameter>
 		<parameter id="bandwidth_out" type="string" value="4.926115007012623"></parameter>
 	</partition>
-	<partition id="29">
+	<partition id="28">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.10.conv.1.0_i_0"></parameter>
@@ -232,7 +232,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.3626431718061674"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.26643171806167404"></parameter>
 	</partition>
-	<partition id="30">
+	<partition id="29">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.10.conv.2_i_0"></parameter>
@@ -240,7 +240,7 @@
 		<parameter id="bandwidth_in" type="string" value="5.590492359932088"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.931748726655348"></parameter>
 	</partition>
-	<partition id="31">
+	<partition id="30">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.11.conv.0.0_i_0"></parameter>
@@ -248,7 +248,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.8210191678354372"></parameter>
 		<parameter id="bandwidth_out" type="string" value="4.926115007012623"></parameter>
 	</partition>
-	<partition id="32">
+	<partition id="31">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.11.conv.1.0_i_0"></parameter>
@@ -256,7 +256,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.3626431718061674"></parameter>
 		<parameter id="bandwidth_out" type="string" value="0.26643171806167404"></parameter>
 	</partition>
-	<partition id="33">
+	<partition id="32">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.11.conv.2_i_0"></parameter>
@@ -264,7 +264,7 @@
 		<parameter id="bandwidth_in" type="string" value="5.225111573936329"></parameter>
 		<parameter id="bandwidth_out" type="string" value="1.3062778934840822"></parameter>
 	</partition>
-	<partition id="34">
+	<partition id="33">
 		<parameter id="kernel_size" type="int" value="1"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.12.conv.0.0_i_0"></parameter>
@@ -272,7 +272,7 @@
 		<parameter id="bandwidth_in" type="string" value="0.7417051469760109"></parameter>
 		<parameter id="bandwidth_out" type="string" value="4.450230881856065"></parameter>
 	</partition>
-	<partition id="35">
+	<partition id="34">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.features.12.conv.1.0_i_0"></parameter>
@@ -421,8 +421,8 @@
 		<parameter id="stride" type="int" value="1"></parameter>
 		<parameter id="input_featuremap" type="string" value="module.mean32.0_i_0"></parameter>
 		<parameter id="output_featuremap" type="string" value="module.classifier.1_i_0"></parameter>
-		<parameter id="bandwidth_in" type="string" value="0.010077484504829372"></parameter>
-		<parameter id="bandwidth_out" type="string" value="0.019379777893902637"></parameter>
+		<parameter id="bandwidth_in" type="string" value="0.03808320987054623"></parameter>
+		<parameter id="bandwidth_out" type="string" value="0.0007772083647050252"></parameter>
 	</partition>
 	<partition id="53">
 		<parameter id="kernel_size" type="int" value="1"></parameter>

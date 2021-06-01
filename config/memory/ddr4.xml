@@ -1,12 +1,13 @@
 <!DOCTYPE memspec SYSTEM "memspec.dtd">
 <memspec>
 
-  <parameter id="memoryId" type="string" value="ddr4" />
+  <parameter id="memoryId" type="string" value="DDR4" />
   <parameter id="memoryType" type="string" value="DDR4" />
+  <parameter id="memoryPart" type="string" value="MT40A256M16-107E" />
   <memarchitecturespec>
-    <parameter id="width" type="uint" value="8" />
+    <parameter id="width" type="uint" value="16" />
     <parameter id="nbrOfChips" type="uint" value="2" />
-    <parameter id="nbrOfBankGroups" type="uint" value="4" />
+    <parameter id="nbrOfBankGroups" type="uint" value="2" />
     <parameter id="nbrOfBanks" type="uint" value="16" />
     <parameter id="nbrOfRanks" type="uint" value="1" />
     <parameter id="nbrOfColumns" type="uint" value="1024" />
@@ -44,16 +45,16 @@
       <parameter id="CKESR" type="uint" value="7" />
   </memtimingspec>
   <mempowerspec>
-      <parameter id="idd0" type="double" value="56.25" />
+      <parameter id="idd0" type="double" value="66" />
       <parameter id="idd02" type="double" value="4.05" />
-      <parameter id="idd2p0" type="double" value="17.0" />
-      <parameter id="idd2p1" type="double" value="17.0" />
-      <parameter id="idd2n" type="double" value="33.75" />
-      <parameter id="idd3p0" type="double" value="22.5" />
-      <parameter id="idd3p1" type="double" value="22.5" />
-      <parameter id="idd3n" type="double" value="39.5" />
-      <parameter id="idd4r" type="double" value="157.5" />
-      <parameter id="idd4w" type="double" value="135.0" />
+      <parameter id="idd2p0" type="double" value="30" />
+      <parameter id="idd2p1" type="double" value="30" />
+      <parameter id="idd2n" type="double" value="44" />
+      <parameter id="idd3p0" type="double" value="44" />
+      <parameter id="idd3p1" type="double" value="44" />
+      <parameter id="idd3n" type="double" value="61" />
+      <parameter id="idd4r" type="double" value="200" />
+      <parameter id="idd4w" type="double" value="246" />
       <parameter id="idd5" type="double" value="118.0" />
       <parameter id="idd6" type="double" value="20.25" />
       <parameter id="idd62" type="double" value="2.6" />

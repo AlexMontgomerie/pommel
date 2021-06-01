@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<networkspec name="vgg11">
+<networkspec name="VGG11">
 	<partition id="0">
 		<parameter id="kernel_size" type="int" value="3"></parameter>
 		<parameter id="stride" type="int" value="1"></parameter>

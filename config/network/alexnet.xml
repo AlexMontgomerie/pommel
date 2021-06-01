@@ -1,4 +1,4 @@
-<networkspec name="alexnet">
+<networkspec name="AlexNet">
     <partition id="0">
         <parameter id="kernel_size" type="int" value="11" />
         <parameter id="stride" type="int" value="4" />

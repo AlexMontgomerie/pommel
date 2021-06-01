@@ -7,13 +7,14 @@ INC_PATH := include
 
 # tool marcros
 CC := g++
-CCFLAG := -std=c++17 -O3 -I./$(INC_PATH) -I. -I./HighFive/include -DRAMULATOR -I/usr/include/hdf5/serial/ -I/usr/include/xtensor -I/usr/local/include/xtl 
+CCFLAG := -std=c++17 -O3 -I./$(INC_PATH) -I. -I./HighFive/include -DRAMULATOR -I/usr/include/hdf5/serial/ -I/usr/include/xtensor -I/usr/local/include/xtl
 DBGFLAG := -g
 CCOBJFLAG := $(CCFLAG) -c
-LIBS := -L./ramulator -L/usr/lib/x86_64-linux-gnu/hdf5/serial/ -lhdf5 -lctemplate -pthread -lxerces-c -lboost_program_options -lboost_system -lboost_filesystem -lramulator -Wl,-R./ramulator
+LIBS := -L./ramulator -L/usr/lib/x86_64-linux-gnu/hdf5/serial/ -lhdf5 -lctemplate -pthread -lxerces-c -lboost_program_options -lboost_system -lboost_filesystem -Wl,-R./ramulator
+#LIBS := -L./ramulator -L/usr/lib/x86_64-linux-gnu/hdf5/serial/ -lhdf5 -lctemplate -pthread -lxerces-c -lboost_program_options -lboost_system -lboost_filesystem -lramulator -Wl,-R./ramulator
 
 # compile marcros
-TARGET_NAME := main 
+TARGET_NAME := main
 ifeq ($(OS),Windows_NT)
 	TARGET_NAME := $(addsuffix .exe,$(TARGET_NAME))
 endif
@@ -41,20 +42,20 @@ $(TARGET): $(OBJ)
 	$(CC) $(CCFLAG) -o $@ $? $(LIBS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAG) -o $@ $< 
+	$(CC) $(CCOBJFLAG) -o $@ $<
 
 $(DBG_PATH)/%.o: $(SRC_PATH)/%.c*
-	$(CC) $(CCOBJFLAG) $(DBGFLAG) -o $@ $< 
+	$(CC) $(CCOBJFLAG) $(DBGFLAG) -o $@ $<
 
 $(TARGET_DEBUG): $(OBJ_DEBUG)
-	$(CC) $(CCFLAG) $(DBGFLAG) $? -o $@ 
+	$(CC) $(CCFLAG) $(DBGFLAG) $? -o $@
 
 # phony rules
 .PHONY: all
 all: directories $(TARGET)
 
 .PHONY: directories
-directories: 
+directories:
 	@mkdir -p $(OBJ_PATH)
 	@mkdir -p $(BIN_PATH)
 

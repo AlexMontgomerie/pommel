@@ -274,7 +274,7 @@ int main(int argc, char *argv[]) {
         }
 
         // get activity and statistics for trace
-        pommel::analysis analysis_output(encoded_stream_out_path,config_inst.memory.num_dq, config_inst.memory.addr_width);
+        pommel::analysis analysis_output(encoded_stream_out_path, config_inst.memory.num_dq, config_inst.memory.addr_width);
 
         // get readings
         float data_activity_out = analysis_output.get_data_activity();
@@ -289,8 +289,8 @@ int main(int argc, char *argv[]) {
         std::string trace_prefix                = output_path + "/" + partition_index + "/trace-";
 
         // find the actual bandwidth in and out
-        float bandwidth_in  = partition_conf.bandwidth_in / compression_ratio_in;
-        float bandwidth_out = partition_conf.bandwidth_out / compression_ratio_out;
+        float bandwidth_in  = partition_conf.bandwidth_in  / ( compression_ratio_in );
+        float bandwidth_out = partition_conf.bandwidth_out / ( compression_ratio_out );
 
         // get period (clk cycles) for input and output featuremaps
         int period_in   = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_in );

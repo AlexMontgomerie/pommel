@@ -10,9 +10,9 @@ int featuremap::get_size(void) {
  * Transforms
  */
 
-std::vector<uint32_t> featuremap::channel_major_transform(std::vector<uint32_t> data_in) {
+std::vector<int32_t> featuremap::channel_major_transform(std::vector<int32_t> data_in) {
     
-    std::vector<uint32_t> data_out;
+    std::vector<int32_t> data_out;
 
     for(int i=0;i<batch_size;i++) {
         for(int j=0;j<height;j++) {
@@ -33,9 +33,9 @@ std::vector<uint32_t> featuremap::channel_major_transform(std::vector<uint32_t> 
     return data_out;
 }
 
-std::vector<uint32_t> featuremap::row_major_transform(std::vector<uint32_t> data_in) {
+std::vector<int32_t> featuremap::row_major_transform(std::vector<int32_t> data_in) {
     
-    std::vector<uint32_t> data_out;
+    std::vector<int32_t> data_out;
 
     for(int i=0;i<batch_size;i++) {
         for(int l=0;l<channels;l++) {
@@ -58,7 +58,7 @@ std::vector<uint32_t> featuremap::row_major_transform(std::vector<uint32_t> data
 void featuremap::generate_stream(std::string data_path, std::string transform, int bitwidth, int data_packing_factor, std::string direction) {
 
     // get transformed data 
-    std::vector<uint32_t> transformed_data;
+    std::vector<int32_t> transformed_data;
     if(transform == "channel-major") {
         transformed_data = channel_major_transform(data);
     } else if(transform == "row-major") {
@@ -72,8 +72,10 @@ void featuremap::generate_stream(std::string data_path, std::string transform, i
     std::ofstream datafile(data_path);
     int i=0, j=0;
     uint128_t val = 0;
+    //printf("data packing factor = %d \n", data_packing_factor);
     for(auto const& value: transformed_data) {
         val |= ( (uint128_t) (value & bitmask) ) << bitwidth*j;
+        //printf("value = %d, val = %d \n", value, (uint32_t) val);
         j = (j+1) % data_packing_factor;
         if(j==0) {
             std::string data = convert_from_uint128(val);
@@ -114,9 +116,16 @@ featuremap::featuremap(std::string featuremap_path, std::string layer_name) : fe
         height      = 1;
     }
 
+    /*
+    printf("batch_size  = %d \n", batch_size);
+    printf("channels    = %d \n", channels);
+    printf("width       = %d \n", width);
+    printf("height      = %d \n", height);
+    */
+
     // get featuremap
     featuremap_size = get_size();
-    uint32_t* tmp = new uint32_t[featuremap_size];
+    int32_t* tmp = new int32_t[featuremap_size];
     layer.read(tmp);
 
     // convert to vector

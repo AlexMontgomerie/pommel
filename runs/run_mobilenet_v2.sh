@@ -45,25 +45,28 @@ run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                output
 run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_bi bi
 run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_rle rle
 run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_def def
-run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_pbm pbm 
+#run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_pbm pbm 
 run $lpddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr3_huffman huffman 
+
 run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_baseline baseline
 run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_bi bi
 run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_rle rle
 run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_def def
-run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_pbm pbm
+#run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_pbm pbm
 run $lpddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr3_huffman huffman 
+
 run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_baseline baseline
 run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_bi bi
 run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_rle rle
 run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_def def
-run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_pbm pbm 
+#run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_pbm pbm 
 run $lpddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr3_huffman huffman
+
 run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_baseline baseline
 run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_bi bi
 run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_rle rle
 run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_def def
-run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_pbm pbm
+#run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_pbm pbm
 run $lpddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr3_huffman huffman
 
 # LPDDR2
@@ -71,25 +74,28 @@ run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                output
 run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_bi bi
 run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_rle rle
 run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_def def
-run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_pbm pbm 
+#run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_pbm pbm 
 run $lpddr2_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu                outputs/tpu_mobilenet_v2_lpddr2_huffman huffman 
+
 run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_baseline baseline
 run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_bi bi
 run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_rle rle
 run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_def def
-run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_pbm pbm
+#run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_pbm pbm
 run $lpddr2_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss       outputs/eyeriss_mobilenet_v2_lpddr2_huffman huffman 
+
 run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_baseline baseline
 run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_bi bi
 run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_rle rle
 run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_def def
-run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_pbm pbm 
+#run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_pbm pbm 
 run $lpddr2_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn             outputs/scnn_mobilenet_v2_lpddr2_huffman huffman
+
 run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_baseline baseline
 run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_bi bi
 run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_rle rle
 run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_def def
-run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_pbm pbm
+#run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_pbm pbm
 run $lpddr2_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_lpddr2_huffman huffman
 
 # DDR3L
@@ -97,28 +103,28 @@ run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_
 run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_bi bi
 run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_rle rle
 run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_def def
-run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_pbm pbm 
+#run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_pbm pbm 
 run $ddr3l_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3l_huffman huffman 
 
 run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_baseline baseline
 run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_bi bi
 run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_rle rle
 run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_def def
-run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_pbm pbm
+#run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_pbm pbm
 run $ddr3l_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3l_huffman huffman 
 
 run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_baseline baseline
 run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_bi bi
 run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_rle rle
 run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_def def
-run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_pbm pbm 
+#run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_pbm pbm 
 run $ddr3l_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3l_huffman huffman
 
 run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_baseline baseline
 run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_bi bi
 run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_rle rle
 run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_def def
-run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_pbm pbm
+#run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_pbm pbm
 run $ddr3l_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3l_huffman huffman
 
 # DDR3
@@ -126,29 +132,28 @@ run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v
 run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_def def
-run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_pbm pbm 
+#run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_pbm pbm 
 run $ddr3_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr3_huffman huffman 
 
 run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_def def
-run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_pbm pbm
+#run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_pbm pbm
 run $ddr3_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr3_huffman huffman 
 
 run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_def def
-run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_pbm pbm 
+#run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_pbm pbm 
 run $ddr3_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr3_huffman huffman
-
 
 run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_baseline baseline
 run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_bi bi
 run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_rle rle
 run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_def def
-run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_pbm pbm
+#run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_pbm pbm
 run $ddr3_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr3_huffman huffman
 
 # DDR4
@@ -157,57 +162,56 @@ run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v
 run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_bi bi
 run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_rle rle
 run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_def def
-run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_pbm pbm
+#run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_pbm pbm
 run $ddr4_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_ddr4_huffman huffman 
 
 run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_baseline baseline
 run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_bi bi
 run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_rle rle
 run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_def def
-run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_pbm pbm
+#run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_pbm pbm
 run $ddr4_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_ddr4_huffman huffman 
 
 run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_baseline baseline
 run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_bi bi
 run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_rle rle
 run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_def def
-run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_pbm pbm
+#run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_pbm pbm
 run $ddr4_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_ddr4_huffman huffman
 
 run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_baseline baseline
 run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_bi bi
 run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_rle rle
 run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_def def
-run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_pbm pbm
+#run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_pbm pbm
 run $ddr4_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_ddr4_huffman huffman
 
 # WIDE-IO
 
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_baseline baseline
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_bi bi
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_rle rle
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_def def
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_pbm pbm
-run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_huffman huffman
-
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_baseline baseline
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_bi bi
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_rle rle
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_def def
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_pbm pbm
-run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_huffman huffman 
-
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_baseline baseline
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_bi bi
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_rle rle
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_def def
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_pbm pbm
-run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_huffman huffman
-
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_baseline baseline
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_bi bi
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_rle rle
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_def def
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_pbm pbm
-run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_huffman huffman
-
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_baseline baseline
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_bi bi
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_rle rle
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_def def
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_pbm pbm
+#run $wide_io_path $mobilenet_v2_fm_8 $tpu $mobilenet_v2_tpu outputs/tpu_mobilenet_v2_wide_io_huffman huffman
+#
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_baseline baseline
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_bi bi
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_rle rle
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_def def
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_pbm pbm
+#run $wide_io_path $mobilenet_v2_fm_16 $eyeriss $mobilenet_v2_eyeriss outputs/eyeriss_mobilenet_v2_wide_io_huffman huffman 
+#
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_baseline baseline
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_bi bi
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_rle rle
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_def def
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_pbm pbm
+#run $wide_io_path $mobilenet_v2_fm_16 $scnn $mobilenet_v2_scnn outputs/scnn_mobilenet_v2_wide_io_huffman huffman
+#
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_baseline baseline
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_bi bi
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_rle rle
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_def def
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_pbm pbm
+#run $wide_io_path $mobilenet_v2_fm_16 $shidiannao $mobilenet_v2_shidiannao outputs/shidiannao_mobilenet_v2_wide_io_huffman huffman

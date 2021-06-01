@@ -1,4 +1,4 @@
-<networkspec name="resnet18">
+<networkspec name="ResNet18">
     <partition id="0">
         <parameter id="kernel_size" type="int" value="7" />
         <parameter id="stride" type="int" value="2" />

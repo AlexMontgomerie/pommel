@@ -16,7 +16,7 @@ class report:
    
         # open config instances
         self.network = pommel.network(self.report["network_path"])
-        #self.accelerator = pommel.accelerator(self.report["accelerator_path"])
+        self.accelerator = pommel.accelerator(self.report["accelerator_path"])
         self.memory = pommel.memory(self.report["memory_path"])
 
     def parse_cacti_report(self, cacti_report_path):
@@ -101,27 +101,27 @@ class report:
         self.report["partitions"][index]["dram"]["trace_power"] = trace_power*self.memory.chips
 
     def get_base_sequence(self, field):
-        seq = []
+        seq = [0]*len(self.report["partitions"].keys())
         for i in self.report["partitions"]:
-            seq.append(self.report["partitions"][i][field])
+            seq[int(i)] = self.report["partitions"][i][field]
         return np.array(seq)
 
     def get_sequence(self, field, direction="in"):
-        seq = []
+        seq = [0]*len(self.report["partitions"].keys())
         for i in self.report["partitions"]:
-            seq.append(self.report["partitions"][i][direction][field])
+            seq[int(i)] = self.report["partitions"][i][direction][field]
         return np.array(seq)
 
     def get_io_sequence(self, field):
-        seq = []
+        seq = [0]*len(self.report["partitions"].keys())
         for i in self.report["partitions"]:
-            seq.append(self.report["partitions"][i]["io"][field])
+            seq[int(i)] = self.report["partitions"][i]["io"][field]
         return np.array(seq)
 
     def get_dram_sequence(self, field):
-        seq = []
+        seq = [0]*len(self.report["partitions"].keys())
         for i in self.report["partitions"]:
-            seq.append(self.report["partitions"][i]["dram"][field])
+            seq[int(i)] = self.report["partitions"][i]["dram"][field]
         return np.array(seq)
 
     def get_total_io_power_sequence(self):
@@ -129,6 +129,9 @@ class report:
         io_dynamic  = self.get_io_sequence("io_dynamic")
         io_bias     = self.get_io_sequence("io_bias")
         return io_phy + io_dynamic + io_bias
+
+    def get_partition_sequence(self):
+        return np.arange(len(self.report["partitions"].keys()))
 
     def get_total_dram_power_sequence(self):
         return self.get_dram_sequence("trace_power")
@@ -155,6 +158,14 @@ class report:
     def get_average_activity_sequence(self):
         return 0.5*(self.get_sequence("data_activity","in") + self.get_sequence("data_activity","out")) 
 
+    def get_average_activity(self):
+        # get average activity sequence
+        activity = self.get_average_activity_sequence()
+        # get all samples
+        samples = self.get_dram_sequence("trace_length")
+        # return weighted average of power
+        return np.sum(activity*samples)/np.sum(samples)
+ 
     def get_average_power(self):
         # get total power
         total_power = self.get_total_io_power_sequence() + self.get_total_dram_power_sequence()
@@ -162,7 +173,24 @@ class report:
         samples = self.get_dram_sequence("trace_length")
         # return weighted average of power
         return np.sum(total_power*samples)/np.sum(samples)
-   
+    
+    def get_total_energy(self):
+        return np.sum(self.get_energy_sequence())
+
+    def get_energy_sequence(self):
+        # get power
+        total_power = self.get_total_io_power_sequence() + self.get_total_dram_power_sequence()
+        # get latency sequence
+        latency = self.get_latency_sequence()
+        # return energy
+        return total_power * latency * 1000.0
+
+    def get_latency_sequence(self):
+        # get memory freq
+        dram_freq = self.memory.clock
+        # get latencies in and out
+        return self.get_dram_sequence("trace_length")/(dram_freq*1000000.0)
+
     def get_latency(self):
         # get memory freq
         dram_freq = self.memory.clock
@@ -187,6 +215,39 @@ class report:
             workload += channels*filters*rows*cols*kernel_size*kernel_size
         return workload/1000000000.0
 
+    def get_featuremap_dims(self):
+        self.featuremaps = pommel.featuremap(self.report["featuremap_path"])
+        dims = []
+        for partition in self.network.get_all_partitions():
+            # get featuremaps
+            input_featuremap  = self.network.get_input_featuremap(partition)
+            output_featuremap = self.network.get_output_featuremap(partition)
+            # get dimensions
+            channels_in = self.featuremaps.get_channels(input_featuremap)
+            rows_in = self.featuremaps.get_rows(input_featuremap)
+            cols_in = self.featuremaps.get_cols(input_featuremap)
+            channels_out = self.featuremaps.get_channels(output_featuremap)
+            rows_out = self.featuremaps.get_rows(output_featuremap)
+            cols_out = self.featuremaps.get_cols(output_featuremap)
+            dims.append(rows_in*cols_in*channels_in +
+                rows_out*cols_out*channels_out)
+        return dims
+
+    def get_filter_dims(self):
+        self.featuremaps = pommel.featuremap(self.report["featuremap_path"])
+        dims = []
+        for partition in self.network.get_all_partitions():
+            # get featuremaps
+            input_featuremap  = self.network.get_input_featuremap(partition)
+            output_featuremap = self.network.get_output_featuremap(partition)
+            # get kernel size
+            kernel_size = self.network.get_kernel_size(partition)
+            # get dimensions
+            channels = self.featuremaps.get_channels(input_featuremap)
+            filters = self.featuremaps.get_channels(output_featuremap)
+            dims.append(kernel_size*kernel_size*channels*filters)
+        return dims
+
     def get_max_bandwidth(self):
         max_bandwidth_in  = max(self.get_sequence("bandwidth", "in"))
         max_bandwidth_out = max(self.get_sequence("bandwidth", "out"))
@@ -202,6 +263,15 @@ class report:
         with open(output_path,"w") as f:
             json.dump(self.report,f,indent=4)
 
+    def get_accelerator_name(self):
+        return self.accelerator.name
+
+    def get_memory_name(self):
+        return self.memory.name
+
+    def get_network_name(self):
+        return self.network.name
+
     def get_power_model(self):
 
         # get relevant readings
@@ -213,7 +283,7 @@ class report:
         y = []
 
         for i in range(power.shape[0]):
-            X.append([activity[i]*bandwidth[i], bandwidth[i]])
+            X.append([8*activity[i]*bandwidth[i], bandwidth[i]])
             y.append(power[i])
 
         # fit model
@@ -223,7 +293,7 @@ class report:
 
         # get coefficients
         bandwidth_coefficient   = reg.coef_[1]
-        activity_coefficient    = reg.coef_[0]/8
+        activity_coefficient    = reg.coef_[0]
         static_term = reg.intercept_
 
         return static_term, bandwidth_coefficient, activity_coefficient

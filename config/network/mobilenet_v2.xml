@@ -1,4 +1,4 @@
-<networkspec name="mobilenet_v2">
+<networkspec name="MobileNet-v2">
     <partition id="0">
         <parameter id="kernel_size" type="int" value="3" />
         <parameter id="stride" type="int" value="2" />
@@ -137,73 +137,73 @@
         <parameter id="input_featuremap" type="string" value="module.features.8.conv.1.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.8.conv.2_i_0" />
     </partition>
-    <partition id="24">
+    <partition id="23">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.8.conv.2_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.8.residual_eltwiseadd_i_1" />
     </partition>
-    <partition id="25">
+    <partition id="24">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.9.conv.0.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.9.conv.1.0_i_0" />
     </partition>
-    <partition id="26">
+    <partition id="25">
         <parameter id="kernel_size" type="int" value="3" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.9.conv.1.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.9.conv.2_i_0" />
     </partition>
-    <partition id="27">
+    <partition id="26">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.9.conv.2_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.9.residual_eltwiseadd_i_1" />
     </partition>
-    <partition id="28">
+    <partition id="27">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.10.conv.0.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.10.conv.1.0_i_0" />
     </partition>
-    <partition id="29">
+    <partition id="28">
         <parameter id="kernel_size" type="int" value="3" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.10.conv.1.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.10.conv.2_i_0" />
     </partition>
-    <partition id="30">
+    <partition id="29">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.10.conv.2_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.10.residual_eltwiseadd_i_1" />
     </partition>
-    <partition id="31">
+    <partition id="30">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.11.conv.0.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.11.conv.1.0_i_0" />
     </partition>
-    <partition id="32">
+    <partition id="31">
         <parameter id="kernel_size" type="int" value="3" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.11.conv.1.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.11.conv.2_i_0" />
     </partition>
-    <partition id="33">
+    <partition id="32">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.11.conv.2_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.12.residual_eltwiseadd_i_0" />
     </partition>
-    <partition id="34">
+    <partition id="33">
         <parameter id="kernel_size" type="int" value="1" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.12.conv.0.0_i_0" />
         <parameter id="output_featuremap" type="string" value="module.features.12.conv.1.0_i_0" />
     </partition>
-    <partition id="35">
+    <partition id="34">
         <parameter id="kernel_size" type="int" value="3" />
         <parameter id="stride" type="int" value="1" />
         <parameter id="input_featuremap" type="string" value="module.features.12.conv.1.0_i_0" />

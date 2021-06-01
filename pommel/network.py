@@ -8,7 +8,9 @@ class network:
         # load network
         with open(network_path, "r") as f:
             self.network = xmltodict.parse(f.read())
-    
+
+        self.name = self.network["networkspec"]["@name"]
+
     # get fields
     def get_all_partitions(self):
         return range(len(self.network["networkspec"]["partition"]))

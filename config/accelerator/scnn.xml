@@ -1,4 +1,4 @@
-<acceleratorspec type="scnn" >
+<acceleratorspec name="SCNN" >
     <parameter id="dataflow" type="string" value="is" />
     <parameter id="array_height" type="int" value="8" />
     <parameter id="array_width" type="int" value="8" />

@@ -4,6 +4,7 @@ data/*
 outputs/*
 outputs_old/*
 featuremaps/*
+build/*
 
 *.trace
 *.cmdtrace
@@ -12,3 +13,6 @@ featuremaps/*
 *.dat
 
 **__pycache__/
+**.pyc
+
+

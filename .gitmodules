@@ -9,3 +9,8 @@
 [submodule "DRAMPower"]
     path = DRAMPower
     url = https://github.com/tukl-msd/DRAMPower
+
+[submodule "HighFive"]
+    path = HighFive
+    url = https://github.com/BlueBrain/HighFive
+

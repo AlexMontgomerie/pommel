@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<networkspec name="alexnet">
+<networkspec name="AlexNet">
 	<partition id="0">
 		<parameter id="kernel_size" type="int" value="11"></parameter>
 		<parameter id="stride" type="int" value="4"></parameter>

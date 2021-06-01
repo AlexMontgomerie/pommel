@@ -1,4 +1,4 @@
-<acceleratorspec type="tpu">
+<acceleratorspec name="TPU">
     <parameter id="dataflow" type="string" value="os" />
     <parameter id="array_height" type="int" value="256" />
     <parameter id="array_width" type="int" value="256" />
