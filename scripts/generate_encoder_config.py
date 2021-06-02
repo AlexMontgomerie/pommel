@@ -11,7 +11,7 @@ def get_layers(filepath):
     # load file
     featuremaps = dd.io.load(filepath)
     # return keys
-    layers = featuremaps["layers"] 
+    layers = featuremaps["layers"]
     layers.append["data"]
     layers.append["output"]
     return layers
@@ -19,7 +19,7 @@ def get_layers(filepath):
 def get_dimensions(featuremaps):
     # get dimensions of each layer
     dimensions = {}
-    #get layers 
+    #get layers
     layers = featuremaps["layers"]
     # iterate over layers
     for layer in layers:
@@ -137,7 +137,29 @@ def add_def_parameters(root, layer, platform_info, featuremaps):
     parameter.setAttribute("value",str(dimensions[layer.getAttribute("id")][1]))
     layer.appendChild(parameter)
 
-def generate_encoder_config(encoder, accelerator_config_path, network_config_path, featuremaps_path, output_path):
+def add_general_parameters(root, layer, platform_info, featuremaps,
+        compression_ratio, activity):
+    # add compression ratio
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","compression_ratio")
+    parameter.setAttribute("type","float")
+    parameter.setAttribute("value", compression_ratio)
+    layer.appendChild(parameter)
+    # add activity
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","activity")
+    parameter.setAttribute("type","float")
+    parameter.setAttribute("value", activity)
+    layer.appendChild(parameter)
+    # add batch size
+    parameter = root.createElement('parameter')
+    parameter.setAttribute("id","batch_size")
+    parameter.setAttribute("type","int")
+    parameter.setAttribute("value", "512")
+    layer.appendChild(parameter)
+
+def generate_encoder_config(encoder, accelerator_config_path,
+        network_config_path, featuremaps_path, output_path, encoder_args):
     # create encoder config
     root = minidom.Document()
     encoderspec = root.createElement("encoderspec")
@@ -160,7 +182,7 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
         output_featuremap   = ""
         for parameter in partition.parameter:
             if parameter["id"] == "input_featuremap":
-                input_featuremap = parameter["value"]            
+                input_featuremap = parameter["value"]
             if parameter["id"] == "output_featuremap":
                 output_featuremap = parameter["value"]
         # add partition input featuremap to encoder spec
@@ -181,6 +203,9 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_huffman_parameters(root, layer, platform_info, featuremaps)
             if encoder == "pbm":
                 add_pbm_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "general":
+                add_general_parameters(root, layer, platform_info, featuremaps,
+                        encoder_args[0], encoder_args[1])
             # add layer to encoderspec
             encoderspec.appendChild(layer)
         # add partition output featuremap to encoder spec
@@ -201,6 +226,9 @@ def generate_encoder_config(encoder, accelerator_config_path, network_config_pat
                 add_huffman_parameters(root, layer, platform_info, featuremaps)
             if encoder == "pbm":
                 add_pbm_parameters(root, layer, platform_info, featuremaps)
+            if encoder == "general":
+                add_general_parameters(root, layer, platform_info, featuremaps,
+                        encoder_args[0], encoder_args[1])
             # add layer to encoderspec
             encoderspec.appendChild(layer)
     # save encoder config
@@ -214,6 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("-n","--network_config_path",required=True, help="network config path (.xml)")
     parser.add_argument("-f","--featuremaps_path",required=True, help="featuremaps path (.h5)")
     parser.add_argument("-o","--output_path",required=True, help="output path (.xml)")
+    parser.add_argument("-c","--encoder_args",nargs='+', required=False, help="encoder arguments")
 
     args = parser.parse_args()
     generate_encoder_config(
@@ -221,6 +250,7 @@ if __name__ == "__main__":
             args.accelerator_config_path,
             args.network_config_path,
             args.featuremaps_path,
-            args.output_path
-    ) 
+            args.output_path,
+            args.encoder_args
+    )
 

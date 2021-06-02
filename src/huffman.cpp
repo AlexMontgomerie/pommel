@@ -2,17 +2,17 @@
 
 namespace pommel {
 
-void huffman::huffman_bitstream_encoder(std::istream &in, std::ostream &out) { 
+void huffman::huffman_bitstream_encoder(std::istream &in, std::ostream &out) {
 
     // value buffer
     uint32_t val;
 
     // iterate over the rest of the stream
     while (in >> val) {
-       
-        // convert from input to code 
+
+        // convert from input to code
         uint32_t encoded_val = code_table[val];
-   
+
 
         // convert this code to a single bitstream
         bool reached_first_one = false;
@@ -20,12 +20,12 @@ void huffman::huffman_bitstream_encoder(std::istream &in, std::ostream &out) {
 
             // get bit value
             uint32_t bit = ( encoded_val >> (31-i) ) & 1;
-            
+
             // ignore leading zeros
             if( (!reached_first_one) && (bit == 1) ) {
                 reached_first_one = true;
             }
-            
+
             // send single bit
             if(reached_first_one) {
                 out << bit << std::endl;
@@ -35,7 +35,7 @@ void huffman::huffman_bitstream_encoder(std::istream &in, std::ostream &out) {
 
 }
 
-void huffman::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) { 
+void huffman::encoder(std::istream &data_in, std::ostream &data_out, std::istream &addr_in, std::ostream &addr_out) {
 
     while( data_in.rdbuf()->in_avail() ) {
         // create buffer
@@ -56,20 +56,20 @@ void huffman::encoder(std::istream &data_in, std::ostream &data_out, std::istrea
         }
         // encode buffer
         std::stringstream encoded_data_buffer;
-        
+
         // setup string streams
         std::stringstream huffman_in;
         std::stringstream huffman_out;
 
         // de-interleave stream in
-        deinterleave(data_buffer, huffman_in, platform.bitwidth, platform.packing_factor); 
+        deinterleave(data_buffer, huffman_in, platform.bitwidth, platform.packing_factor);
 
         // perform run length encoding
         huffman_bitstream_encoder(huffman_in, huffman_out);
 
         // interleave stream again
-        interleave(huffman_out, encoded_data_buffer, 1, platform.packing_factor*platform.bitwidth); 
-       
+        interleave(huffman_out, encoded_data_buffer, 1, platform.packing_factor*platform.bitwidth);
+
         // send to output
         std::string addr_line_prev;
         while( std::getline(encoded_data_buffer, data_line) ) {
