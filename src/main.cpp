@@ -19,6 +19,7 @@ using namespace boost::program_options;
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
 #include "coding_schemes/huffman.hpp"
+#include "coding_schemes/general.hpp"
 
 using encoder_t = std::variant<
     pommel::encoder<pommel::bi>,
@@ -27,7 +28,8 @@ using encoder_t = std::variant<
     pommel::encoder<pommel::abe>,
     pommel::encoder<pommel::pbm>,
     pommel::encoder<pommel::rle>,
-    pommel::encoder<pommel::huffman>
+    pommel::encoder<pommel::huffman>,
+    pommel::encoder<pommel::general>
 >;
 
 using trace_t = std::variant<
@@ -56,42 +58,44 @@ encoder_t get_encoder_inst(std::string config_path, std::string featuremap, pomm
     // get encoder
     if( encoder_type == "bi" ) {
         return pommel::encoder<pommel::bi>(config_path, featuremap, platform);
-    } else if( encoder_type == "def" ) {    
+    } else if( encoder_type == "def" ) {
         return pommel::encoder<pommel::def>(config_path, featuremap, platform);
-    } else if( encoder_type == "awr" ) {    
+    } else if( encoder_type == "awr" ) {
         return pommel::encoder<pommel::awr>(config_path, featuremap, platform);
-    } else if( encoder_type == "abe" ) {    
+    } else if( encoder_type == "abe" ) {
         return pommel::encoder<pommel::abe>(config_path, featuremap, platform);
-    } else if( encoder_type == "pbm" ) {    
+    } else if( encoder_type == "pbm" ) {
         return pommel::encoder<pommel::pbm>(config_path, featuremap, platform);
-    } else if( encoder_type == "rle" ) {    
+    } else if( encoder_type == "rle" ) {
         return pommel::encoder<pommel::rle>(config_path, featuremap, platform);
-    } else if( encoder_type == "huffman" ) {    
+    } else if( encoder_type == "huffman" ) {
         return pommel::encoder<pommel::huffman>(config_path, featuremap, platform);
+    } else if( encoder_type == "general" ) {
+        return pommel::encoder<pommel::general>(config_path, featuremap, platform);
     } else {
         fprintf(stderr,"ERROR (encoder) : %s not specified!\n", encoder_type.c_str());
     }
 }
 
-trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path, 
+trace_t get_trace_inst(std::string dram_type, std::string ramulator_config_path,
         std::string output_path, int burst_size, int period, int bitwidth) {
-    if( dram_type == "DDR3" ) { 
+    if( dram_type == "DDR3" ) {
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    else if( dram_type == "DDR3L" ) { 
+    else if( dram_type == "DDR3L" ) {
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    else if( dram_type == "DDR4" ) { 
+    else if( dram_type == "DDR4" ) {
         return pommel::trace<ramulator::DDR4>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    else if( dram_type == "WIDEIO_SDR" ) { 
+    else if( dram_type == "WIDEIO_SDR" ) {
         //return pommel::trace<ramulator::WideIO>(ramulator_config_path,output_path,burst_size,period,bitwidth);
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    else if( dram_type == "LPDDR2" ) { 
+    else if( dram_type == "LPDDR2" ) {
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
-    else if( dram_type == "LPDDR3" ) { 
+    else if( dram_type == "LPDDR3" ) {
         return pommel::trace<ramulator::DDR3>(ramulator_config_path,output_path,burst_size,period,bitwidth);
     }
     else {
@@ -103,7 +107,7 @@ int main(int argc, char *argv[]) {
 
     // parameters
     int opt;
-    
+
     // config file paths
     std::string memory_config_path;
     std::string encoder_config_path;
@@ -124,7 +128,7 @@ int main(int argc, char *argv[]) {
     bool use_scale_sim = false;
 
     try {
- 
+
         // add command line options
         options_description desc("Allowed Options");
         desc.add_options()
@@ -141,7 +145,7 @@ int main(int argc, char *argv[]) {
         variables_map vm;
         store(parse_command_line(argc, argv, desc), vm);
 
-        if (vm.count("help")) {  
+        if (vm.count("help")) {
             std::cout << desc << "\n";
             return 0;
         }
@@ -182,7 +186,7 @@ int main(int argc, char *argv[]) {
     report["encoder_path"]      = encoder_config_path.c_str();
     report["featuremap_path"]   = featuremap_path.c_str();
 
-    //get types 
+    //get types
     report["dram_type"] = config_inst.memory.dram_type.c_str();
     report["accelerator_name"] = config_inst.platform.name.c_str();
     report["network_name"] = network_name.c_str();
@@ -194,20 +198,20 @@ int main(int argc, char *argv[]) {
     // TODO: add some information at the start
 
     // iterate over partition for a given accelerator
-    for( auto const& partition : config_inst.network ) { 
+    for( auto const& partition : config_inst.network ) {
 
         // partition information
         std::string partition_index = std::to_string(partition.first);
         pommel::network_config_t partition_conf = partition.second;
-      
+
 
         // create output paths
         boost::filesystem::create_directory(output_path);
         boost::filesystem::create_directory(output_path+"/"+partition_index);
-        
+
         // temporary ramulator config path
         std::string ramulator_config_path;
-        
+
         /**
          * Input Featuremap
          */
@@ -217,11 +221,11 @@ int main(int argc, char *argv[]) {
         ramulator_config_path = output_path + "/" + partition_index + "/input_ramulator.cfg";
 
         // generate config for ramulator and trace
-        config_inst.generate_ramulator_config(ramulator_config_path); 
- 
+        config_inst.generate_ramulator_config(ramulator_config_path);
+
         //  load the featuremap
-        pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);    
-        featuremap_input.generate_stream(stream_in_path, config_inst.platform.transform, 
+        pommel::featuremap featuremap_input(featuremap_path, partition_conf.input_featuremap);
+        featuremap_input.generate_stream(stream_in_path, config_inst.platform.transform,
                 config_inst.platform.bitwidth, config_inst.platform.packing_factor, "R");
 
         // get activity and statistics for baseline trace
@@ -238,13 +242,13 @@ int main(int argc, char *argv[]) {
 
         // get activity and statistics for trace
         pommel::analysis analysis_input(encoded_stream_in_path,config_inst.memory.num_dq,config_inst.memory.addr_width);
-            
+
         // get readings
         float data_activity_in = analysis_input.get_data_activity();
         float addr_activity_in = analysis_input.get_addr_activity();
         float compression_ratio_in = (float) analysis_input_baseline.get_total_samples()/((float) analysis_input.get_total_samples());
         float total_samples_in = analysis_input.get_total_samples();
-        
+
         /**
          * Output Featuremap
          */
@@ -254,10 +258,10 @@ int main(int argc, char *argv[]) {
         ramulator_config_path = output_path + "/" + partition_index + "/output_ramulator.cfg";
 
         // generate config for ramulator and trace
-        config_inst.generate_ramulator_config(ramulator_config_path); 
- 
+        config_inst.generate_ramulator_config(ramulator_config_path);
+
         // load the featuremap
-        pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);    
+        pommel::featuremap featuremap_output(featuremap_path, partition_conf.output_featuremap);
         featuremap_output.generate_stream(stream_out_path, config_inst.platform.transform,
                 config_inst.platform.bitwidth, config_inst.platform.packing_factor, "W");
 
@@ -281,7 +285,7 @@ int main(int argc, char *argv[]) {
         float addr_activity_out = analysis_output.get_addr_activity();
         float compression_ratio_out = (float) analysis_output_baseline.get_total_samples() / ((float) analysis_output.get_total_samples());
         float total_samples_out = analysis_output.get_total_samples();
-        
+
         // output paths for external tools
         std::string cacti_read_config_path      = output_path + "/" + partition_index + "/read_cacti.cfg";
         std::string cacti_write_config_path     = output_path + "/" + partition_index + "/write_cacti.cfg";
@@ -309,14 +313,14 @@ int main(int argc, char *argv[]) {
         // generate combined trace
         trace_t trace = get_trace_inst(config_inst.memory.dram_type, ramulator_config_path, trace_prefix,
                 config_inst.platform.burst_size, period, config_inst.platform.bitwidth);
-        
+
         std::visit([
                 &stream_in=encoded_stream_in_path,
                 &stream_out=encoded_stream_out_path,
                 &in_addr_offset=config_inst.platform.ifmap_offset,
                 &out_addr_offset=config_inst.platform.ofmap_offset
                 ](auto&& arg){
-                arg.generate_combined_trace(stream_in, stream_out, 
+                arg.generate_combined_trace(stream_in, stream_out,
                         in_addr_offset, out_addr_offset); }, trace);
 
         // calculate read, write and idle duty cycles
@@ -325,51 +329,51 @@ int main(int argc, char *argv[]) {
         float idle_duty_cycle  = 1 - (read_duty_cycle+write_duty_cycle);
 
         // generate the cacti config files
-        config_inst.generate_cacti_config("READ",cacti_read_config_path, data_activity_in, 
+        config_inst.generate_cacti_config("READ",cacti_read_config_path, data_activity_in,
                 addr_activity_in, read_duty_cycle);
 
-        config_inst.generate_cacti_config("WRITE",cacti_write_config_path, data_activity_out, 
+        config_inst.generate_cacti_config("WRITE",cacti_write_config_path, data_activity_out,
                 addr_activity_out, write_duty_cycle);
 
-        config_inst.generate_cacti_config("IDLE",cacti_idle_config_path, 0.0, 
+        config_inst.generate_cacti_config("IDLE",cacti_idle_config_path, 0.0,
                 0.0, idle_duty_cycle);
 
         // print debug information
         printf("Running Partition %s of %s \n", partition_index.c_str(), output_path.c_str() );
         printf("Encoding Scheme: %s\n", coder_name.c_str() );
-        printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    ); 
-        printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   ); 
-        printf("---- bitwidth               : %d \n", config_inst.platform.bitwidth ); 
-        printf("---- clk freq (MHz)         : %d \n", config_inst.platform.clk_freq ); 
-        printf("---- mem bandwidth (GB/s)   : %f \n", config_inst.memory.bandwidth ); 
-        printf("---- bandwidth (GB/s)       : %f \n", bandwidth ); 
-        printf("---- burst_size             : %d \n", config_inst.platform.burst_size ); 
-        printf("---- period                 : %d \n", period ); 
-        printf("---- read duty cycle        : %f \n", read_duty_cycle ); 
-        printf("---- write duty cycle       : %f \n", write_duty_cycle ); 
-        printf("---- idle duty cycle        : %f \n", idle_duty_cycle ); 
-        printf("---- data activity in       : %f \n", data_activity_in); 
-        printf("---- data activity out      : %f \n", data_activity_out); 
-        printf("---- address activity in    : %f \n", addr_activity_in); 
-        printf("---- address activity out   : %f \n", addr_activity_out); 
-        printf("---- compression ratio in   : %f \n", compression_ratio_in); 
-        printf("---- compression ratio out  : %f \n", compression_ratio_out); 
+        printf("input featuremap    = %s\n", partition_conf.input_featuremap.c_str()    );
+        printf("output featuremap   = %s\n", partition_conf.output_featuremap.c_str()   );
+        printf("---- bitwidth               : %d \n", config_inst.platform.bitwidth );
+        printf("---- clk freq (MHz)         : %d \n", config_inst.platform.clk_freq );
+        printf("---- mem bandwidth (GB/s)   : %f \n", config_inst.memory.bandwidth );
+        printf("---- bandwidth (GB/s)       : %f \n", bandwidth );
+        printf("---- burst_size             : %d \n", config_inst.platform.burst_size );
+        printf("---- period                 : %d \n", period );
+        printf("---- read duty cycle        : %f \n", read_duty_cycle );
+        printf("---- write duty cycle       : %f \n", write_duty_cycle );
+        printf("---- idle duty cycle        : %f \n", idle_duty_cycle );
+        printf("---- data activity in       : %f \n", data_activity_in);
+        printf("---- data activity out      : %f \n", data_activity_out);
+        printf("---- address activity in    : %f \n", addr_activity_in);
+        printf("---- address activity out   : %f \n", addr_activity_out);
+        printf("---- compression ratio in   : %f \n", compression_ratio_in);
+        printf("---- compression ratio out  : %f \n", compression_ratio_out);
 
         // add report information
-        report["partitions"][partition_index.c_str()] = { 
+        report["partitions"][partition_index.c_str()] = {
             {"bandwidth" , bandwidth},
             {"read_duty_cycle" , read_duty_cycle},
             {"write_duty_cycle", write_duty_cycle},
             {"idle_duty_cycle" , idle_duty_cycle}
         };
-        report["partitions"][partition_index.c_str()]["in"] = { 
+        report["partitions"][partition_index.c_str()]["in"] = {
             {"bandwidth", bandwidth_in},
             {"samples", total_samples_in},
             {"compression_ratio", compression_ratio_in},
             {"data_activity", data_activity_in},
             {"addr_activity", addr_activity_in}
         };
-        report["partitions"][partition_index.c_str()]["out"] = { 
+        report["partitions"][partition_index.c_str()]["out"] = {
             {"bandwidth", bandwidth_out},
             {"samples", total_samples_out},
             {"compression_ratio", compression_ratio_out},

@@ -13,6 +13,7 @@
 #include "coding_schemes/awr.hpp"
 #include "coding_schemes/rle.hpp"
 #include "coding_schemes/huffman.hpp"
+#include "coding_schemes/general.hpp"
 
 namespace pommel {
 
@@ -31,7 +32,7 @@ class encoder {
             if( !in.is_open() ) {
                 fprintf(stderr,"cannot open input file: %s \n", stream_in_path.c_str());
             }
-    
+
             // get the data field stream
             std::stringstream data_stream;
             get_stream_field(in, data_stream, DATA);
@@ -39,11 +40,11 @@ class encoder {
             // reset to beginning of input stream
             in.clear();
             in.seekg(0, std::ios::beg);
-          
+
             // get addr field stream
             std::stringstream addr_stream;
             get_stream_field(in, addr_stream, ADDR);
- 
+
             // reset to beginning of input stream
             in.clear();
             in.seekg(0, std::ios::beg);
@@ -59,10 +60,10 @@ class encoder {
             std::ofstream out (stream_out_path);
             if( !out.is_open() ) {
                 fprintf(stderr,"cannot open output file: %s \n", stream_out_path.c_str());
-            } 
+            }
 
             // create new stream
-            create_stream(output_addr_stream, output_data_stream, direction, out); 
+            create_stream(output_addr_stream, output_data_stream, direction, out);
 
             // close files
             in.close();

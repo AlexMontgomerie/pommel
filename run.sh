@@ -1,6 +1,6 @@
 # build tool TODO: remove later on
-make clean
-make -j 8
+# make clean
+# make -j 8
 
 # parameters
 #memory_config=config/memory/MICRON_1Gb_DDR3-1600_8bit_G.xml
