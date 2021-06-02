@@ -55,13 +55,13 @@ target_include_directories(POMMEL PUBLIC
 # add_subdirectory(DRAMPower)
 # target_link_libraries(POMMEL DRAMPower)
 
-## adding xtensor
-find_package(xtensor REQUIRED)
-include_directories(${xtensor_INCLUDE_DIRS})
+# ## adding xtensor
+# find_package(xtensor REQUIRED)
+# include_directories(${xtensor_INCLUDE_DIRS})
 
-## adding xtl
-find_package(xtl REQUIRED)
-include_directories(${xtl_INCLUDE_DIRS})
+# ## adding xtl
+# find_package(xtl REQUIRED)
+# include_directories(${xtl_INCLUDE_DIRS})
 
 ## adding ctemplate
 target_link_libraries(POMMEL ctemplate)
