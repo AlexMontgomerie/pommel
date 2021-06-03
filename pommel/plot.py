@@ -19,7 +19,7 @@ mpl.rcParams['figure.figsize'] = [8.0, 6.0]
 mpl.rcParams['figure.dpi'] = 80
 mpl.rcParams['savefig.dpi'] = 100
 
-mpl.rcParams['font.size'] = 15 
+mpl.rcParams['font.size'] = 15
 mpl.rcParams['legend.fontsize'] = 'small'
 mpl.rcParams['figure.titlesize'] = 'small'
 
@@ -39,7 +39,7 @@ mpl.rcParams['lines.scale_dashes'] = False
 
 class plot:
     def __init__(self, networks, accelerators, memories, coding_schemes):
-        
+
         # save lists
         self.networks       = networks
         self.accelerators   = accelerators
@@ -74,7 +74,7 @@ class plot:
 
         # create figure
         fig, axs = plt.subplots(2, sharey="row")
- 
+
         x = np.arange(len(self.memories))
         width = 0.65/len(self.accelerators)
 
@@ -92,7 +92,7 @@ class plot:
             #axs[0].set_ylabel("Performance (GOP/s)", size="medium")
             #axs[0].axes.xaxis.set_visible(False)
             #axs[0].grid(axis='y')
- 
+
         # add bandwidth bar plots
         power = {}
         for accelerator in self.accelerators:
@@ -125,14 +125,14 @@ class plot:
             axs[1].set_xticks(x+0.5)
             axs[1].set_xticklabels(memory_names)
             axs[1].grid(axis='y')
- 
+
         handles, labels = axs[0].get_legend_handles_labels()
         fig.legend(handles, labels, loc="upper right")
         plt.show()
 
 
     def accelerator_power_energy_layerwise_plot(self, network, memory):
-        
+
         # create figure
         fig, axs = plt.subplots(len(self.accelerators), sharey="col")
         axs2 = []
@@ -153,7 +153,7 @@ class plot:
             ax.set_ylabel(report.get_accelerator_name(),size="medium")
             ax.grid()
             ax.label_outer()
-       
+
         ax.set_xlabel("Partition Index")
         #ax.grid()
         #ax.set(xlabel="Performance (GOP/s)", ylabel="Average Power (mW)")
@@ -169,17 +169,17 @@ class plot:
 
 
         ax = fig.add_subplot(111, frameon=False)
-        
+
         ax.set_ylabel(f"Energy ($\mu$ J)\n\n",size="large")
         #ax2 = ax.twinx()
         #ax2.set_ylabel(f"Power (mW)",size="large", color="r")
-     
+
         ax.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
         #ax2.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
-        
+
         ax.spines["right"].set_visible(False)
         ax.spines["left"].set_visible(False)
-        
+
         #ax2.spines["right"].set_visible(False)
         #ax2.spines["left"].set_visible(False)
 
@@ -190,13 +190,13 @@ class plot:
     def power_breakdown_layerwise_plot(self, network, accelerator):
         # create figure
         fig, axs = plt.subplots(len(self.memories), sharey="col")
- 
+
         for memory in self.memories:
             # get axis
             ax = axs[self.memories.index(memory)]
             # open report
             report = pommel.report(f"outputs/{accelerator}_{network}_{memory}_baseline/report.json")
-            # get IO and DRAM power 
+            # get IO and DRAM power
             dram_power  = report.get_total_dram_power_sequence()
             io_power    = report.get_total_io_power_sequence()
             # add plots
@@ -218,18 +218,18 @@ class plot:
         ax = fig.add_subplot(111, frameon=False)
         ax.set_ylabel(f"Power (mW)\n\n",size="large")
         ax.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
- 
+
         plt.show()
 
     def average_power_performance_scatter_plot(self, network, accelerator):
-        
+
         markers_all = ['o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h', 'H', 'D', 'd', 'P', 'X']
         #fig, axs = plt.subplots(len(self.accelerators), sharey="row")
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_xscale("log")
         for memory in self.memories:
-            y = [] 
+            y = []
             x = []
             markers = []
             # open report
@@ -243,7 +243,7 @@ class plot:
             y.append(total_energy)
             x.append(performance)
             ax.scatter(x,y, label=report.get_memory_name(), marker="x")
-            
+
         ax.grid()
         ax.set(xlabel="Performance (GOP/s)", ylabel="Average Power (mW)")
 
@@ -281,7 +281,7 @@ class plot:
                 ax.bar(x+0.5+(self.coding_schemes.index(coding_scheme)-1)/len(self.coding_schemes)*0.75, power[coding_scheme], width, label=coding_scheme.upper())
             ax.set_xticks(x+0.5)
             ax.set_xticklabels(memory_names)
-            
+
             energy = {}
             x = np.arange(len(self.memories))
             width = 0.65/len(self.coding_schemes)
@@ -308,7 +308,7 @@ class plot:
             # open report
             report = pommel.report(f"outputs/tpu_{network}_ddr3_baseline/report.json")
             ax.set_title(report.get_network_name())
-       
+
         axs[0,0].set_ylabel("Power (mW)", size="medium")
         axs[1,0].set_ylabel("Energy ($\mu$ J)", size="medium")
 
@@ -368,7 +368,7 @@ class plot:
         handles, labels = axs[1].get_legend_handles_labels()
         fig.legend(handles, labels, bbox_to_anchor=(10,800), bbox_transform=axs[0].transData)
         axs[1].set_xlabel("Partition Index",size="large")
-        plt.show()        
+        plt.show()
 
         # create plot
         #self.create_plot(fig, axs, "Accelerator", "Average Power (mW)", "Comparision of Average Power for Coding Schemes")
@@ -376,7 +376,7 @@ class plot:
 
 
     def average_power_coding_scheme_bar_plot(self):
-        
+
         fig, axs = plt.subplots(len(self.memories),len(self.networks), sharey="row")
         for memory in self.memories:
             for network in self.networks:
@@ -402,7 +402,7 @@ class plot:
         # set titles
         for ax, network in zip(axs[0], self.networks):
             ax.set_title(network)
-        
+
         for ax, memory in zip(axs[:,0], self.memories):
             ax.set_ylabel(memory,size="medium")
 
@@ -411,7 +411,7 @@ class plot:
         self.create_plot(fig, axs, "Accelerator", "Average Power (mW)", "")
 
     def layerwise_average_power_coding_scheme_plot(self, accelerator):
-        
+
         fig, axs = plt.subplots(len(self.memories),len(self.networks), sharey="row")
         for memory in self.memories:
             for network in self.networks:
@@ -423,16 +423,16 @@ class plot:
                     total_power = report.get_total_power_sequence()
                     ax.plot(np.arange(len(total_power)),total_power,label=coding_scheme)
                 #ax.set_title(f"{network} on {memory}")
-        
+
         # set titles
         for ax, network in zip(axs[0], self.networks):
             ax.set_title(network)
-        
+
         for ax, memory in zip(axs[:,0], self.memories):
             ax.set_ylabel(memory,size="medium")
 
     def layerwise_energy_coding_scheme_plot(self, accelerator, network):
-        
+
         fig, axs = plt.subplots(len(self.memories))
         for memory in self.memories:
             ax = axs[self.memories.index(memory)]
@@ -444,14 +444,14 @@ class plot:
             total_energy = report.get_energy_sequence()
             ax.plot(partitions, total_energy, color="r",label="Energy")
             ax2 = ax.twinx()
-            # get power and 
+            # get power and
             dram_power = report.get_total_dram_power_sequence()
             io_power = report.get_total_io_power_sequence()
             ax2.plot(partitions, dram_power, color="b",linestyle="dotted", label="Power (DRAM)")
             ax2.plot(partitions, io_power, color="b",linestyle="dashed", label="Power (IO)")
             #ax2.yaxis.set_visible(False)
 
-        # add memory labels 
+        # add memory labels
         for ax, memory in zip(axs, self.memories):
             ax.set_ylabel(memory.upper(),size="medium")
 
@@ -483,7 +483,7 @@ class plot:
         self.create_plot(fig, axs, "Partition Index", "Average Power (mW)", "")
 
     def layerwise_average_power_plot(self, memory):
-        
+
         fig, axs = plt.subplots(len(self.accelerators),len(self.networks), sharey="row")
         for accelerator in self.accelerators:
             for network in self.networks:
@@ -504,7 +504,7 @@ class plot:
         # set titles
         for ax, network in zip(axs[0], self.networks):
             ax.set_title(network)
-        
+
         for ax, accelerator in zip(axs[:,0], self.accelerators):
             ax.set_ylabel(accelerator,size="medium")
 
@@ -513,7 +513,7 @@ class plot:
         self.create_plot(fig, axs, "Partition Index", "Average Power (mW)", "")
 
     def layerwise_trace_length_bar_plot(self, network, memory):
-        
+
         fig, axs = plt.subplots(len(self.coding_schemes), len(self.accelerators), sharey="row")
         for accelerator in self.accelerators:
             for coding_scheme in self.coding_schemes:
@@ -563,7 +563,7 @@ class plot:
         # create plot
         self.create_plot(fig, axs, "Partition Index", "Bandwidth Ratio", "Comparision of Bandwidth Ratio for Coding Schemes across Layers")
 
-    
+
     def layerwise_compression_ratio_coding_scheme_plot(self, accelerator, memory):
 
         fig, axs = plt.subplots(len(self.networks))

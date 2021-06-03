@@ -4,11 +4,20 @@ DRAMPOWER_PATH=/home/alex/DRAMPower/drampower
 
 # parameters
 memory_config=$1
-featuremap_path=$2
-encoder=$3
-network_config=$4
-accelerator_config=$5
-output_path=$6
+shift
+featuremap_path=$1
+shift
+encoder=$1
+shift
+network_config=$1
+shift
+accelerator_config=$1
+shift
+output_path=$1
+shift
+
+# create output directory
+mkdir -p $output_path
 
 if [ "$encoder" = "baseline" ]; then
 
@@ -29,7 +38,8 @@ else
         -a $accelerator_config \
         -n $network_config \
         -f $featuremap_path \
-        -o ${output_path}/encoder_config.xml
+        -o ${output_path}/encoder_config.xml \
+        -c $@
 
     encoder_config=${output_path}/encoder_config.xml
 
@@ -40,17 +50,17 @@ else
         --encoder $encoder_config \
         --network $network_config \
         --accelerator $accelerator_config \
-        --output $output_path 
+        --output $output_path
 
 fi
 
 # iterate over folders in output directory
 for partition in $output_path/*/ ; do
-    
+
     # run DRAM Power estimation
     ./DRAMPower/drampower -m $memory_config -c $partition/trace-chan-0-rank-0.cmdtrace  > $partition/dram_power.rpt
 
-    # run cacti IO estimation 
+    # run cacti IO estimation
     cd cacti
         ./cacti -infile ../$partition/read_cacti.cfg  > ../$partition/read_cacti.rpt
         ./cacti -infile ../$partition/write_cacti.cfg > ../$partition/write_cacti.rpt
