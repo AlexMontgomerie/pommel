@@ -1,5 +1,5 @@
-#ifndef CONFIG_HPP_ 
-#define CONFIG_HPP_ 
+#ifndef CONFIG_HPP_
+#define CONFIG_HPP_
 
 #include "common.hpp"
 #include <ctemplate/template.h>
@@ -50,8 +50,9 @@ typedef struct {
     int cols;
     int rows;
     int data_rate;
-    int burst_length; 
-    int clock;
+    int burst_length;
+    float base_clock;
+    float clock;
     int capacity;
     float bandwidth;
 } memory_config_t;
@@ -105,9 +106,13 @@ class config {
         //void generate_cacti_config(std::string config_path);
         void generate_cacti_config(std::string direction, std::string config_path, float data_activity, float address_activity, float duty_cycle);
         void generate_dram_power_config(std::string config_path);
+        void generate_dram_power_memory_config(std::string memory_config_template, std::string output_path);
+
+        // update functions
+        void update_memory_bandwidth(void);
 
 };
 
 }
 
-#endif 
+#endif

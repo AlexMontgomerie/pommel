@@ -15,6 +15,8 @@ accelerator_config=$1
 shift
 output_path=$1
 shift
+controller_type=$1
+shift
 
 # create output directory
 mkdir -p $output_path
@@ -29,17 +31,26 @@ if [ "$encoder" = "baseline" ]; then
         --encoder $encoder \
         --network $network_config \
         --accelerator $accelerator_config \
-        --output $output_path
+        --output $output_path \
+        --controller $controller_type
 
 else
 
     # generate encoder config
-    python scripts/generate_encoder_config.py -e $encoder \
-        -a $accelerator_config \
-        -n $network_config \
-        -f $featuremap_path \
-        -o ${output_path}/encoder_config.xml \
-        -c $@
+    if [ -z "$@" ]; then
+        python scripts/generate_encoder_config.py -e $encoder \
+            -a $accelerator_config \
+            -n $network_config \
+            -f $featuremap_path \
+            -o ${output_path}/encoder_config.xml
+    else
+        python scripts/generate_encoder_config.py -e $encoder \
+            -a $accelerator_config \
+            -n $network_config \
+            -f $featuremap_path \
+            -o ${output_path}/encoder_config.xml \
+            -c $@
+    fi
 
     encoder_config=${output_path}/encoder_config.xml
 
@@ -50,7 +61,8 @@ else
         --encoder $encoder_config \
         --network $network_config \
         --accelerator $accelerator_config \
-        --output $output_path
+        --output $output_path \
+        --controller $controller_type
 
 fi
 
@@ -58,7 +70,8 @@ fi
 for partition in $output_path/*/ ; do
 
     # run DRAM Power estimation
-    ./DRAMPower/drampower -m $memory_config -c $partition/trace-chan-0-rank-0.cmdtrace  > $partition/dram_power.rpt
+    # ./DRAMPower/drampower -m $memory_config -c $partition/trace-chan-0-rank-0.cmdtrace  > $partition/dram_power.rpt
+    ./DRAMPower/drampower -m $partition/memory.xml -c $partition/trace-chan-0-rank-0.cmdtrace  > $partition/dram_power.rpt
 
     # run cacti IO estimation
     cd cacti

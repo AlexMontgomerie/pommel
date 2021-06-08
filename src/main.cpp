@@ -11,6 +11,7 @@ using namespace boost::program_options;
 #include "trace.hpp"
 #include "featuremap.hpp"
 #include "encoder.hpp"
+#include "controller.hpp"
 
 #include "coding_schemes/def.hpp"
 #include "coding_schemes/abe.hpp"
@@ -117,6 +118,9 @@ int main(int argc, char *argv[]) {
     // encoding scheme
     std::string coder_name;
 
+    // controller method
+    std::string controller_type;
+
     // file path names
     std::string featuremap_path;
     std::string trace_path;
@@ -136,6 +140,7 @@ int main(int argc, char *argv[]) {
         ("baseline", "compute baseline power readings (no encoding)")
         ("memory", value(&memory_config_path)->required(), "file path for memory config (.xml)")
         ("encoder", value(&encoder_config_path), "file path for encoding scheme config (.xml)")
+        ("controller", value(&controller_type)->required(), "controller type")
         ("network", value(&network_config_path)->required(), "file path for network config (.xml)")
         ("accelerator", value(&accelerator_config_path)->required(), "accelerator config path (.xml)")
         ("featuremap", value(&featuremap_path)->required(), "featuremap data path (.h5)")
@@ -292,20 +297,31 @@ int main(int argc, char *argv[]) {
         std::string cacti_idle_config_path      = output_path + "/" + partition_index + "/idle_cacti.cfg";
         std::string trace_prefix                = output_path + "/" + partition_index + "/trace-";
 
-        // find the actual bandwidth in and out
-        float bandwidth_in  = partition_conf.bandwidth_in  / ( compression_ratio_in );
-        float bandwidth_out = partition_conf.bandwidth_out / ( compression_ratio_out );
+        // calculate the period based on the memory controller scheme
+        uint32_t period;
+        if( controller_type == "standard" ) {
+            period = pommel::standard_controller(config_inst, partition_conf, compression_ratio_in, compression_ratio_out);
+        } else if( controller_type == "freq_scaling" ) {
+            period = pommel::variable_frequency_controller(config_inst, partition_conf, compression_ratio_in, compression_ratio_out);
+        } else {
+            fprintf(stderr,"controller type %s not supported!\n", controller_type.c_str());
 
-        // get period (clk cycles) for input and output featuremaps
-        int period_in   = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_in );
-        int period_out  = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_out );
-
-        // calculate burst transfer period
-        uint32_t period = std::max(period_in, period_out);
-        if ( period <= 2*config_inst.platform.burst_size ) {
-            printf("WARNING: required bandwidth larger than memory bandwidth\n");
-            period = 2*config_inst.platform.burst_size+1;
         }
+
+        /* // find the actual bandwidth in and out */
+        /* float bandwidth_in  = partition_conf.bandwidth_in  / ( compression_ratio_in ); */
+        /* float bandwidth_out = partition_conf.bandwidth_out / ( compression_ratio_out ); */
+
+        /* // get period (clk cycles) for input and output featuremaps */
+        /* int period_in   = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_in ); */
+        /* int period_out  = (int) ( config_inst.platform.burst_size*config_inst.memory.bandwidth / bandwidth_out ); */
+
+        /* // calculate burst transfer period */
+        /* uint32_t period = std::max(period_in, period_out); */
+        /* if ( period <= 2*config_inst.platform.burst_size ) { */
+        /*     printf("WARNING: required bandwidth larger than memory bandwidth\n"); */
+        /*     period = 2*config_inst.platform.burst_size+1; */
+        /* } */
 
         // actual bandwidth
         float bandwidth = ( 2*config_inst.platform.burst_size*config_inst.memory.bandwidth ) /( (float) period );
@@ -314,6 +330,7 @@ int main(int argc, char *argv[]) {
         trace_t trace = get_trace_inst(config_inst.memory.dram_type, ramulator_config_path, trace_prefix,
                 config_inst.platform.burst_size, period, config_inst.platform.bitwidth);
 
+        // generate the DRAMPower trace
         std::visit([
                 &stream_in=encoded_stream_in_path,
                 &stream_out=encoded_stream_out_path,
@@ -323,6 +340,10 @@ int main(int argc, char *argv[]) {
                 arg.generate_combined_trace(stream_in, stream_out,
                         in_addr_offset, out_addr_offset); }, trace);
 
+        // generate the DRAMPower memory config
+        std::string dram_power_memory_config = output_path + "/" + partition_index + "/memory.xml";
+        config_inst.generate_dram_power_memory_config(memory_config_path, dram_power_memory_config);
+
         // calculate read, write and idle duty cycles
         float read_duty_cycle  = config_inst.platform.burst_size / ((float) period);
         float write_duty_cycle = config_inst.platform.burst_size / ((float) period);
@@ -331,10 +352,8 @@ int main(int argc, char *argv[]) {
         // generate the cacti config files
         config_inst.generate_cacti_config("READ",cacti_read_config_path, data_activity_in,
                 addr_activity_in, read_duty_cycle);
-
         config_inst.generate_cacti_config("WRITE",cacti_write_config_path, data_activity_out,
                 addr_activity_out, write_duty_cycle);
-
         config_inst.generate_cacti_config("IDLE",cacti_idle_config_path, 0.0,
                 0.0, idle_duty_cycle);
 
@@ -367,14 +386,14 @@ int main(int argc, char *argv[]) {
             {"idle_duty_cycle" , idle_duty_cycle}
         };
         report["partitions"][partition_index.c_str()]["in"] = {
-            {"bandwidth", bandwidth_in},
+            {"bandwidth", bandwidth},
             {"samples", total_samples_in},
             {"compression_ratio", compression_ratio_in},
             {"data_activity", data_activity_in},
             {"addr_activity", addr_activity_in}
         };
         report["partitions"][partition_index.c_str()]["out"] = {
-            {"bandwidth", bandwidth_out},
+            {"bandwidth", bandwidth},
             {"samples", total_samples_out},
             {"compression_ratio", compression_ratio_out},
             {"data_activity", data_activity_out},
