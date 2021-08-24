@@ -1,6 +1,0 @@
-<encoderspec type="bi">
-  <layer id="classifier.1">  
-    <parameter id="bitwidth" type="int" value="8" />
-    <parameter id="distance" type="int" value="16" />
-  </layer>
-</encoderspec>
