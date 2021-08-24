@@ -49,7 +49,6 @@ target_include_directories(POMMEL PUBLIC
 ## adding ctemplate
 target_link_libraries(POMMEL ctemplate)
 
-# setting CFlags
+## setting CFlags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DRAMULATOR -DHIGHFIVE_EXAMPLES=OFF")
-
 

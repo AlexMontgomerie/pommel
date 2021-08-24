@@ -16,4 +16,6 @@ build/*
 **.pyc
 .ipynb_checkpoints/
 
+**.h5
+
 makefile
