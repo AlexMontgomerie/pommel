@@ -14,7 +14,3 @@
     path = HighFive
     url = https://github.com/BlueBrain/HighFive
 
-[submodule "SCALE-Sim"]
-    path = SCALE-Sim
-    url = https://github.com/ARM-software/SCALE-Sim
-
