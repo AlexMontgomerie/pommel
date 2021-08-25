@@ -53,7 +53,6 @@ To use the tool, the following arguments are required:
 An example of running the tool is as follows. To run the tool, you must download the example featuremap from [here](https://imperialcollegelondon.box.com/shared/static/r8za7qx35yw0x2wib7dbd1deuyqb34yg.h5). To generate featuremap data, please look at [distiller-featuremap](https://github.com/AlexMontgomerie/distiller-featuremap).
 
 ```
-
 ./build/POMMEL \
     --baseline \
     --memory example/memory.xml \
